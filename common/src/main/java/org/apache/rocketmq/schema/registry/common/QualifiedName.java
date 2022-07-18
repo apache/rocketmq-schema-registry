@@ -38,6 +38,7 @@ public class QualifiedName implements Serializable {
     private String tenant;
     private String subject;
     private String schema;
+    private Long version;
 
     public QualifiedName(
         @Nullable final String cluster,
@@ -51,16 +52,30 @@ public class QualifiedName implements Serializable {
         this.schema = schema;
     }
 
+    public QualifiedName(
+        @Nullable final String cluster,
+        @Nullable final String tenant,
+        @Nullable final String subject,
+        @Nullable final String schema,
+        @Nullable final Long version
+    ) {
+        this.cluster= cluster;
+        this.tenant= tenant;
+        this.subject= subject;
+        this.schema = schema;
+        this.version = version;
+    }
+
     public SubjectInfo subjectInfo() {
         return new SubjectInfo(cluster, subject);
     }
 
     public String fullName() {
-        return cluster + '/' + tenant + '/' + subject + '/' + schema;
+        return cluster + '/' + tenant + '/' + subject + '/' + schema + '/' + version;
     }
 
     public String schemaFullName() {
-        return tenant + '/' + schema;
+        return tenant + '/' + schema + '/' + version;
     }
 
     public String subjectFullName() {
@@ -78,6 +93,8 @@ public class QualifiedName implements Serializable {
             .append(subject).append('\"');
         sb.append(",\"name\":\"")
             .append(schema).append('\"');
+        sb.append(",\"version\":\"")
+            .append(version).append('\"');
         sb.append('}');
         return sb.toString();
     }

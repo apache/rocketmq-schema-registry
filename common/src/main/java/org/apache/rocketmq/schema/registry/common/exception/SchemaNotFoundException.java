@@ -17,10 +17,14 @@
 
 package org.apache.rocketmq.schema.registry.common.exception;
 
+import lombok.Getter;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 
+@Getter
 public class SchemaNotFoundException extends SchemaException {
     private static final long serialVersionUID = 554251224980156176L;
+
+    private final int errorCode = 40402;
 
     public SchemaNotFoundException(final QualifiedName qualifiedName) {
         this(String.format("Schema: %s not found, please check your configuration.", qualifiedName));

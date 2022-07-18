@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.net.HttpURLConnection;
+import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
@@ -296,11 +297,11 @@ public class SchemaController {
 
     @RequestMapping(
         method = RequestMethod.GET,
-        path = "/subject/{subject-name}"
+        path = "/subject/{subject-name}/schema"
     )
     @ApiOperation(
         value = "Schema information",
-        notes = "Schema information for the given schema name under the subject")
+        notes = "Schema information with the latest version under the subject")
     @ApiResponses(
         {
             @ApiResponse(
@@ -314,7 +315,7 @@ public class SchemaController {
         }
     )
     public SchemaRecordDto getSchemaBySubject(
-        @ApiParam(value = "The name of the schema", required = true)
+        @ApiParam(value = "The name of the subject", required = true)
         @PathVariable("subject-name") String subject
     ) {
         return getSchemaBySubject("default", subject);
@@ -322,11 +323,11 @@ public class SchemaController {
 
     @RequestMapping(
         method = RequestMethod.GET,
-        path = "/cluster/{cluster-name}/subject/{subject-name}"
+        path = "/cluster/{cluster-name}/subject/{subject-name}/schema"
     )
     @ApiOperation(
         value = "Schema information",
-        notes = "Schema information for the given schema name under the subject")
+        notes = "Schema information with the latest version under the subject")
     @ApiResponses(
         {
             @ApiResponse(
@@ -350,6 +351,74 @@ public class SchemaController {
         return this.requestProcessor.processRequest(
             "getSchemaBySubject",
             () -> schemaService.getBySubject(name)
+        );
+    }
+
+    @RequestMapping(
+        method = RequestMethod.GET,
+        path = "/cluster/{cluster-name}/subject/{subject-name}/schema/versions/{version}"
+    )
+    @ApiOperation(
+        value = "Schema information",
+        notes = "Schema information with the given version under the subject")
+    @ApiResponses(
+        {
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_OK,
+                message = "The schema is returned"
+            ),
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_NOT_FOUND,
+                message = "The requested tenant or schema cannot be found"
+            )
+        }
+    )
+    public SchemaRecordDto getSchemaBySubject(
+        @ApiParam(value = "The cluster of the subject", required = true)
+        @PathVariable("cluster-name") String cluster,
+        @ApiParam(value = "The name of the subject", required = true)
+        @PathVariable("subject-name") String subject,
+        @ApiParam(value = "The version of the schema", required = true)
+        @PathVariable("version") String version
+    ) {
+        QualifiedName name = new QualifiedName(cluster, null, subject, null, Long.parseLong(version));
+
+        return this.requestProcessor.processRequest(
+            "getSchemaBySubject",
+            () -> schemaService.getBySubject(name)
+        );
+    }
+
+    @RequestMapping(
+        method = RequestMethod.GET,
+        path = "/cluster/{cluster-name}/subject/{subject-name}/schema/versions"
+    )
+    @ApiOperation(
+        value = "Schema information",
+        notes = "Schema information with a list of versions under the subject")
+    @ApiResponses(
+        {
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_OK,
+                message = "The schema is returned"
+            ),
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_NOT_FOUND,
+                message = "The requested tenant or schema cannot be found"
+            )
+        }
+    )
+    public List<SchemaRecordDto> getSchemaListBySubject(
+        @ApiParam(value = "The cluster of the subject", required = true)
+        @PathVariable("cluster-name") String cluster,
+        @ApiParam(value = "The name of the subject", required = true)
+        @PathVariable("subject-name") String subject
+    ) {
+        QualifiedName name = new QualifiedName(cluster, null, subject, null);
+
+        return this.requestProcessor.processRequest(
+            "getSchemaListBySubject",
+            () -> schemaService.listBySubject(name)
         );
     }
 }

@@ -21,6 +21,8 @@ import com.google.common.base.Strings;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.context.RequestContext;
@@ -234,6 +236,23 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         log.info("get schema by subject: {}", qualifiedName.getSubject());
         return storageUtil.convertToSchemaRecordDto(recordInfo);
+    }
+
+    @Override
+    public List<SchemaRecordDto> listBySubject(QualifiedName qualifiedName) {
+        final RequestContext requestContext = RequestContextManager.getContext();
+        log.info("register get request context: " + requestContext);
+
+        //        CommonUtil.validateName(qualifiedName);
+        this.accessController.checkPermission("", qualifiedName.getSubject(), SchemaOperation.GET);
+
+        List<SchemaRecordInfo> recordInfos = storageServiceProxy.listBySubject(qualifiedName, config.isCacheEnabled());
+        if (recordInfos == null) {
+            throw new SchemaException("Subject: " + qualifiedName + " not exist");
+        }
+
+        log.info("list schema by subject: {}", qualifiedName.getSubject());
+        return recordInfos.stream().map(storageUtil::convertToSchemaRecordDto).collect(Collectors.toList());
     }
 
     private void checkSchemaExist(final QualifiedName qualifiedName) {

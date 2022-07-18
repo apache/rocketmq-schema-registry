@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.rocketmq.schema.registry.common.exception;
+package org.apache.rocketmq.schema.registry.core.expection;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import org.apache.rocketmq.schema.registry.common.exception.SchemaException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -37,21 +38,13 @@ public class RequestExceptionHandler {
      * @param e        The inner exception to handle
      * @throws IOException on error in sending error
      */
-    @ExceptionHandler({SchemaException.class})
+    @ExceptionHandler(SchemaException.class)
     public void handleException(
         final HttpServletResponse response,
         final SchemaException e
     ) throws IOException {
-        final int status;
-
-        if (e instanceof SchemaNotFoundException) {
-            status = HttpStatus.NOT_FOUND.value();
-        } else  {
-            status = HttpStatus.INTERNAL_SERVER_ERROR.value();
-        }
-
         log.error("Global handle SchemaException: " + e.getMessage(), e);
-        response.sendError(status, e.getMessage());
+        response.sendError(e.getErrorCode(), e.getMessage());
     }
 
 }

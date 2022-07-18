@@ -17,8 +17,13 @@
 
 package org.apache.rocketmq.schema.registry.common.exception;
 
+import lombok.Getter;
+
+@Getter
 public class SchemaAuthorizedException extends SchemaException {
     private static final long serialVersionUID = 204882338833006991L;
+
+    private final int errorCode = 40101;
 
     public SchemaAuthorizedException(final String tenant, final String schemaName) {
         this(String.format("Schema: %s/%s not found, please check your configuration.", tenant, schemaName));

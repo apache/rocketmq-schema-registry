@@ -17,6 +17,8 @@
 
 package org.apache.rocketmq.schema.registry.storage.rocketmq;
 
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
@@ -76,5 +78,10 @@ public class RocketmqStorageService implements StorageService<SchemaInfo> {
     @Override
     public SchemaRecordInfo getBySubject(StorageServiceContext context, QualifiedName name) {
         return storageClient.getBySubject(name);
+    }
+
+    @Override
+    public List<SchemaRecordInfo> listBySubject(StorageServiceContext context, QualifiedName name) {
+        return storageClient.listBySubject(name);
     }
 }
