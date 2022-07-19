@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(
-    path = "/schema-registry/v1",
+    path = "/schema-registry/v1/cluster/{cluster-name}",
     produces = MediaType.APPLICATION_JSON_VALUE
 )
 @Api(
@@ -67,7 +67,7 @@ public class SchemaController {
 
     @RequestMapping(
         method = RequestMethod.POST,
-        path = "/cluster/{cluster-name}/subject/{subject-name}/schema/{schema-name}",
+        path = "/subject/{subject-name}/schema/{schema-name}",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseStatus(HttpStatus.CREATED)
@@ -102,7 +102,7 @@ public class SchemaController {
 
     @RequestMapping(
         method = RequestMethod.POST,
-        path = "/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/{schema-name}",
+        path = "/tenant/{tenant-name}/subject/{subject-name}/schema/{schema-name}",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseStatus(HttpStatus.CREATED)
@@ -148,13 +148,13 @@ public class SchemaController {
     }
 
     @RequestMapping(
-        path = "/tenant/{tenant-name}/schema/{schema-name}",
+        path = "/tenant/{tenant-name}/subject/{subject-name}/schema",
         method = RequestMethod.DELETE
     )
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(
         value = "Delete schema",
-        notes = "Delete the schema under the given tenant"
+        notes = "Delete the schema under the given tenant and subject"
     )
     @ApiResponses(
         {
@@ -169,12 +169,14 @@ public class SchemaController {
         }
     )
     public SchemaDto deleteSchema(
+        @ApiParam(value = "The cluster of the subject", required = true)
+        @PathVariable("cluster-name") final String cluster,
         @ApiParam(value = "The tenant of the schema", required = true)
         @PathVariable("tenant-name") final String tenant,
-        @ApiParam(value = "The name of the schema", required = true)
-        @PathVariable("schema-name") final String schemaName
+        @ApiParam(value = "The subject of the schema", required = true)
+        @PathVariable("subject-name") final String subject
     ) {
-        QualifiedName name = new QualifiedName(null, tenant, null, schemaName);
+        QualifiedName name = new QualifiedName(cluster, tenant, subject, null);
         return this.requestProcessor.processRequest(
             name,
             "deleteSchema",
@@ -183,7 +185,46 @@ public class SchemaController {
     }
 
     @RequestMapping(
-        path = "/cluster/{cluster-name}/subject/{subject-name}/schema/{schema-name}",
+        path = "/tenant/{tenant-name}/subject/{subject-name}/schema/versions/{version}",
+        method = RequestMethod.DELETE
+    )
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(
+        value = "Delete schema",
+        notes = "Delete the schema under the given tenant, subject and version"
+    )
+    @ApiResponses(
+        {
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_OK,
+                message = "Schema deleted success"
+            ),
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_NOT_FOUND,
+                message = "The requested schema cannot be found or it's still been used"
+            )
+        }
+    )
+    public SchemaDto deleteSchema(
+        @ApiParam(value = "The cluster of the subject", required = true)
+        @PathVariable("cluster-name") final String cluster,
+        @ApiParam(value = "The tenant of the schema", required = true)
+        @PathVariable("tenant-name") final String tenant,
+        @ApiParam(value = "The subject of the schema", required = true)
+        @PathVariable("subject-name") final String subject,
+        @ApiParam(value = "The version of the schema", required = true)
+        @PathVariable("version") final String version
+    ) {
+        QualifiedName name = new QualifiedName(cluster, tenant, subject, null, Long.valueOf(version));
+        return this.requestProcessor.processRequest(
+            name,
+            "deleteSchema",
+            () -> this.schemaService.delete(name)
+        );
+    }
+
+    @RequestMapping(
+        path = "/subject/{subject-name}/schema/{schema-name}",
         method = RequestMethod.PUT,
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
@@ -217,7 +258,7 @@ public class SchemaController {
     }
 
     @RequestMapping(
-        path = "/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/{schema-name}",
+        path = "/tenant/{tenant-name}/subject/{subject-name}/schema/{schema-name}",
         method = RequestMethod.PUT,
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
@@ -259,11 +300,11 @@ public class SchemaController {
 
     @RequestMapping(
         method = RequestMethod.GET,
-        path = "/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/{schema-name}"
+        path = "/tenant/{tenant-name}/subject/{subject-name}/schema"
     )
     @ApiOperation(
         value = "Schema information",
-        notes = "Schema information for the given schema name under the tenant")
+        notes = "Schema information with the latest version under the tenant and subject")
     @ApiResponses(
         {
             @ApiResponse(
@@ -276,22 +317,92 @@ public class SchemaController {
             )
         }
     )
-    public SchemaDto getSchema(
+    public SchemaRecordDto getSchemaByTenantSubject(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,
         @ApiParam(value = "The tenant of the schema", required = true)
         @PathVariable(value = "tenant-name") final String tenant,
         @ApiParam(value = "The subject of the schema", required = true)
-        @PathVariable(name = "subject-name") final String subject,
-        @ApiParam(value = "The name of the schema", required = true)
-        @PathVariable("schema-name") final String schemaName
+        @PathVariable(name = "subject-name") final String subject
     ) {
-        QualifiedName name = new QualifiedName(cluster, tenant, subject, schemaName);
-        log.info("Request for get schema for schema: {}", name.fullName());
+        QualifiedName name = new QualifiedName(cluster, tenant, subject, null);
+        log.info("Request for get schema for subject: {}", name.subjectFullName());
         return this.requestProcessor.processRequest(
             name,
-            "getSchema",
-            () -> schemaService.get(name)
+            "getSchemaByTenantSubject",
+            () -> schemaService.getBySubject(name)
+        );
+    }
+
+    @RequestMapping(
+        method = RequestMethod.GET,
+        path = "/tenant/{tenant-name}/subject/{subject-name}/schema/versions/{version}"
+    )
+    @ApiOperation(
+        value = "Schema information",
+        notes = "Schema information with the given version under the tenant and the subject")
+    @ApiResponses(
+        {
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_OK,
+                message = "The schema is returned"
+            ),
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_NOT_FOUND,
+                message = "The requested tenant or schema cannot be found"
+            )
+        }
+    )
+    public SchemaRecordDto getSchemaByTenantSubject(
+        @ApiParam(value = "The cluster of the subject", required = true)
+        @PathVariable("cluster-name") final String cluster,
+        @ApiParam(value = "The tenant of the schema", required = true)
+        @PathVariable(value = "tenant-name") final String tenant,
+        @ApiParam(value = "The name of the subject", required = true)
+        @PathVariable("subject-name") final String subject,
+        @ApiParam(value = "The version of the schema", required = true)
+        @PathVariable("version") final String version
+    ) {
+        QualifiedName name = new QualifiedName(cluster, tenant, subject, null, Long.parseLong(version));
+
+        return this.requestProcessor.processRequest(
+            "getSchemaByTenantSubject",
+            () -> schemaService.getBySubject(name)
+        );
+    }
+
+    @RequestMapping(
+        method = RequestMethod.GET,
+        path = "/tenant/{tenant-name}/subject/{subject-name}/schema/versions"
+    )
+    @ApiOperation(
+        value = "Schema information",
+        notes = "Schema information with a list of versions under the tenant and the subject")
+    @ApiResponses(
+        {
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_OK,
+                message = "The schema is returned"
+            ),
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_NOT_FOUND,
+                message = "The requested tenant or schema cannot be found"
+            )
+        }
+    )
+    public List<SchemaRecordDto> getSchemaListByTenantSubject(
+        @ApiParam(value = "The cluster of the subject", required = true)
+        @PathVariable("cluster-name") String cluster,
+        @ApiParam(value = "The tenant of the schema", required = true)
+        @PathVariable(value = "tenant-name") final String tenant,
+        @ApiParam(value = "The name of the subject", required = true)
+        @PathVariable("subject-name") String subject
+    ) {
+        QualifiedName name = new QualifiedName(cluster, tenant, subject, null);
+
+        return this.requestProcessor.processRequest(
+            "getSchemaListByTenantSubject",
+            () -> schemaService.listBySubject(name)
         );
     }
 
@@ -315,48 +426,17 @@ public class SchemaController {
         }
     )
     public SchemaRecordDto getSchemaBySubject(
-        @ApiParam(value = "The name of the subject", required = true)
-        @PathVariable("subject-name") String subject
-    ) {
-        return getSchemaBySubject("default", subject);
-    }
-
-    @RequestMapping(
-        method = RequestMethod.GET,
-        path = "/cluster/{cluster-name}/subject/{subject-name}/schema"
-    )
-    @ApiOperation(
-        value = "Schema information",
-        notes = "Schema information with the latest version under the subject")
-    @ApiResponses(
-        {
-            @ApiResponse(
-                code = HttpURLConnection.HTTP_OK,
-                message = "The schema is returned"
-            ),
-            @ApiResponse(
-                code = HttpURLConnection.HTTP_NOT_FOUND,
-                message = "The requested tenant or schema cannot be found"
-            )
-        }
-    )
-    public SchemaRecordDto getSchemaBySubject(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable("cluster-name") String cluster,
         @ApiParam(value = "The name of the subject", required = true)
         @PathVariable("subject-name") String subject
     ) {
-        QualifiedName name = new QualifiedName(cluster, null, subject, null);
-
-        return this.requestProcessor.processRequest(
-            "getSchemaBySubject",
-            () -> schemaService.getBySubject(name)
-        );
+        return getSchemaByTenantSubject(cluster, "default", subject);
     }
 
     @RequestMapping(
         method = RequestMethod.GET,
-        path = "/cluster/{cluster-name}/subject/{subject-name}/schema/versions/{version}"
+        path = "/subject/{subject-name}/schema/versions/{version}"
     )
     @ApiOperation(
         value = "Schema information",
@@ -381,17 +461,12 @@ public class SchemaController {
         @ApiParam(value = "The version of the schema", required = true)
         @PathVariable("version") String version
     ) {
-        QualifiedName name = new QualifiedName(cluster, null, subject, null, Long.parseLong(version));
-
-        return this.requestProcessor.processRequest(
-            "getSchemaBySubject",
-            () -> schemaService.getBySubject(name)
-        );
+        return getSchemaByTenantSubject(cluster, "default", subject, version);
     }
 
     @RequestMapping(
         method = RequestMethod.GET,
-        path = "/cluster/{cluster-name}/subject/{subject-name}/schema/versions"
+        path = "/subject/{subject-name}/schema/versions"
     )
     @ApiOperation(
         value = "Schema information",
@@ -414,11 +489,6 @@ public class SchemaController {
         @ApiParam(value = "The name of the subject", required = true)
         @PathVariable("subject-name") String subject
     ) {
-        QualifiedName name = new QualifiedName(cluster, null, subject, null);
-
-        return this.requestProcessor.processRequest(
-            "getSchemaListBySubject",
-            () -> schemaService.listBySubject(name)
-        );
+        return getSchemaListByTenantSubject(cluster, "default", subject);
     }
 }

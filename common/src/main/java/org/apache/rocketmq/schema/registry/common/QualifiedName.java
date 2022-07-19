@@ -75,11 +75,11 @@ public class QualifiedName implements Serializable {
     }
 
     public String schemaFullName() {
-        return tenant + '/' + schema + '/' + version;
+        return schema + '/' + version;
     }
 
     public String subjectFullName() {
-        return cluster + '/' + subject;
+        return cluster + '/' + tenant + '/' + subject;
     }
 
     @Override

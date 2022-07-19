@@ -50,4 +50,7 @@ public class SchemaRecordDto {
 
     @ApiModelProperty(value = "Subjects of this record binding")
     private List<SubjectDto> subjects;
+
+    @ApiModelProperty(value = "Schema type")
+    private String type;
 }

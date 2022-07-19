@@ -98,6 +98,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
         schemaInfo.setUniqueId(idGenerator.nextId());
         schemaInfo.setLastRecordVersion(1L);
         schemaInfo.getLastRecord().setSchema(qualifiedName.schemaFullName());
+        schemaInfo.getLastRecord().setType(schemaInfo.getMeta().getType().name());
         schemaInfo.getLastRecord().bindSubject(qualifiedName.subjectInfo());
 
         if (config.isUploadEnabled()) {
