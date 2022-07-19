@@ -25,6 +25,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.rocketmq.schema.registry.common.model.Dependency;
+import org.apache.rocketmq.schema.registry.common.model.SchemaType;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -52,5 +53,5 @@ public class SchemaRecordDto {
     private List<SubjectDto> subjects;
 
     @ApiModelProperty(value = "Schema type")
-    private String type;
+    private SchemaType type;
 }

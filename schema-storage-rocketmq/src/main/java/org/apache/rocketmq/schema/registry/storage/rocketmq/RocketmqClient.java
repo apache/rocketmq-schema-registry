@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +36,7 @@ import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.client.producer.SendStatus;
+import org.apache.rocketmq.common.ThreadFactoryImpl;
 import org.apache.rocketmq.common.TopicConfig;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.message.MessageExt;
@@ -48,6 +52,7 @@ import org.apache.rocketmq.schema.registry.common.json.JsonConverterImpl;
 import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
 import org.apache.rocketmq.schema.registry.common.model.SchemaRecordInfo;
 import org.apache.rocketmq.schema.registry.common.model.SubjectInfo;
+import org.apache.rocketmq.store.DefaultMessageStore;
 import org.apache.rocketmq.tools.admin.DefaultMQAdminExt;
 import org.rocksdb.ColumnFamilyDescriptor;
 import org.rocksdb.ColumnFamilyHandle;
@@ -83,6 +88,9 @@ public class RocketmqClient {
     private final List<ColumnFamilyDescriptor> cfDescriptors = new ArrayList<>();
     private final Map<String, ColumnFamilyHandle> cfHandleMap = new HashMap<>();
 
+    private ScheduledExecutorService scheduledExecutorService;
+
+    private static final Integer PULL_TASK_INTERVAL = 5 * 1000;
 
     /**
      * RocksDB for cache
@@ -178,61 +186,70 @@ public class RocketmqClient {
                     e.printStackTrace();
                 }
             });
-            while (true) {
-                List<MessageExt> msgList = scheduleConsumer.poll(1000);
-                if (msgList != null) {
-                    msgList.forEach(this::consumeMessage);
-                }
-            }
+            this.scheduledExecutorService.scheduleAtFixedRate(new RocketmqStoragePullTask(),
+                0, PULL_TASK_INTERVAL, TimeUnit.MILLISECONDS);
+
         } catch (MQClientException e) {
             throw new SchemaException("Rocketmq client start failed", e);
         }
     }
 
-    private void consumeMessage(MessageExt msg) {
-        synchronized (this) {
-            try {
-                if (msg.getKeys().equals(DELETE_KEYS)) {
-                    // delete
-                    byte[] schemaFullName = msg.getBody();
-                    byte[] schemaInfoBytes = cache.get(schemaCfHandle(), schemaFullName);
-                    if (schemaInfoBytes != null) {
-                        deleteAllSubject(converter.fromJson(schemaInfoBytes, SchemaInfo.class));
-                        cache.delete(schemaCfHandle(), schemaFullName);
-                    }
-                } else {
-                    byte[] schemaFullName = converter.toBytes(msg.getKeys());
-                    byte[] schemaInfoBytes = msg.getBody();
-                    SchemaInfo update = converter.fromJson(schemaInfoBytes, SchemaInfo.class);
-                    byte[] lastRecordBytes = converter.toJsonAsBytes(update.getLastRecord());
+    public class RocketmqStoragePullTask implements Runnable {
 
-                    byte[] result = cache.get(schemaCfHandle(), schemaFullName);
-                    if (result == null) {
-                        // register
-                        cache.put(schemaCfHandle(), schemaFullName, schemaInfoBytes);
-                        cache.put(subjectCfHandle(), converter.toBytes(update.subjectFullName()), lastRecordBytes);
+        @Override
+        public void run() {
+            List<MessageExt> msgList = scheduleConsumer.poll(1000);
+            if (CollectionUtils.isNotEmpty(msgList)) {
+                msgList.forEach(this::consumeMessage);
+            }
+        }
+
+        private void consumeMessage(MessageExt msg) {
+            synchronized (this) {
+                try {
+                    log.info("receive msg, the content is {}", new String(msg.getBody()));
+                    if (DELETE_KEYS.equals(msg.getKeys())) {
+                        // delete
+                        byte[] schemaFullName = msg.getBody();
+                        byte[] schemaInfoBytes = cache.get(schemaCfHandle(), schemaFullName);
+                        if (schemaInfoBytes != null) {
+                            deleteAllSubject(converter.fromJson(schemaInfoBytes, SchemaInfo.class));
+                            cache.delete(schemaCfHandle(), schemaFullName);
+                        }
                     } else {
-                        SchemaInfo current = converter.fromJson(result, SchemaInfo.class);
-                        if (current.getLastRecordVersion() == update.getLastRecordVersion()) {
-                            return;
-                        }
-                        if (current.getLastRecordVersion() > update.getLastRecordVersion()) {
-                            throw new SchemaException("Schema version is invalid, update: "
-                                + update.getLastRecordVersion() + ", but current: " + current.getLastRecordVersion());
-                        }
+                        byte[] schemaFullName = converter.toBytes(msg.getKeys());
+                        byte[] schemaInfoBytes = msg.getBody();
+                        SchemaInfo update = converter.fromJson(schemaInfoBytes, SchemaInfo.class);
+                        byte[] lastRecordBytes = converter.toJsonAsBytes(update.getLastRecord());
 
-                        cache.put(schemaCfHandle(), schemaFullName, schemaInfoBytes);
-                        update.getLastRecord().getSubjects().forEach(subject -> {
-                            try {
-                                cache.put(subjectCfHandle(), converter.toBytes(subject.fullName()), lastRecordBytes);
-                            } catch (RocksDBException e) {
-                                throw new SchemaException("Update schema: " + update.getQualifiedName() + " failed.", e);
+                        byte[] result = cache.get(schemaCfHandle(), schemaFullName);
+                        if (result == null) {
+                            // register
+                            cache.put(schemaCfHandle(), schemaFullName, schemaInfoBytes);
+                            cache.put(subjectCfHandle(), converter.toBytes(update.subjectFullName()), lastRecordBytes);
+                        } else {
+                            SchemaInfo current = converter.fromJson(result, SchemaInfo.class);
+                            if (current.getLastRecordVersion() == update.getLastRecordVersion()) {
+                                return;
                             }
-                        });
+                            if (current.getLastRecordVersion() > update.getLastRecordVersion()) {
+                                throw new SchemaException("Schema version is invalid, update: "
+                                    + update.getLastRecordVersion() + ", but current: " + current.getLastRecordVersion());
+                            }
+
+                            cache.put(schemaCfHandle(), schemaFullName, schemaInfoBytes);
+                            update.getLastRecord().getSubjects().forEach(subject -> {
+                                try {
+                                    cache.put(subjectCfHandle(), converter.toBytes(subject.fullName()), lastRecordBytes);
+                                } catch (RocksDBException e) {
+                                    throw new SchemaException("Update schema: " + update.getQualifiedName() + " failed.", e);
+                                }
+                            });
+                        }
                     }
+                } catch (Throwable e) {
+                    throw new SchemaException("Rebuild schema cache failed", e);
                 }
-            } catch (Throwable e) {
-                throw new SchemaException("Rebuild schema cache failed", e);
             }
         }
     }
@@ -386,6 +403,9 @@ public class RocketmqClient {
         );
 
         this.converter = new JsonConverterImpl();
+
+        this.scheduledExecutorService =
+            Executors.newSingleThreadScheduledExecutor(new ThreadFactoryImpl("RocketmqStoragePullTask"));
     }
 
     private ColumnFamilyHandle schemaCfHandle() {

@@ -37,7 +37,7 @@ public class SchemaRecordInfo implements Serializable {
     private String idl;
     private Dependency dependency;
     private List<SubjectInfo> subjects;
-    private String type;
+    private SchemaType type;
     //    private List<FieldInfo> fields;
 
     public void bindSubject(final SubjectInfo subjectInfo) {

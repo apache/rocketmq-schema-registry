@@ -6,19 +6,18 @@
 
 package org.apache.rocketmq.schema.registry.core.api.v1;
 
+import java.net.HttpURLConnection;
+import java.util.List;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import java.net.HttpURLConnection;
-import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaRecordDto;
-import org.apache.rocketmq.schema.registry.common.exception.SchemaNotFoundException;
 import org.apache.rocketmq.schema.registry.core.api.RequestProcessor;
 import org.apache.rocketmq.schema.registry.core.service.SchemaService;
 import org.springframework.beans.factory.annotation.Autowired;

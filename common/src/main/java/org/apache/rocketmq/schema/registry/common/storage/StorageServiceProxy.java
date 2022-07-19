@@ -70,7 +70,7 @@ public class StorageServiceProxy {
      *
      * @param name Qualified name with tenant / name of schema
      */
-    @CacheEvict(key = "'schema.' + #name.getTenant() + '/' + #name.getSchema()")
+    @CacheEvict(key = "'schema.' + #name.getSchema()")
     public void delete(final QualifiedName name) {
         final RequestContext requestContext = RequestContextManager.getContext();
         final StorageServiceContext storageServiceContext = storageUtil.convertToStorageServiceContext(requestContext);
@@ -86,7 +86,7 @@ public class StorageServiceProxy {
      * @param schemaInfo schema information instance
      * @return true if errors after this should be ignored.
      */
-    @CacheEvict(key = "'schema.' + #name.getTenant() + '/' + #name.getSchema()")
+    @CacheEvict(key = "'schema.' + #name.getSchema()")
     public SchemaInfo update(final QualifiedName name, final SchemaInfo schemaInfo) {
         final RequestContext requestContext = RequestContextManager.getContext();
         final StorageServiceContext storageServiceContext = storageUtil.convertToStorageServiceContext(requestContext);
@@ -103,7 +103,7 @@ public class StorageServiceProxy {
      * @param useCache if schema can be retrieved from cache
      * @return schema information instance
      */
-    @Cacheable(key = "'schema.' + #name.getTenant() + '/' + #name.getSchema()", condition = "#useCache")
+    @Cacheable(key = "'schema.' + #name.getSchema()", condition = "#useCache")
     public SchemaInfo get(final QualifiedName name, final boolean useCache) {
         final RequestContext requestContext = RequestContextManager.getContext();
         final StorageServiceContext storageServiceContext = storageUtil.convertToStorageServiceContext(requestContext);
@@ -112,7 +112,6 @@ public class StorageServiceProxy {
         return storageService.get(storageServiceContext, name);
     }
 
-    @Cacheable(key = "'subject.' + #name.getSubject()  + '/' + #name.getVersion()", condition = "#useCache && #name.getVersion() != null")
     public SchemaRecordInfo getBySubject(final QualifiedName name, final boolean useCache) {
         final RequestContext requestContext = RequestContextManager.getContext();
         final StorageServiceContext storageServiceContext = storageUtil.convertToStorageServiceContext(requestContext);
@@ -121,7 +120,6 @@ public class StorageServiceProxy {
         return storageService.getBySubject(storageServiceContext, name);
     }
 
-    @Cacheable(key = "'subject.' + #name.getSubject()", condition = "#useCache")
     public List<SchemaRecordInfo> listBySubject(final QualifiedName name, final boolean useCache) {
         final RequestContext requestContext = RequestContextManager.getContext();
         final StorageServiceContext storageServiceContext = storageUtil.convertToStorageServiceContext(requestContext);
