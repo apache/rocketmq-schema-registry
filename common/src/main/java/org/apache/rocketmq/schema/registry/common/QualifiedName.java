@@ -71,11 +71,11 @@ public class QualifiedName implements Serializable {
     }
 
     public String fullName() {
-        return cluster + '/' + tenant + '/' + subject + '/' + schema + '/' + version;
+        return cluster + '/' + tenant + '/' + subject + '/' + schema;
     }
 
     public String schemaFullName() {
-        return schema + '/' + version;
+        return schema;
     }
 
     public String subjectFullName() {

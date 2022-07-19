@@ -64,7 +64,11 @@ public class RocketmqStorageClientImpl implements RocketmqStorageClient {
      */
     @Override
     public void delete(QualifiedName qualifiedName) {
-        rocketmqClient.delete(qualifiedName);
+        if (qualifiedName.getVersion() == null) {
+            rocketmqClient.deleteBySubject(qualifiedName);
+        } else {
+            rocketmqClient.deleteByVersion(qualifiedName);
+        }
     }
 
     /**
@@ -101,7 +105,7 @@ public class RocketmqStorageClientImpl implements RocketmqStorageClient {
         }
 
         // schema version is given
-        SchemaInfo schemaInfo = getSchemaInfoBySubject(qualifiedName.subjectFullName());
+        SchemaInfo schemaInfo = rocketmqClient.getSchemaInfoBySubject(qualifiedName.subjectFullName());
         if (schemaInfo == null || schemaInfo.getDetails() == null || schemaInfo.getDetails().getSchemaRecords() == null) {
             return null;
         }
@@ -112,20 +116,10 @@ public class RocketmqStorageClientImpl implements RocketmqStorageClient {
 
     @Override
     public List<SchemaRecordInfo> listBySubject(QualifiedName qualifiedName) {
-        SchemaInfo schemaInfo = getSchemaInfoBySubject(qualifiedName.subjectFullName());
+        SchemaInfo schemaInfo = rocketmqClient.getSchemaInfoBySubject(qualifiedName.subjectFullName());
         if (schemaInfo == null || schemaInfo.getDetails() == null) {
             return null;
         }
         return schemaInfo.getDetails().getSchemaRecords();
-    }
-
-    private SchemaInfo getSchemaInfoBySubject(String subjectFullName) {
-        byte[] lastRecordBytes = rocketmqClient.getBySubject(subjectFullName);
-        if (lastRecordBytes == null) {
-            return null;
-        }
-        SchemaRecordInfo lastRecord = jsonConverter.fromJson(lastRecordBytes, SchemaRecordInfo.class);
-        byte[] result = rocketmqClient.getSchema(lastRecord.getSchema());
-        return result == null ? null : jsonConverter.fromJson(result, SchemaInfo.class);
     }
 }
