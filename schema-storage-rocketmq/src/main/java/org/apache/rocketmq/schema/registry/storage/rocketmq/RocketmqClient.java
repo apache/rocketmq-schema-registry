@@ -103,8 +103,8 @@ public class RocketmqClient {
     public RocketmqClient(Properties props) {
         init(props);
         createStorageTopic();
-        startRemoteStorage();
         startLocalCache();
+        startRemoteStorage();
     }
 
     private void createStorageTopic() {
@@ -198,17 +198,25 @@ public class RocketmqClient {
 
         @Override
         public void run() {
-            List<MessageExt> msgList = scheduleConsumer.poll(1000);
-            if (CollectionUtils.isNotEmpty(msgList)) {
-                msgList.forEach(this::consumeMessage);
+            try {
+                List<MessageExt> msgList = scheduleConsumer.poll(1000);
+                if (CollectionUtils.isNotEmpty(msgList)) {
+                    msgList.forEach(this::consumeMessage);
+                }
+                scheduleConsumer.commitSync();
+            } catch (Exception e) {
+                log.error("consume message exception, consume offset may not commit");
             }
         }
 
         private void consumeMessage(MessageExt msg) {
+            if (msg.getKeys() == null) {
+                return;
+            }
             synchronized (this) {
                 try {
                     log.info("receive msg, the content is {}", new String(msg.getBody()));
-                    if (DELETE_KEYS.equals(msg.getKeys())) {
+                    if (msg.getKeys().equals(DELETE_KEYS)) {
                         // delete
                         byte[] schemaFullName = msg.getBody();
                         byte[] schemaInfoBytes = cache.get(schemaCfHandle(), schemaFullName);
@@ -230,6 +238,7 @@ public class RocketmqClient {
                         } else {
                             SchemaInfo current = converter.fromJson(result, SchemaInfo.class);
                             if (current.getLastRecordVersion() == update.getLastRecordVersion()) {
+                                log.info("Schema version is the same, no need to update.");
                                 return;
                             }
                             if (current.getLastRecordVersion() > update.getLastRecordVersion()) {
@@ -248,7 +257,8 @@ public class RocketmqClient {
                         }
                     }
                 } catch (Throwable e) {
-                    throw new SchemaException("Rebuild schema cache failed", e);
+                    log.error("Update schema cache failed, msg {}", new String(msg.getBody()), e);
+                    throw new SchemaException("Update schema " + msg.getKeys() + " failed.", e);
                 }
             }
         }

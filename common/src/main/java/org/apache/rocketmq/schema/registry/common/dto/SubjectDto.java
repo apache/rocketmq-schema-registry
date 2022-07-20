@@ -35,6 +35,9 @@ public class SubjectDto {
     @ApiModelProperty(value = "Cluster of this subject", required = true)
     private String cluster;
 
+    @ApiModelProperty(value = "Tenant of this subject", required = true)
+    private String tenant;
+
     @ApiModelProperty(value = "Name of this subject", required = true)
     private String subject;
 }

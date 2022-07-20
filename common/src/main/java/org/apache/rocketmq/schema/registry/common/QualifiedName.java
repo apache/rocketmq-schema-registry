@@ -34,10 +34,6 @@ import org.apache.rocketmq.schema.registry.common.model.SubjectInfo;
 public class QualifiedName implements Serializable {
     private static final long serialVersionUID = 2266514833942841209L;
 
-    public static final String DEFAULT_TENANT = "default";
-
-    public static final String DEFAULT_CLUSTER = "cluster";
-
     private String cluster;
     private String tenant;
     private String subject;
@@ -71,7 +67,7 @@ public class QualifiedName implements Serializable {
     }
 
     public SubjectInfo subjectInfo() {
-        return new SubjectInfo(cluster, subject);
+        return new SubjectInfo(cluster, tenant, subject);
     }
 
     public String fullName() {
@@ -79,7 +75,7 @@ public class QualifiedName implements Serializable {
     }
 
     public String schemaFullName() {
-        return schema;
+        return tenant + '/' + schema;
     }
 
     public String subjectFullName() {
