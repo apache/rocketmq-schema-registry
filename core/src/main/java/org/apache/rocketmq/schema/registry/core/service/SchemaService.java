@@ -17,6 +17,7 @@
 
 package org.apache.rocketmq.schema.registry.core.service;
 
+import java.util.List;
 import java.util.Optional;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.dto.BaseDto;
@@ -67,4 +68,12 @@ public interface SchemaService<T extends BaseDto> {
      * @return schema object with the schemaName
      */
     SchemaRecordDto getBySubject(QualifiedName qualifiedName);
+
+    /**
+     * Query the schema object with the given subject name.
+     *
+     * @param qualifiedName subject of the schema binding
+     * @return schema object with the schemaName
+     */
+    List<SchemaRecordDto> listBySubject(QualifiedName qualifiedName);
 }

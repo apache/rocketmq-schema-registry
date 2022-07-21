@@ -17,10 +17,14 @@
 
 package org.apache.rocketmq.schema.registry.common.exception;
 
+import lombok.Getter;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 
+@Getter
 public class SchemaCompatibilityException extends SchemaException {
     private static final long serialVersionUID = 2602020608319903212L;
+
+    private final int errorCode = 40901;
 
     public SchemaCompatibilityException(final QualifiedName qualifiedName) {
         this(String.format("Schema: %s validate failed.", qualifiedName));

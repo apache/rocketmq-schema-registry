@@ -17,7 +17,12 @@
 
 package org.apache.rocketmq.schema.registry.common.exception;
 
+import lombok.Getter;
+
+@Getter
 public class SchemaException extends RuntimeException {
+
+    private final int errorCode = 50001;
 
     /** Constructor. */
     public SchemaException() {

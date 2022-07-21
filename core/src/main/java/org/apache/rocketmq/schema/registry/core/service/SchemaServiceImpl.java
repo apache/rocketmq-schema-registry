@@ -17,32 +17,33 @@
 
 package org.apache.rocketmq.schema.registry.core.service;
 
-import com.google.common.base.Strings;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
+
+import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
-import org.apache.rocketmq.schema.registry.common.context.RequestContext;
 import org.apache.rocketmq.schema.registry.common.auth.AccessControlService;
+import org.apache.rocketmq.schema.registry.common.context.RequestContext;
+import org.apache.rocketmq.schema.registry.common.context.RequestContextManager;
+import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaRecordDto;
+import org.apache.rocketmq.schema.registry.common.exception.SchemaCompatibilityException;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaException;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaExistException;
-import org.apache.rocketmq.schema.registry.common.exception.SchemaCompatibilityException;
+import org.apache.rocketmq.schema.registry.common.exception.SchemaNotFoundException;
 import org.apache.rocketmq.schema.registry.common.model.Dependency;
+import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
+import org.apache.rocketmq.schema.registry.common.model.SchemaOperation;
 import org.apache.rocketmq.schema.registry.common.model.SchemaRecordInfo;
 import org.apache.rocketmq.schema.registry.common.model.SubjectInfo;
 import org.apache.rocketmq.schema.registry.common.properties.GlobalConfig;
-import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
-import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
-import org.apache.rocketmq.schema.registry.common.model.SchemaOperation;
-import org.apache.rocketmq.schema.registry.common.exception.SchemaNotFoundException;
-import org.apache.rocketmq.schema.registry.common.context.RequestContextManager;
-import org.apache.rocketmq.schema.registry.common.utils.IdGenerator;
-import org.apache.rocketmq.schema.registry.core.dependency.DependencyService;
 import org.apache.rocketmq.schema.registry.common.storage.StorageServiceProxy;
 import org.apache.rocketmq.schema.registry.common.utils.CommonUtil;
+import org.apache.rocketmq.schema.registry.common.utils.IdGenerator;
 import org.apache.rocketmq.schema.registry.common.utils.StorageUtil;
+import org.apache.rocketmq.schema.registry.core.dependency.DependencyService;
 
 @Slf4j
 public class SchemaServiceImpl implements SchemaService<SchemaDto> {
@@ -81,6 +82,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
         final RequestContext requestContext = RequestContextManager.getContext();
         log.info("register get request context: " + requestContext);
 
+        schemaDto.setQualifiedName(qualifiedName);
         checkSchemaValid(schemaDto);
         checkSchemaExist(qualifiedName);
 
@@ -96,6 +98,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
         schemaInfo.setUniqueId(idGenerator.nextId());
         schemaInfo.setLastRecordVersion(1L);
         schemaInfo.getLastRecord().setSchema(qualifiedName.schemaFullName());
+        schemaInfo.getLastRecord().setType(schemaInfo.getMeta().getType());
         schemaInfo.getLastRecord().bindSubject(qualifiedName.subjectInfo());
 
         if (config.isUploadEnabled()) {
@@ -116,6 +119,8 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
     public SchemaDto update(QualifiedName qualifiedName, SchemaDto schemaDto) {
         final RequestContext requestContext = RequestContextManager.getContext();
         log.info("update get request context: " + requestContext);
+
+        schemaDto.setQualifiedName(qualifiedName);
 
         this.accessController.checkPermission("", "", SchemaOperation.UPDATE);
 
@@ -153,12 +158,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
         }
 
         if (update.getAudit() == null) {
-            // todo
             update.setAudit(current.getAudit());
-        }
-
-        if (update.getQualifiedName() == null) {
-            update.setQualifiedName(current.getQualifiedName());
         }
 
 //        checkSchemaValid(schemaDto);
@@ -234,6 +234,23 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         log.info("get schema by subject: {}", qualifiedName.getSubject());
         return storageUtil.convertToSchemaRecordDto(recordInfo);
+    }
+
+    @Override
+    public List<SchemaRecordDto> listBySubject(QualifiedName qualifiedName) {
+        final RequestContext requestContext = RequestContextManager.getContext();
+        log.info("register get request context: " + requestContext);
+
+        //        CommonUtil.validateName(qualifiedName);
+        this.accessController.checkPermission("", qualifiedName.getSubject(), SchemaOperation.GET);
+
+        List<SchemaRecordInfo> recordInfos = storageServiceProxy.listBySubject(qualifiedName, config.isCacheEnabled());
+        if (recordInfos == null) {
+            throw new SchemaException("Subject: " + qualifiedName + " not exist");
+        }
+
+        log.info("list schema by subject: {}", qualifiedName.getSubject());
+        return recordInfos.stream().map(storageUtil::convertToSchemaRecordDto).collect(Collectors.toList());
     }
 
     private void checkSchemaExist(final QualifiedName qualifiedName) {

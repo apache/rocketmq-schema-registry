@@ -18,8 +18,14 @@
 package org.apache.rocketmq.schema.registry.storage.rocketmq;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.context.StoragePluginContext;
 import org.apache.rocketmq.schema.registry.common.json.JsonConverter;
@@ -58,7 +64,11 @@ public class RocketmqStorageClientImpl implements RocketmqStorageClient {
      */
     @Override
     public void delete(QualifiedName qualifiedName) {
-        rocketmqClient.delete(qualifiedName);
+        if (qualifiedName.getVersion() == null) {
+            rocketmqClient.deleteBySubject(qualifiedName);
+        } else {
+            rocketmqClient.deleteByVersion(qualifiedName);
+        }
     }
 
     /**
@@ -78,7 +88,7 @@ public class RocketmqStorageClientImpl implements RocketmqStorageClient {
      */
     @Override
     public SchemaInfo getSchema(QualifiedName qualifiedName) {
-        byte[] result = rocketmqClient.getSchema(qualifiedName);
+        byte[] result = rocketmqClient.getSchema(qualifiedName.schemaFullName());
         return result == null ? null : jsonConverter.fromJson(result, SchemaInfo.class);
     }
 
@@ -89,7 +99,27 @@ public class RocketmqStorageClientImpl implements RocketmqStorageClient {
      */
     @Override
     public SchemaRecordInfo getBySubject(QualifiedName qualifiedName) {
-        byte[] result = rocketmqClient.getBySubject(qualifiedName);
-        return result == null ? null : jsonConverter.fromJson(result, SchemaRecordInfo.class);
+        if (qualifiedName.getVersion() == null) {
+            byte[] result = rocketmqClient.getBySubject(qualifiedName.subjectFullName());
+            return result == null ? null : jsonConverter.fromJson(result, SchemaRecordInfo.class);
+        }
+
+        // schema version is given
+        SchemaInfo schemaInfo = rocketmqClient.getSchemaInfoBySubject(qualifiedName.subjectFullName());
+        if (schemaInfo == null || schemaInfo.getDetails() == null || schemaInfo.getDetails().getSchemaRecords() == null) {
+            return null;
+        }
+        Map<Long, SchemaRecordInfo> versionSchemaMap = schemaInfo.getDetails().getSchemaRecords()
+            .stream().collect(Collectors.toMap(SchemaRecordInfo::getVersion, Function.identity()));
+        return versionSchemaMap.get(qualifiedName.getVersion());
+    }
+
+    @Override
+    public List<SchemaRecordInfo> listBySubject(QualifiedName qualifiedName) {
+        SchemaInfo schemaInfo = rocketmqClient.getSchemaInfoBySubject(qualifiedName.subjectFullName());
+        if (schemaInfo == null || schemaInfo.getDetails() == null) {
+            return null;
+        }
+        return schemaInfo.getDetails().getSchemaRecords();
     }
 }
