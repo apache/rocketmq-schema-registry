@@ -92,9 +92,9 @@ public class SchemaController {
     )
     public SchemaDto registerSchema(
         @ApiParam(value = "The subject of the schema", required = true)
-        @PathVariable(name = "subject-name") final String subject,
+        @PathVariable(value = "subject-name") final String subject,
         @ApiParam(value = "The name of the schema", required = true)
-        @PathVariable("schema-name") final String schemaName,
+        @PathVariable(value = "schema-name") final String schemaName,
         @ApiParam(value = "The schema detail", required = true)
         @RequestBody final SchemaDto schemaDto
     ) {
@@ -129,9 +129,9 @@ public class SchemaController {
         @ApiParam(value = "The tenant of the schema", required = true)
         @PathVariable(value = "tenant-name") final String tenant,
         @ApiParam(value = "The subject of the schema", required = true)
-        @PathVariable(name = "subject-name") final String subject,
+        @PathVariable(value = "subject-name") final String subject,
         @ApiParam(value = "The name of the schema", required = true)
-        @PathVariable("schema-name") final String schemaName,
+        @PathVariable(value = "schema-name") final String schemaName,
         @ApiParam(value = "The schema detail", required = true)
         @RequestBody final SchemaDto schemaDto
     ) {
@@ -175,7 +175,7 @@ public class SchemaController {
         @ApiParam(value = "The tenant of the schema", required = true)
         @PathVariable(value = "tenant-name") final String tenant,
         @ApiParam(value = "The subject of the schema", required = true)
-        @PathVariable("subject-name") final String subject
+        @PathVariable(value = "subject-name") final String subject
     ) {
         QualifiedName name = new QualifiedName(cluster, tenant, subject, null);
         return this.requestProcessor.processRequest(
@@ -212,9 +212,9 @@ public class SchemaController {
         @ApiParam(value = "The tenant of the schema", required = true)
         @PathVariable(value = "tenant-name") final String tenant,
         @ApiParam(value = "The subject of the schema", required = true)
-        @PathVariable("subject-name") final String subject,
+        @PathVariable(value = "subject-name") final String subject,
         @ApiParam(value = "The version of the schema", required = true)
-        @PathVariable("version") final String version
+        @PathVariable(value = "version") final String version
     ) {
         QualifiedName name = new QualifiedName(cluster, tenant, subject, null, Long.valueOf(version));
         return this.requestProcessor.processRequest(
@@ -248,9 +248,9 @@ public class SchemaController {
     )
     public SchemaDto updateSchema(
         @ApiParam(value = "The subject of the schema", required = true)
-        @PathVariable(name = "subject-name") final String subject,
+        @PathVariable(value = "subject-name") final String subject,
         @ApiParam(value = "The name of the schema", required = true)
-        @PathVariable("schema-name") final String schemaName,
+        @PathVariable(value = "schema-name") final String schemaName,
         @ApiParam(value = "The schema detail", required = true)
         @RequestBody final SchemaDto schemaDto
     ) {
@@ -284,9 +284,9 @@ public class SchemaController {
         @ApiParam(value = "The tenant of the schema", required = true)
         @PathVariable(value = "tenant-name") final String tenant,
         @ApiParam(value = "The subject of the schema", required = true)
-        @PathVariable(name = "subject-name") final String subject,
+        @PathVariable(value = "subject-name") final String subject,
         @ApiParam(value = "The name of the schema", required = true)
-        @PathVariable("schema-name") final String schemaName,
+        @PathVariable(value = "schema-name") final String schemaName,
         @ApiParam(value = "The schema detail", required = true)
         @RequestBody final SchemaDto schemaDto
     ) {
@@ -320,7 +320,7 @@ public class SchemaController {
     )
     public SchemaRecordDto getSchemaBySubject(
         @ApiParam(value = "The name of the subject", required = true)
-        @PathVariable("subject-name") String subject
+        @PathVariable(value = "subject-name") String subject
     ) {
         return getSchemaBySubject(DEFAULT_CLUSTER, DEFAULT_CLUSTER, subject);
     }
@@ -350,7 +350,7 @@ public class SchemaController {
         @ApiParam(value = "The tenant of the schema", required = true)
         @PathVariable(value = "tenant-name") final String tenant,
         @ApiParam(value = "The name of the subject", required = true)
-        @PathVariable("subject-name") String subject
+        @PathVariable(value = "subject-name") String subject
     ) {
         QualifiedName name = new QualifiedName(cluster, tenant, subject, null);
         log.info("Request for get schema for subject: {}", name.subjectFullName());
@@ -386,9 +386,9 @@ public class SchemaController {
         @ApiParam(value = "The tenant of the schema", required = true)
         @PathVariable(value = "tenant-name") final String tenant,
         @ApiParam(value = "The name of the subject", required = true)
-        @PathVariable("subject-name") String subject,
+        @PathVariable(value = "subject-name") String subject,
         @ApiParam(value = "The version of the schema", required = true)
-        @PathVariable("version") String version
+        @PathVariable(value = "version") String version
     ) {
         QualifiedName name = new QualifiedName(cluster, tenant, subject, null, Long.parseLong(version));
 
@@ -423,7 +423,7 @@ public class SchemaController {
         @ApiParam(value = "The tenant of the schema", required = true)
         @PathVariable(value = "tenant-name") final String tenant,
         @ApiParam(value = "The name of the subject", required = true)
-        @PathVariable("subject-name") String subject
+        @PathVariable(value = "subject-name") String subject
     ) {
         QualifiedName name = new QualifiedName(cluster, tenant, subject, null);
 
