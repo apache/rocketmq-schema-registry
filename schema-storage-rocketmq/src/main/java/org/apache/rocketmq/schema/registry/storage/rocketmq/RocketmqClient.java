@@ -43,6 +43,7 @@ import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.common.message.MessageQueue;
 import org.apache.rocketmq.common.protocol.body.ClusterInfo;
 import org.apache.rocketmq.common.protocol.route.BrokerData;
+import org.apache.rocketmq.common.protocol.route.TopicRouteData;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaException;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaExistException;
@@ -111,6 +112,22 @@ public class RocketmqClient {
         try {
             mqAdminExt.start();
 
+            // check if the topic exists
+            TopicRouteData topicRouteData = null;
+            try {
+                topicRouteData = mqAdminExt.examineTopicRouteInfo(storageTopic);
+            } catch (MQClientException e) {
+                log.warn("maybe the storage topic not found, need to create");
+            } catch (Exception e) {
+                throw new SchemaException("Failed to create storage rocketmq topic", e);
+            }
+
+            if (topicRouteData != null && CollectionUtils.isNotEmpty(topicRouteData.getBrokerDatas())
+                && CollectionUtils.isNotEmpty(topicRouteData.getQueueDatas())) {
+                log.info("the storage topic already exist, no need to create");
+                return;
+            }
+
             try {
                 ClusterInfo clusterInfo = mqAdminExt.examineBrokerClusterInfo();
                 HashMap<String, BrokerData> brokerAddrTable = clusterInfo.getBrokerAddrTable();
@@ -119,7 +136,10 @@ public class RocketmqClient {
                     topicConfig.setTopicName(storageTopic);
                     topicConfig.setReadQueueNums(8);
                     topicConfig.setWriteQueueNums(8);
-                    // TODO compact topic (TopicAttributes)
+                    // create compact topic
+                    Map<String, String> attributes = new HashMap<>(1);
+                    attributes.put("+delete.policy", "COMPACTION");
+                    topicConfig.setAttributes(attributes);
                     String brokerAddr = brokerData.selectBrokerAddr();
                     mqAdminExt.createAndUpdateTopicConfig(brokerAddr, topicConfig);
                 }
