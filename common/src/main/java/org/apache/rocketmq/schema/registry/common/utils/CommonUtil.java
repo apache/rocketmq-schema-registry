@@ -17,6 +17,7 @@
 
 package org.apache.rocketmq.schema.registry.common.utils;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import java.io.BufferedReader;
 import java.io.File;
@@ -60,9 +61,9 @@ import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
 public class CommonUtil {
 
     public static void validateName(QualifiedName qualifiedName) {
-//        Preconditions.checkNotNull(qualifiedName.getTenant(), "Tenant is null");
-//        Preconditions.checkNotNull(qualifiedName.getSubject(), "Subject is null");
-//        Preconditions.checkNotNull(qualifiedName.getName(), "Schema name is null");
+        Preconditions.checkNotNull(qualifiedName.getTenant(), "Tenant is null");
+        Preconditions.checkNotNull(qualifiedName.getSubject(), "Subject is null");
+        Preconditions.checkNotNull(qualifiedName.getSchema(), "Schema name is null");
     }
 
     public static boolean isQualifiedNameEmpty(QualifiedName qualifiedName) {

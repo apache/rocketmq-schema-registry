@@ -33,10 +33,11 @@ public class SubjectInfo implements Serializable {
     private static final long serialVersionUID = -92808722007777844L;
 
     private String cluster;
+    private String tenant;
     private String subject;
 
     public String fullName() {
-        return cluster + '/' + subject;
+        return cluster + '/' + tenant + '/' + subject;
     }
 
     @Override
@@ -44,6 +45,8 @@ public class SubjectInfo implements Serializable {
         final StringBuilder sb = new StringBuilder("{");
         sb.append("\"cluster\":\"")
             .append(cluster).append('\"');
+        sb.append("\"tenant\":\"")
+            .append(tenant).append('\"');
         sb.append(",\"subject\":\"")
             .append(subject).append('\"');
         sb.append('}');

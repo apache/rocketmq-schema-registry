@@ -81,4 +81,7 @@ public class SchemaInfo extends BaseInfo {
         getLastRecord().setVersion(version);
     }
 
+    public int getRecordCount() {
+        return getDetails().getSchemaRecords().size();
+    }
 }

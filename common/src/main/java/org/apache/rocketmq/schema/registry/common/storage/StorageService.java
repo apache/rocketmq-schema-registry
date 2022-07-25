@@ -17,6 +17,8 @@
 
 package org.apache.rocketmq.schema.registry.common.storage;
 
+import java.util.List;
+
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.context.StorageServiceContext;
 import org.apache.rocketmq.schema.registry.common.model.BaseInfo;
@@ -76,6 +78,10 @@ public interface StorageService<T extends BaseInfo> {
     }
 
     default SchemaRecordInfo getBySubject(final StorageServiceContext context, final QualifiedName name) {
+        throw new UnsupportedOperationException(ERROR_MESSAGE_DEFAULT);
+    }
+
+    default List<SchemaRecordInfo> listBySubject(final StorageServiceContext context, final QualifiedName name) {
         throw new UnsupportedOperationException(ERROR_MESSAGE_DEFAULT);
     }
 }
