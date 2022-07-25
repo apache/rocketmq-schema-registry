@@ -234,7 +234,8 @@ public class RocketmqClient {
             }
             synchronized (this) {
                 try {
-                    log.info("receive msg, the content is {}", new String(msg.getBody()));
+                    log.info("receive msg, queue={}, offset={}, key={}, the content is {}", msg.getQueueId(),
+                        msg.getQueueOffset(), msg.getKeys(), new String(msg.getBody()));
                     if (msg.getKeys().equals(DELETE_KEYS)) {
                         // delete
                         byte[] schemaFullName = msg.getBody();
@@ -256,11 +257,12 @@ public class RocketmqClient {
                             cache.put(subjectCfHandle(), converter.toBytes(update.subjectFullName()), lastRecordBytes);
                         } else {
                             SchemaInfo current = converter.fromJson(result, SchemaInfo.class);
-                            if (current.getLastRecordVersion() == update.getLastRecordVersion()) {
+                            boolean isDeleted = current.getRecordCount() > update.getRecordCount();
+                            if (current.getLastRecordVersion() == update.getLastRecordVersion() && !isDeleted) {
                                 log.info("Schema version is the same, no need to update.");
                                 return;
                             }
-                            if (current.getLastRecordVersion() > update.getLastRecordVersion()) {
+                            if (current.getLastRecordVersion() > update.getLastRecordVersion() && !isDeleted) {
                                 throw new SchemaException("Schema version is invalid, update: "
                                     + update.getLastRecordVersion() + ", but current: " + current.getLastRecordVersion());
                             }
@@ -338,10 +340,15 @@ public class RocketmqClient {
         if (schemaInfo == null || schemaInfo.getDetails() == null || schemaInfo.getDetails().getSchemaRecords() == null) {
             throw new SchemaNotFoundException(name);
         }
+        List<SubjectInfo> subjects = schemaInfo.getLastRecord().getSubjects();
         List<SchemaRecordInfo> schemaRecords = schemaInfo.getDetails().getSchemaRecords();
         schemaRecords.removeIf(record -> record.getVersion() == name.getVersion());
         if (CollectionUtils.isEmpty(schemaRecords)) {
             deleteBySubject(name);
+        }
+        // delete but still need bind subject
+        if (schemaInfo.getLastRecord().getSubjects().isEmpty()) {
+            schemaInfo.getLastRecord().setSubjects(subjects);
         }
         byte[] schemaInfoBytes = converter.toJsonAsBytes(schemaInfo);
 

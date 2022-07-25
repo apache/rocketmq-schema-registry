@@ -27,7 +27,7 @@ public class SchemaExistException extends SchemaException {
   private final int errorCode = 40401;
 
   public SchemaExistException(final QualifiedName qualifiedName) {
-    this(String.format("Schema: %s is exist, please check your configuration.", qualifiedName));
+    this(String.format("Schema: %s is exist, please check your configuration.", qualifiedName.schemaFullName()));
   }
 
   public SchemaExistException(final String msg) {
