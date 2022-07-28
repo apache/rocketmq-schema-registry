@@ -54,7 +54,7 @@ public class SwaggerConfig {
 
     @Bean
     public Docket docket(Environment environment) {
-        Profiles profiles = Profiles.of("dev","test");
+        Profiles profiles = Profiles.of("dev", "test");
         boolean isEnable = environment.acceptsProfiles(profiles);
 
         return new Docket(DocumentationType.OAS_30)
@@ -67,21 +67,20 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo(){
 
-        //作者信息
         Contact contact = new Contact(
-                "王帆",
-                "wangfan8@xiaomi.com",
-                "wangfan8@xiaomi.com");
+            "Apache rocketmq-schema-registry",
+            "https://github.com/apache/rocketmq-schema-registry",
+            "");
 
         return new ApiInfo(
-                "RocketMQ Schema Registry",
-                "RocketMQ Schema Registry Swagger API Document",
-                "V1.0",
-                "",
-                contact,
-                "Apache 2.0",
-                "http://www.apache.org/licenses/LICENSE-2.0",
-                new ArrayList<>());
+            "RocketMQ Schema Registry",
+            "RocketMQ Schema Registry Swagger API Document",
+            "V1.0",
+            "",
+            contact,
+            "Apache 2.0",
+            "http://www.apache.org/licenses/LICENSE-2.0",
+            new ArrayList<>());
     }
 
     @Bean
