@@ -13,22 +13,32 @@
     <artifactId>rocketmq-schema-registry-all</artifactId>
     <version>0.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>rocketmq-schema-registry</name>
+    <name>rocketmq-schema-registry-${project.version}</name>
     <description>rocketmq-schema-registry</description>
 
     <modules>
         <module>common</module>
         <module>core</module>
-        <module>schema-storage-rocketmq</module>
-        <module>storage-war</module>
+        <module>storage-rocketmq</module>
+        <module>war</module>
     </modules>
 
     <properties>
         <java.version>1.8</java.version>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- internal package versions -->
         <spring-boot.version>2.6.7</spring-boot.version>
         <spring.version>3.2.8-RELEASE</spring.version>
+        <aspectj.weaver.version>1.9.5</aspectj.weaver.version>
+        <springfox.version>3.0.0</springfox.version>
+        <lombok.version>1.18.24</lombok.version>
+        <google.annotations.version>3.0.1</google.annotations.version>
+        <google.guava.version>31.1-jre</google.guava.version>
+        <dozer.version>5.4.0</dozer.version>
+        <rocksdb.version>7.2.2</rocksdb.version>
+        <avro.version>1.11.0</avro.version>
     </properties>
 
     <dependencies>
@@ -68,104 +78,51 @@
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-            <version>1.9.5</version>
+            <version>${aspectj.weaver.version}</version>
         </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>org.springframework</groupId>-->
-<!--            <artifactId>spring-aspects</artifactId>-->
-<!--            <version>${spring.version}</version>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>org.springframework</groupId>-->
-<!--            <artifactId>spring-orm</artifactId>-->
-<!--            <version>${spring.version}</version>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>org.springdoc</groupId>-->
-<!--            <artifactId>springdoc-openapi-ui</artifactId>-->
-<!--            <version>1.6.9</version>-->
-<!--        </dependency>-->
 
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>
-            <version>3.0.0</version>
+            <version>${springfox.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
+            <version>${lombok.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>annotations</artifactId>
-            <version>3.0.1</version>
+            <version>${google.annotations.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>31.1-jre</version>
+            <version>${google.guava.version}</version>
         </dependency>
 
         <dependency>
             <groupId>net.sf.dozer</groupId>
             <artifactId>dozer</artifactId>
-            <version>5.4.0</version>
+            <version>${dozer.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.rocksdb</groupId>
             <artifactId>rocksdbjni</artifactId>
-            <version>7.2.2</version>
+            <version>${rocksdb.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
-            <version>1.11.0</version>
+            <version>${avro.version}</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
-    <distributionManagement>
-        <repository>
-            <id>central</id>
-            <name>maven-release-virtual</name>
-            <url>
-                https://pkgs.d.xiaomi.net/artifactory/maven-release-virtual
-            </url>
-        </repository>
-        <snapshotRepository>
-            <id>snapshots</id>
-            <name>maven-snapshot-virtual</name>
-            <url>
-                https://pkgs.d.xiaomi.net/artifactory/maven-snapshot-virtual
-            </url>
-        </snapshotRepository>
-    </distributionManagement>
 
 </project>

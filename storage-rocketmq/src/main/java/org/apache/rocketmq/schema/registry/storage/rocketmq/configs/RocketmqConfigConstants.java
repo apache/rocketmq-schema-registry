@@ -32,7 +32,7 @@ public class RocketmqConfigConstants {
     public static final String STORAGE_ROCKETMQ_CONSUMER_GROUP_DEFAULT = "default";
 
     public static final String STORAGE_ROCKETMQ_NAMESRV = "storage.rocketmq.namesrv";
-    public static final String STORAGE_ROCKETMQ_NAMESRV_DEFAULT = "localhost:9876";
+    public static final String STORAGE_ROCKETMQ_NAMESRV_DEFAULT = "http://10.231.54.148:9876";
 
     public static final String STORAGE_ROCKETMQ_TOPIC = "storage.rocketmq.topic";
     public static final String STORAGE_ROCKETMQ_TOPIC_DEFAULT = "RMQ_SYS_schema_registry_storage";

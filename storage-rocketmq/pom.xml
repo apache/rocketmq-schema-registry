@@ -26,31 +26,45 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>schema-storage-rocketmq</artifactId>
+    <artifactId>storage-rocketmq</artifactId>
+    <name>rocketmq-schema-registry-storage-rocketmq-${project.version}</name>
+    <packaging>jar</packaging>
+    
+    <properties>
+        <rocketmq.client.version>5.0.0-ALPHA</rocketmq.client.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>common</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
-            <scope>compile</scope>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-client</artifactId>
-            <version>5.0.0-ALPHA</version>
+            <version>${rocketmq.client.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-tools</artifactId>
-            <version>5.0.0-ALPHA</version>
+            <version>${rocketmq.client.version}</version>
         </dependency>
     </dependencies>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>maven-release-virtual</name>
+            <url></url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>maven-snapshot-virtual</name>
+            <url></url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>
