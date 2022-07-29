@@ -21,6 +21,7 @@
         <module>core</module>
         <module>storage-rocketmq</module>
         <module>war</module>
+        <module>client</module>
     </modules>
 
     <properties>
