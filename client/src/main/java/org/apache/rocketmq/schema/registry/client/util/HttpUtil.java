@@ -94,4 +94,8 @@ public class HttpUtil {
 
         return connection;
     }
+
+    public static String buildRequestUrl(String baseUrl, String path) {
+        return baseUrl.replaceFirst("/$", "") + "/" + path.replaceFirst("^/", "");
+    }
 }

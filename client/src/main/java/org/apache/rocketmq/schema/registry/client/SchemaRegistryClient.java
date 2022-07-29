@@ -22,38 +22,33 @@ import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaRecordDto;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface SchemaRegistryClient {
 
-    default SchemaDto registerSchema(String clusterName, String subjectName, String schemaName, SchemaDto schemaDto) throws IOException, RestClientException {
-        return registerSchema(clusterName, "default", subjectName, schemaName, schemaDto);
-    }
+    SchemaDto registerSchema(String subject, String schemaName, SchemaDto schemaDto) throws RestClientException, IOException;
 
     SchemaDto registerSchema(String clusterName, String tenant, String subjectName, String schemaName, SchemaDto schemaDto) throws IOException, RestClientException;
 
 
-    SchemaDto deleteSchema(String tenant, String schemaName) throws IOException, RestClientException;
+    SchemaDto deleteSchema(String cluster, String tenant, String subject) throws IOException, RestClientException;
 
-    default SchemaDto updateSchema(String cluster, String subjectName, String schemaName, SchemaDto schemaDto) throws IOException, RestClientException {
-        return updateSchema(cluster, "default", subjectName, schemaName, schemaDto);
-    }
+    SchemaDto deleteSchema(String cluster, String tenant, String subject, long version) throws IOException, RestClientException;
+
+    SchemaDto updateSchema(String subject, String schemaName, SchemaDto schemaDto) throws RestClientException, IOException;
 
     SchemaDto updateSchema(String cluster, String tenant, String subjectName, String schemaName, SchemaDto schemaDto) throws IOException, RestClientException;
 
-    SchemaDto getSchema(String cluster, String tenant, String subject, String schemaName) throws IOException, RestClientException;
+    SchemaRecordDto getSchemaBySubject(String subject) throws RestClientException, IOException;
 
-    default SchemaRecordDto getSchemaBySubject(String subject) throws IOException, RestClientException {
-        return getSchemaBySubject("default", subject);
-    }
+    SchemaRecordDto getSchemaBySubject(String cluster, String tenant, String subject) throws IOException, RestClientException;
 
-    SchemaRecordDto getSchemaBySubject(String cluster, String subject) throws IOException, RestClientException;
+    SchemaRecordDto getSchemaBySubject(String cluster, String tenant, String subject, long version) throws IOException, RestClientException;
 
-    default SchemaRecordDto getSchemaById(long schemaId) {
-        throw new UnsupportedOperationException();
-    }
+    List<SchemaRecordDto> getSchemaListBySubject(String cluster, String tenant, String subject) throws RestClientException, IOException;
 
-    default SchemaRecordDto getSchemaBySubjectAndId(String subject, long schemaId) {
-        throw new UnsupportedOperationException();
-    }
+    SchemaRecordDto getSchemaById(long schemaId);
+
+    SchemaRecordDto getSchemaBySubjectAndId(String subject, long schemaId);
 
 }
