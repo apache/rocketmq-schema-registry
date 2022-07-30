@@ -20,7 +20,6 @@ package org.apache.rocketmq.schema.registry.common.context;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.rocketmq.schema.registry.common.model.StorageType;
 
 @Data
 @AllArgsConstructor

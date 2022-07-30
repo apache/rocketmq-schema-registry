@@ -17,16 +17,14 @@
 
 package org.apache.rocketmq.schema.registry.client;
 
+import java.io.IOException;
+import java.util.List;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
 import org.apache.rocketmq.schema.registry.client.rest.RestService;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaRecordDto;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-public class NormalSchemaRegistryClient implements SchemaRegistryClient{
+public class NormalSchemaRegistryClient implements SchemaRegistryClient {
 
     private final RestService restService;
 
@@ -35,34 +33,38 @@ public class NormalSchemaRegistryClient implements SchemaRegistryClient{
     }
 
     @Override
-    public SchemaDto registerSchema(String subject, String schemaName, SchemaDto schemaDto) throws RestClientException, IOException {
+    public SchemaDto registerSchema(String subject, String schemaName,
+        SchemaDto schemaDto) throws RestClientException, IOException {
         return restService.registerSchema(subject, schemaName, schemaDto);
     }
 
     @Override
     public SchemaDto registerSchema(String clusterName, String tenant, String subjectName,
-                                    String schemaName, SchemaDto schemaDto) throws IOException, RestClientException {
+        String schemaName, SchemaDto schemaDto) throws IOException, RestClientException {
         return restService.registerSchema(clusterName, tenant, subjectName, schemaName, schemaDto);
     }
 
     @Override
-    public SchemaDto deleteSchema(String cluster, String tenant, String subject) throws IOException, RestClientException {
+    public SchemaDto deleteSchema(String cluster, String tenant,
+        String subject) throws IOException, RestClientException {
         return restService.deleteSchema(cluster, tenant, subject);
     }
 
     @Override
-    public SchemaDto deleteSchema(String cluster, String tenant, String subject, long version) throws IOException, RestClientException {
+    public SchemaDto deleteSchema(String cluster, String tenant, String subject,
+        long version) throws IOException, RestClientException {
         return restService.deleteSchema(cluster, tenant, subject, version);
     }
 
     @Override
-    public SchemaDto updateSchema(String subject, String schemaName, SchemaDto schemaDto) throws RestClientException, IOException {
+    public SchemaDto updateSchema(String subject, String schemaName,
+        SchemaDto schemaDto) throws RestClientException, IOException {
         return restService.updateSchema(subject, schemaName, schemaDto);
     }
 
     @Override
     public SchemaDto updateSchema(String cluster, String tenant, String subjectName,
-                                  String schemaName, SchemaDto schemaDto) throws IOException, RestClientException {
+        String schemaName, SchemaDto schemaDto) throws IOException, RestClientException {
         return restService.updateSchema(cluster, tenant, subjectName, schemaName, schemaDto);
     }
 
@@ -71,17 +73,20 @@ public class NormalSchemaRegistryClient implements SchemaRegistryClient{
         return restService.getSchemaBySubject(subject);
     }
 
-    public SchemaRecordDto getSchemaBySubject(String cluster, String tenant, String subject) throws RestClientException, IOException {
+    public SchemaRecordDto getSchemaBySubject(String cluster, String tenant,
+        String subject) throws RestClientException, IOException {
         return restService.getSchemaBySubject(cluster, tenant, subject);
     }
 
     @Override
-    public SchemaRecordDto getSchemaBySubject(String cluster, String tenant, String subject, long version) throws IOException, RestClientException {
+    public SchemaRecordDto getSchemaBySubject(String cluster, String tenant, String subject,
+        long version) throws IOException, RestClientException {
         return restService.getSchemaBySubject(cluster, tenant, subject, version);
     }
 
     @Override
-    public List<SchemaRecordDto> getSchemaListBySubject(String cluster, String tenant, String subject) throws RestClientException, IOException {
+    public List<SchemaRecordDto> getSchemaListBySubject(String cluster, String tenant,
+        String subject) throws RestClientException, IOException {
         return restService.getSchemaListBySubject(cluster, tenant, subject);
     }
 

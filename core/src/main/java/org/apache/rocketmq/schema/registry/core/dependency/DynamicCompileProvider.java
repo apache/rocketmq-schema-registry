@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaException;
 import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
-import org.apache.rocketmq.schema.registry.common.properties.GlobalConfigImpl;
 import org.apache.rocketmq.schema.registry.common.utils.CommonUtil;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
@@ -51,7 +50,7 @@ import org.eclipse.aether.util.repository.AuthenticationBuilder;
 @Data
 @Slf4j
 public class DynamicCompileProvider {
-    private final static RepositorySystem system = newRepositorySystem();
+    private final static RepositorySystem SYSTEM = newRepositorySystem();
 
     public static DependencyHelper compile(final String jdkPath, final String parentDir,
         final SchemaInfo schemaInfo, final String dependencyTemplate) {
@@ -125,12 +124,12 @@ public class DynamicCompileProvider {
         try {
             String versionCache = CommonUtil.mkdir(String.format("%s/version_cache/%d_resources",
                 localRepo, System.currentTimeMillis())).getCanonicalPath();
-            RepositorySystemSession session = newSession(system, versionCache);
+            RepositorySystemSession session = newSession(SYSTEM, versionCache);
             DeployRequest deployRequest = new DeployRequest()
                 .setRepository(remoteRepo)
                 .addArtifact(jarArtifact)
                 .addArtifact(pomArtifact);
-            DeployResult result = system.deploy(session, deployRequest);
+            DeployResult result = SYSTEM.deploy(session, deployRequest);
             log.info("transfer artifact " + groupId + ":" + artifactId + ":" + version + " to central success.");
         } catch (DeploymentException | IOException e) {
             throw new SchemaException("Deploy jar file: " + jarFile + " failed", e);

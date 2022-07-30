@@ -17,7 +17,6 @@
 
 package org.apache.rocketmq.schema.registry.common.model;
 
-import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;

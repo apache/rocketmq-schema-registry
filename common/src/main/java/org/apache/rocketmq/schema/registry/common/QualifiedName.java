@@ -17,12 +17,8 @@
 
 package org.apache.rocketmq.schema.registry.common;
 
-import java.beans.Transient;
-import javax.annotation.Nullable;
 import java.io.Serializable;
-
-import javax.security.auth.Subject;
-import lombok.AllArgsConstructor;
+import javax.annotation.Nullable;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -46,9 +42,9 @@ public class QualifiedName implements Serializable {
         @Nullable final String subject,
         @Nullable final String schema
     ) {
-        this.cluster= cluster;
-        this.tenant= tenant;
-        this.subject= subject;
+        this.cluster = cluster;
+        this.tenant = tenant;
+        this.subject = subject;
         this.schema = schema;
     }
 
@@ -59,9 +55,9 @@ public class QualifiedName implements Serializable {
         @Nullable final String schema,
         @Nullable final Long version
     ) {
-        this.cluster= cluster;
-        this.tenant= tenant;
-        this.subject= subject;
+        this.cluster = cluster;
+        this.tenant = tenant;
+        this.subject = subject;
         this.schema = schema;
         this.version = version;
     }

@@ -19,13 +19,14 @@ package org.apache.rocketmq.schema.registry.client.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
-import org.apache.rocketmq.schema.registry.client.rest.JacksonMapper;
-
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
+import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
+import org.apache.rocketmq.schema.registry.client.rest.JacksonMapper;
 
 public class HttpUtil {
     public static ObjectMapper jsonParser = JacksonMapper.INSTANCE;
@@ -34,9 +35,9 @@ public class HttpUtil {
     private static final int ERROR_CODE = 5001;
 
     public static <T> T sendHttpRequest(String requestUrl, String method, String requestBodyData,
-                                        Map<String, String> requestProperties,
-                                        TypeReference<T> responseFormat)
-            throws IOException, RestClientException {
+        Map<String, String> requestProperties,
+        TypeReference<T> responseFormat)
+        throws IOException, RestClientException {
 
         HttpURLConnection connection = null;
         try {
@@ -64,7 +65,7 @@ public class HttpUtil {
                 return null;
             } else {
                 throw new RestClientException("send request failed", responseCode,
-                        ERROR_CODE);
+                    ERROR_CODE);
             }
 
         } finally {
@@ -75,8 +76,8 @@ public class HttpUtil {
     }
 
     private static HttpURLConnection buildConnection(URL url, String method, Map<String,
-            String> requestProperties)
-            throws IOException {
+        String> requestProperties)
+        throws IOException {
         HttpURLConnection connection = null;
         connection = (HttpURLConnection) url.openConnection();
 

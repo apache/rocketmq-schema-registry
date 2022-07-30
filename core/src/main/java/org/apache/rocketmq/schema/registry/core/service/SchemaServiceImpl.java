@@ -17,11 +17,10 @@
 
 package org.apache.rocketmq.schema.registry.core.service;
 
+import com.google.common.base.Strings;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.auth.AccessControlService;
@@ -195,6 +194,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
     }
 
     // TODO add get last record query
+
     /**
      * {@inheritDoc}
      */

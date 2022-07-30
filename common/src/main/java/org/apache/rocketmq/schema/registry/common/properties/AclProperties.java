@@ -40,10 +40,8 @@ public class AclProperties {
     }
 
     /**
-     * Parse the configuration to get operation control. The control is at userName level
-     * and the controlled operations include create, delete, and rename for table.
-     * The format is below.
-     * db1:user1,user2|db2:user1,user2
+     * Parse the configuration to get operation control. The control is at userName level and the controlled operations
+     * include create, delete, and rename for table. The format is below. db1:user1,user2|db2:user1,user2
      *
      * @param aclStr the config strings for dbs
      * @return acl config

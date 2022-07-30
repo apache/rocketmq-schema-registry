@@ -22,7 +22,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class UrlBuilder {
@@ -85,11 +90,11 @@ public class UrlBuilder {
     public URI build(Object... templatePathValues) {
 
         List<String> templateValues = Arrays.stream(templatePathValues)
-                .map(o -> UriPercentEncoder.encode(String.valueOf(o), Charset.defaultCharset()))
-                .collect(Collectors.toList());
+            .map(o -> UriPercentEncoder.encode(String.valueOf(o), Charset.defaultCharset()))
+            .collect(Collectors.toList());
         if (templateValues.size() != this.templateNames.size()) {
             throw new IllegalArgumentException("Mismatched number of template variable names: expected "
-                    + this.templateNames.size() + ", got " + templateValues.size());
+                + this.templateNames.size() + ", got " + templateValues.size());
         }
 
         String encodedPath = templatePath;
@@ -117,7 +122,7 @@ public class UrlBuilder {
         }
         try {
             queryParamString.append(encodeQueryParameter(paramName)).append('=')
-                    .append(encodeQueryParameter(paramValue));
+                .append(encodeQueryParameter(paramValue));
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException(e);
         }
@@ -141,11 +146,11 @@ public class UrlBuilder {
 
     static String encodeQueryParameter(String paramValue) throws UnsupportedEncodingException {
         return URLEncoder.encode(paramValue, "UTF-8")
-                /*
-                 * use percent-encoding which is supported everywhere as per RFC-3986, not
-                 * legacy RFC-1866
-                 */
-                .replace("+", "%20");
+            /*
+             * use percent-encoding which is supported everywhere as per RFC-3986, not
+             * legacy RFC-1866
+             */
+            .replace("+", "%20");
     }
 
     static final List<String> findNamesInTemplate(String path) {

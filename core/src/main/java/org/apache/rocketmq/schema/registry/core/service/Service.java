@@ -21,5 +21,4 @@ import org.apache.rocketmq.schema.registry.common.dto.BaseDto;
 
 public interface Service<T extends BaseDto> {
 
-
 }

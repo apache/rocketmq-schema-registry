@@ -21,15 +21,15 @@ import org.apache.rocketmq.schema.registry.common.auth.AccessControlService;
 import org.apache.rocketmq.schema.registry.common.auth.DefaultAccessControlServiceImpl;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
 import org.apache.rocketmq.schema.registry.common.properties.GlobalConfig;
+import org.apache.rocketmq.schema.registry.common.storage.StorageManager;
+import org.apache.rocketmq.schema.registry.common.storage.StorageServiceProxy;
 import org.apache.rocketmq.schema.registry.common.utils.IdGenerator;
 import org.apache.rocketmq.schema.registry.common.utils.SnowFlakeIdGenerator;
+import org.apache.rocketmq.schema.registry.common.utils.StorageUtil;
 import org.apache.rocketmq.schema.registry.core.dependency.DependencyService;
-import org.apache.rocketmq.schema.registry.common.storage.StorageManager;
 import org.apache.rocketmq.schema.registry.core.service.SchemaInitializationService;
 import org.apache.rocketmq.schema.registry.core.service.SchemaService;
 import org.apache.rocketmq.schema.registry.core.service.SchemaServiceImpl;
-import org.apache.rocketmq.schema.registry.common.storage.StorageServiceProxy;
-import org.apache.rocketmq.schema.registry.common.utils.StorageUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,8 +59,7 @@ public class SchemaServiceConfig {
     /**
      * Handle startup and shutdown of schema service.
      *
-     * @param storageManager  Plugin manager to use
-     *
+     * @param storageManager Plugin manager to use
      * @return The initialization service bean
      */
     @Bean
@@ -105,6 +104,5 @@ public class SchemaServiceConfig {
     public IdGenerator idGenerator(final GlobalConfig config) {
         return new SnowFlakeIdGenerator(config);
     }
-
 
 }

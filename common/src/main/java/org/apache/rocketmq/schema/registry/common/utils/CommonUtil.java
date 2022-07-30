@@ -52,8 +52,8 @@ import org.apache.avro.SchemaValidator;
 import org.apache.avro.SchemaValidatorBuilder;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
-import org.apache.rocketmq.schema.registry.common.exception.SchemaException;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaCompatibilityException;
+import org.apache.rocketmq.schema.registry.common.exception.SchemaException;
 import org.apache.rocketmq.schema.registry.common.model.Compatibility;
 import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
 
@@ -201,10 +201,10 @@ public class CommonUtil {
 
         @Override
         public void run() {
-            try (
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                BufferedReader br = new BufferedReader(inputStreamReader);
-            ) {
+
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader br = new BufferedReader(inputStreamReader);
+            try {
                 String line;
                 StringBuilder sb = new StringBuilder();
                 while ((line = br.readLine()) != null) {
@@ -212,7 +212,24 @@ public class CommonUtil {
                 }
                 output = sb.toString();
             } catch (Throwable e) {
-                log.error("", e);
+                log.error("Read from file error", e);
+            } finally {
+                if (br != null) {
+                    try {
+                        br.close();
+
+                    } catch (IOException ioException) {
+                        log.error("", ioException);
+                    }
+                }
+                if (inputStreamReader != null) {
+                    try {
+                        inputStreamReader.close();
+
+                    } catch (IOException ioException) {
+                        log.error("", ioException);
+                    }
+                }
             }
         }
     }

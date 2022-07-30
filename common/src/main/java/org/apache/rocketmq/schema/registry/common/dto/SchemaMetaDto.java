@@ -17,15 +17,14 @@
 
 package org.apache.rocketmq.schema.registry.common.dto;
 
-import org.apache.rocketmq.schema.registry.common.model.Compatibility;
-import org.apache.rocketmq.schema.registry.common.model.SchemaType;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.apache.rocketmq.schema.registry.common.model.Compatibility;
+import org.apache.rocketmq.schema.registry.common.model.SchemaType;
 
 @Data
 @EqualsAndHashCode(callSuper = false)

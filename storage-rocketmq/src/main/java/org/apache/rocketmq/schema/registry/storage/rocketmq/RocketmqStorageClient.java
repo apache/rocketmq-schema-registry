@@ -18,7 +18,6 @@
 package org.apache.rocketmq.schema.registry.storage.rocketmq;
 
 import java.util.List;
-
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
 import org.apache.rocketmq.schema.registry.common.model.SchemaRecordInfo;

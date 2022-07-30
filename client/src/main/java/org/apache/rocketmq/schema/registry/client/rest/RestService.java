@@ -19,26 +19,25 @@ package org.apache.rocketmq.schema.registry.client.rest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
 import org.apache.rocketmq.schema.registry.client.util.HttpUtil;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaRecordDto;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class RestService {
     private static final TypeReference<SchemaDto> SCHEMA_DTO_TYPE_REFERENCE =
-            new TypeReference<SchemaDto>() {
-            };
+        new TypeReference<SchemaDto>() {
+        };
     private static final TypeReference<SchemaRecordDto> SCHEMA_RECORD_DTO_TYPE_REFERENCE =
-            new TypeReference<SchemaRecordDto>() {
-            };
+        new TypeReference<SchemaRecordDto>() {
+        };
     private static final TypeReference<List<SchemaRecordDto>> SCHEMA_RECORD_DTO_TYPE_LIST_REFERENCE =
-            new TypeReference<List<SchemaRecordDto>>() {
-            };
+        new TypeReference<List<SchemaRecordDto>>() {
+        };
 
     public static ObjectMapper jsonParser = JacksonMapper.INSTANCE;
 
@@ -61,7 +60,8 @@ public class RestService {
         this.httpHeaders = httpHeaders;
     }
 
-    public SchemaDto registerSchema(String subject, String schemaName, SchemaDto schemaDto) throws IOException, RestClientException {
+    public SchemaDto registerSchema(String subject, String schemaName,
+        SchemaDto schemaDto) throws IOException, RestClientException {
         UrlBuilder urlBuilder = UrlBuilder.fromPath("/subject/{subject-name}/schema/{schema-name}");
         String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(subject, schemaName).toString());
         String data = jsonParser.writeValueAsString(schemaDto);
@@ -69,26 +69,29 @@ public class RestService {
     }
 
     public SchemaDto registerSchema(String clusterName, String tenant, String subjectName,
-                                    String schemaName, SchemaDto schemaDto) throws IOException, RestClientException {
+        String schemaName, SchemaDto schemaDto) throws IOException, RestClientException {
         UrlBuilder urlBuilder = UrlBuilder.fromPath("/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/{schema-name}");
         String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(clusterName, tenant, subjectName, schemaName).toString());
         String data = jsonParser.writeValueAsString(schemaDto);
         return HttpUtil.sendHttpRequest(path, HTTP_POST, data, httpHeaders, SCHEMA_DTO_TYPE_REFERENCE);
     }
 
-    public SchemaDto deleteSchema(String cluster, String tenant, String subject) throws RestClientException, IOException {
+    public SchemaDto deleteSchema(String cluster, String tenant,
+        String subject) throws RestClientException, IOException {
         UrlBuilder urlBuilder = UrlBuilder.fromPath("/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema");
         String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(cluster, tenant, subject).toString());
         return HttpUtil.sendHttpRequest(path, HTTP_DELETE, null, httpHeaders, SCHEMA_DTO_TYPE_REFERENCE);
     }
 
-    public SchemaDto deleteSchema(String cluster, String tenant, String subject, long version) throws IOException, RestClientException {
+    public SchemaDto deleteSchema(String cluster, String tenant, String subject,
+        long version) throws IOException, RestClientException {
         UrlBuilder urlBuilder = UrlBuilder.fromPath("/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/versions/{version}");
         String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(cluster, tenant, subject, version).toString());
         return HttpUtil.sendHttpRequest(path, HTTP_DELETE, null, httpHeaders, SCHEMA_DTO_TYPE_REFERENCE);
     }
 
-    public SchemaDto updateSchema(String subject, String schemaName, SchemaDto schemaDto) throws IOException, RestClientException {
+    public SchemaDto updateSchema(String subject, String schemaName,
+        SchemaDto schemaDto) throws IOException, RestClientException {
         UrlBuilder urlBuilder = UrlBuilder.fromPath("/subject/{subject-name}/schema/{schema-name}");
         String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(subject, schemaName).toString());
         String data = jsonParser.writeValueAsString(schemaDto);
@@ -96,7 +99,7 @@ public class RestService {
     }
 
     public SchemaDto updateSchema(String cluster, String tenant, String subject,
-                                  String schemaName, SchemaDto schemaDto) throws IOException, RestClientException {
+        String schemaName, SchemaDto schemaDto) throws IOException, RestClientException {
         UrlBuilder urlBuilder = UrlBuilder.fromPath("/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/{schema-name}");
         String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(cluster, tenant, subject, schemaName).toString());
         String data = jsonParser.writeValueAsString(schemaDto);
@@ -109,19 +112,22 @@ public class RestService {
         return HttpUtil.sendHttpRequest(path, HTTP_GET, null, httpHeaders, SCHEMA_RECORD_DTO_TYPE_REFERENCE);
     }
 
-    public SchemaRecordDto getSchemaBySubject(String cluster, String tenant, String subject) throws IOException, RestClientException {
+    public SchemaRecordDto getSchemaBySubject(String cluster, String tenant,
+        String subject) throws IOException, RestClientException {
         UrlBuilder urlBuilder = UrlBuilder.fromPath("/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema");
         String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(cluster, tenant, subject).toString());
         return HttpUtil.sendHttpRequest(path, HTTP_GET, null, httpHeaders, SCHEMA_RECORD_DTO_TYPE_REFERENCE);
     }
 
-    public SchemaRecordDto getSchemaBySubject(String cluster, String tenant, String subject, long version) throws IOException, RestClientException {
+    public SchemaRecordDto getSchemaBySubject(String cluster, String tenant, String subject,
+        long version) throws IOException, RestClientException {
         UrlBuilder urlBuilder = UrlBuilder.fromPath("/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/versions/{version}");
         String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(cluster, tenant, subject, version).toString());
         return HttpUtil.sendHttpRequest(path, HTTP_GET, null, httpHeaders, SCHEMA_RECORD_DTO_TYPE_REFERENCE);
     }
 
-    public List<SchemaRecordDto> getSchemaListBySubject(String cluster, String tenant, String subject) throws RestClientException, IOException {
+    public List<SchemaRecordDto> getSchemaListBySubject(String cluster, String tenant,
+        String subject) throws RestClientException, IOException {
         UrlBuilder urlBuilder = UrlBuilder.fromPath("/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/versions");
         String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(cluster, tenant, subject).toString());
         return HttpUtil.sendHttpRequest(path, HTTP_GET, null, httpHeaders, SCHEMA_RECORD_DTO_TYPE_LIST_REFERENCE);

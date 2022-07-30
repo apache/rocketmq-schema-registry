@@ -17,9 +17,8 @@
 
 package org.apache.rocketmq.schema.registry.common.json;
 
-import org.apache.rocketmq.schema.registry.common.exception.SchemaException;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.rocketmq.schema.registry.common.exception.SchemaException;
 
 /**
  * Json <-> Object

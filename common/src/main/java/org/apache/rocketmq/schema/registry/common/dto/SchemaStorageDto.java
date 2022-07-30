@@ -17,9 +17,8 @@
 
 package org.apache.rocketmq.schema.registry.common.dto;
 
-import java.util.Map;
-
 import io.swagger.annotations.ApiModelProperty;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

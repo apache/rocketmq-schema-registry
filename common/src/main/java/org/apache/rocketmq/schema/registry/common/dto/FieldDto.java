@@ -59,7 +59,7 @@ public class FieldDto extends BaseDto {
     @ApiModelProperty(value = "Is a sorted field, default is false")
     private Boolean isSortable = false;
 
-    @ApiModelProperty(value = "This filed sorted type, like：ascending, descending, ignore")
+    @ApiModelProperty(value = "This filed sorted type, like: ascending, descending, ignore")
     private String sortType;
 
     @ApiModelProperty(value = "Extra info of the field")
