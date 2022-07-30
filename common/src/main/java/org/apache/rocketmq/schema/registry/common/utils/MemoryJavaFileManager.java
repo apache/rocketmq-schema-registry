@@ -35,7 +35,9 @@ import javax.tools.SimpleJavaFileObject;
 
 public class MemoryJavaFileManager extends ForwardingJavaFileManager {
 
-    /** Java source file extension. */
+    /**
+     * Java source file extension.
+     */
     private final static String EXT = ".java";
 
     private Map<String, ByteBuffer> classBytes;
@@ -87,7 +89,7 @@ public class MemoryJavaFileManager extends ForwardingJavaFileManager {
             return new FilterOutputStream(new ByteArrayOutputStream()) {
                 public void close() throws IOException {
                     out.close();
-                    ByteArrayOutputStream bos = (ByteArrayOutputStream)out;
+                    ByteArrayOutputStream bos = (ByteArrayOutputStream) out;
                     classBytes.put(name, ByteBuffer.wrap(bos.toByteArray()));
                 }
             };
@@ -116,7 +118,8 @@ public class MemoryJavaFileManager extends ForwardingJavaFileManager {
                 final StringBuilder newUri = new StringBuilder();
                 newUri.append("mfm:///");
                 newUri.append(name.replace('.', '/'));
-                if(name.endsWith(EXT)) newUri.replace(newUri.length() - EXT.length(), newUri.length(), EXT);
+                if (name.endsWith(EXT))
+                    newUri.replace(newUri.length() - EXT.length(), newUri.length(), EXT);
                 return URI.create(newUri.toString());
             } catch (Exception exp) {
                 return URI.create("mfm:///com/sun/script/java/java_source");

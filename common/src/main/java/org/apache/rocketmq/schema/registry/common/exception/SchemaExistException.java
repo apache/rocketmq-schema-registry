@@ -22,19 +22,19 @@ import org.apache.rocketmq.schema.registry.common.QualifiedName;
 
 @Getter
 public class SchemaExistException extends SchemaException {
-  private static final long serialVersionUID = -9177284523006645052L;
+    private static final long serialVersionUID = -9177284523006645052L;
 
-  private final int errorCode = 40401;
+    private final int errorCode = 40401;
 
-  public SchemaExistException(final QualifiedName qualifiedName) {
-    this(String.format("Schema: %s is exist, please check your configuration.", qualifiedName.schemaFullName()));
-  }
+    public SchemaExistException(final QualifiedName qualifiedName) {
+        this(String.format("Schema: %s is exist, please check your configuration.", qualifiedName.schemaFullName()));
+    }
 
-  public SchemaExistException(final String msg) {
-    super(msg);
-  }
+    public SchemaExistException(final String msg) {
+        super(msg);
+    }
 
-  public SchemaExistException(final String msg, final Throwable cause) {
-    super(msg, cause);
-  }
+    public SchemaExistException(final String msg, final Throwable cause) {
+        super(msg, cause);
+    }
 }

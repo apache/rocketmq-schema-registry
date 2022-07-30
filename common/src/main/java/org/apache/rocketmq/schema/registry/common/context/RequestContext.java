@@ -17,10 +17,9 @@
 
 package org.apache.rocketmq.schema.registry.common.context;
 
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.UUID;
-
+import javax.annotation.Nullable;
 import lombok.Builder;
 import lombok.Data;
 

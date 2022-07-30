@@ -32,7 +32,7 @@ public interface StoragePlugin {
     /**
      * Returns the storage service implementation for the type.
      *
-     * @param storageContext      registry for spectator
+     * @param storageContext registry for spectator
      * @return connector factory
      */
     StorageFactory load(StoragePluginContext storageContext);

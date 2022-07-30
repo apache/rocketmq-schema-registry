@@ -42,7 +42,7 @@ public enum SchemaType {
     /**
      * Binlog type for reserved
      */
-     BINLOG(6);
+    BINLOG(6);
 
     private final int value;
 

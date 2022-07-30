@@ -18,7 +18,6 @@
 package org.apache.rocketmq.schema.registry.common.properties;
 
 import lombok.Data;
-import org.apache.rocketmq.schema.registry.common.model.StorageType;
 
 @Data
 public class ServiceProperties {

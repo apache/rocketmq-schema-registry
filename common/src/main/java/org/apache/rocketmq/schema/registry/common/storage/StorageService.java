@@ -18,7 +18,6 @@
 package org.apache.rocketmq.schema.registry.common.storage;
 
 import java.util.List;
-
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.context.StorageServiceContext;
 import org.apache.rocketmq.schema.registry.common.model.BaseInfo;
@@ -35,7 +34,7 @@ public interface StorageService<T extends BaseInfo> {
     /**
      * Register a brand new schema.
      *
-     * @param context  The storage service needed context
+     * @param context    The storage service needed context
      * @param schemaInfo The schema information
      * @throws UnsupportedOperationException If the storage type doesn't implement this method
      */
@@ -47,7 +46,7 @@ public interface StorageService<T extends BaseInfo> {
      * Delete schema with all version
      *
      * @param context The storage service needed context
-     * @param name Qualified name with tenant / name of schema
+     * @param name    Qualified name with tenant / name of schema
      * @throws UnsupportedOperationException If the storage type doesn't implement this method
      */
     default void delete(final StorageServiceContext context, final QualifiedName name) {
@@ -57,7 +56,7 @@ public interface StorageService<T extends BaseInfo> {
     /**
      * Update schema and generate a new version with the given information.
      *
-     * @param context  The request context
+     * @param context    The request context
      * @param schemaInfo schema information
      * @throws UnsupportedOperationException If the connector doesn't implement this method
      */
@@ -69,7 +68,7 @@ public interface StorageService<T extends BaseInfo> {
      * Query a resource with the given tenant and name.
      *
      * @param context The storage service needed context
-     * @param name Qualified name with tenant / name of schema
+     * @param name    Qualified name with tenant / name of schema
      * @return The resource metadata.
      * @throws UnsupportedOperationException If the storage type doesn't implement this method
      */

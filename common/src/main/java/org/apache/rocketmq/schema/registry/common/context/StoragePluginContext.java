@@ -17,14 +17,9 @@
 
 package org.apache.rocketmq.schema.registry.common.context;
 
-import java.util.Properties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.apache.rocketmq.schema.registry.common.exception.SchemaException;
-import org.apache.rocketmq.schema.registry.common.model.StorageType;
 import org.apache.rocketmq.schema.registry.common.properties.GlobalConfig;
-import org.springframework.context.ApplicationContext;
 
 @Data
 @AllArgsConstructor

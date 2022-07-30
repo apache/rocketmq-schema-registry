@@ -19,9 +19,9 @@ package org.apache.rocketmq.schema.registry.common.auth;
 
 import java.util.Map;
 import java.util.Set;
-import org.apache.rocketmq.schema.registry.common.model.SchemaOperation;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaAuthorizedException;
+import org.apache.rocketmq.schema.registry.common.model.SchemaOperation;
 import org.apache.rocketmq.schema.registry.common.properties.GlobalConfig;
 
 public class DefaultAccessControlServiceImpl implements AccessControlService {

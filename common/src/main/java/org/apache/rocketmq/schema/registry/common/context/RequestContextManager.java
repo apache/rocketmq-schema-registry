@@ -19,17 +19,17 @@ package org.apache.rocketmq.schema.registry.common.context;
 
 public class RequestContextManager {
 
-    private static final ThreadLocal<RequestContext> contexts = new ThreadLocal<>();
+    private static final ThreadLocal<RequestContext> CONTEXTS = new ThreadLocal<>();
 
     private RequestContextManager() {
     }
 
     public static void removeContext() {
-        contexts.remove();
+        CONTEXTS.remove();
     }
 
     public static RequestContext getContext() {
-        RequestContext result = contexts.get();
+        RequestContext result = CONTEXTS.get();
         if (result == null) {
             result = new RequestContext();
             putContext(result);
@@ -38,6 +38,6 @@ public class RequestContextManager {
     }
 
     public static void putContext(final RequestContext context) {
-        contexts.set(context);
+        CONTEXTS.set(context);
     }
 }

@@ -18,12 +18,9 @@
 package org.apache.rocketmq.schema.registry.core.service;
 
 import java.util.List;
-import java.util.Optional;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.dto.BaseDto;
-import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaRecordDto;
-import org.apache.rocketmq.schema.registry.common.model.SchemaRecordInfo;
 
 public interface SchemaService<T extends BaseDto> {
 
@@ -31,7 +28,7 @@ public interface SchemaService<T extends BaseDto> {
      * Register the given schema.
      *
      * @param qualifiedName tenant / name of the schema
-     * @param dto register resource information
+     * @param dto           register resource information
      * @return registered schema object
      */
     T register(QualifiedName qualifiedName, T dto);
@@ -40,7 +37,7 @@ public interface SchemaService<T extends BaseDto> {
      * Register the schema.
      *
      * @param qualifiedName tenant / name of the schema
-     * @param dto update information
+     * @param dto           update information
      * @return updated schema object
      */
     T update(QualifiedName qualifiedName, T dto);

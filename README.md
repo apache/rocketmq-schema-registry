@@ -1,9 +1,16 @@
 rocketmq-schema-registry
 ================
 
-RocketMQ schema registry is a management platform for Avro schema of RocketMQ Topic, which provides a restful interface for store, delete, update and query schema. Schema register will generate new schema version in every update request. Therefore, during schema evolution, the platform supports formatting and verification based on specified compatibility configurations. By default, seven compatibility policies are supported. Schemas can evolve based on a unique subject, and each Schema version in the evolution can be individually referenced to other subjects. By binding subject to the Schema, the New RocketMQ client can send data based on a user-specified structure without requiring the user to care about the details of serialization and deserialization
+RocketMQ schema registry is a management platform for Avro schema of RocketMQ Topic, which provides a restful interface
+for store, delete, update and query schema. Schema register will generate new schema version in every update request.
+Therefore, during schema evolution, the platform supports formatting and verification based on specified compatibility
+configurations. By default, seven compatibility policies are supported. Schemas can evolve based on a unique subject,
+and each Schema version in the evolution can be individually referenced to other subjects. By binding subject to the
+Schema, the New RocketMQ client can send data based on a user-specified structure without requiring the user to care
+about the details of serialization and deserialization
 
 It offers a variety of features:
+
 * Handle basic schema management operation including store, query, update, delete
 * Encoding / Decoding capacity by user specified serializer / deserializer in client
 * Compatibility validate in duration of schema evolution or send/receive message
@@ -22,7 +29,10 @@ cd rocketmq-schema-registry
 ```
 
 #### Prepare storage layer
-Currently, only RocketMQ is supported as the storage layer. And relies on the Compact Topic feature of RocketMQ 5.0, although previous versions can also be worked, but there is a risk of data loss if the machine disk fails. Similarly, DB-type storage layers will be extended in the future.
+
+Currently, only RocketMQ is supported as the storage layer. And relies on the Compact Topic feature of RocketMQ 5.0,
+although previous versions can also be worked, but there is a risk of data loss if the machine disk fails. Similarly,
+DB-type storage layers will be extended in the future.
 
 On rocketmq storage type, we need to start a RocketMQ namesrv and broker service first.
 
@@ -44,6 +54,7 @@ $ nohup sh bin/mqbroker -n localhost:9876 &
 #### Edit configuration
 
 * Config storage local cache path
+
 ```shell
 $ storage.local.cache.path="" >> schema-storage-rocketmq/src/main/resources
 ```
@@ -59,7 +70,8 @@ Swagger API documentation can be accessed from http://localhost:8080/swagger-ui/
 Package management
 --------------
 
-If you want to upload binary resources to your package repository like artifactory, schema-registry support `schema.dependency.upload-enabled = true` to enable package management. 
+If you want to upload binary resources to your package repository like artifactory, schema-registry
+support `schema.dependency.upload-enabled = true` to enable package management.
 
 Properties details:
 
@@ -110,7 +122,9 @@ $ curl -X GET http://localhost:8081/schema-registry/v1/cluster/{cluster-name}/te
 Contribute
 --------------
 
-We always welcome new contributions, whether for trivial cleanups, [big new features](https://github.com/apache/rocketmq/wiki/RocketMQ-Improvement-Proposal) or other material rewards, more details see [here](http://rocketmq.apache.org/docs/how-to-contribute/).
+We always welcome new contributions, whether for trivial
+cleanups, [big new features](https://github.com/apache/rocketmq/wiki/RocketMQ-Improvement-Proposal) or other material
+rewards, more details see [here](http://rocketmq.apache.org/docs/how-to-contribute/).
 
 License
 ----------

@@ -1,19 +1,29 @@
-/**
- * Copyright 2022, Xiaomi.
- * All rights reserved.
- * Author: wangfan8@xiaomi.com
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.apache.rocketmq.schema.registry.core.api.v1;
-
-import java.net.HttpURLConnection;
-import java.util.List;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.net.HttpURLConnection;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
@@ -37,12 +47,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(
     path = "/schema-registry/v1",
     produces = MediaType.APPLICATION_JSON_VALUE
-)
+    )
 @Api(
     value = "SchemaRegistryV1",
     produces = MediaType.APPLICATION_JSON_VALUE,
     consumes = MediaType.APPLICATION_JSON_VALUE
-)
+    )
 @Slf4j
 public class SchemaController {
 
@@ -57,7 +67,7 @@ public class SchemaController {
      * Constructor.
      *
      * @param requestProcessor request processor
-     * @param schemaService schema service
+     * @param schemaService    schema service
      */
     @Autowired
     public SchemaController(
@@ -72,12 +82,12 @@ public class SchemaController {
         method = RequestMethod.POST,
         path = "/subject/{subject-name}/schema/{schema-name}",
         consumes = MediaType.APPLICATION_JSON_VALUE
-    )
+        )
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(
         value = "Register a new schema",
         notes = "Return success if there were no errors registering the schema"
-    )
+        )
     @ApiResponses(
         {
             @ApiResponse(
@@ -89,7 +99,7 @@ public class SchemaController {
                 message = "The requested schema cannot be registered"
             )
         }
-    )
+        )
     public SchemaDto registerSchema(
         @ApiParam(value = "The subject of the schema", required = true)
         @PathVariable(value = "subject-name") final String subject,
@@ -105,12 +115,12 @@ public class SchemaController {
         method = RequestMethod.POST,
         path = "/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/{schema-name}",
         consumes = MediaType.APPLICATION_JSON_VALUE
-    )
+        )
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(
         value = "Register a new schema",
         notes = "Return success if there were no errors registering the schema"
-    )
+        )
     @ApiResponses(
         {
             @ApiResponse(
@@ -122,7 +132,7 @@ public class SchemaController {
                 message = "The requested schema cannot be registered"
             )
         }
-    )
+        )
     public SchemaDto registerSchema(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,
@@ -151,12 +161,12 @@ public class SchemaController {
     @RequestMapping(
         path = "/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema",
         method = RequestMethod.DELETE
-    )
+        )
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(
         value = "Delete schema",
         notes = "Delete the schema under the given subject"
-    )
+        )
     @ApiResponses(
         {
             @ApiResponse(
@@ -167,8 +177,7 @@ public class SchemaController {
                 code = HttpURLConnection.HTTP_NOT_FOUND,
                 message = "The requested schema cannot be found or it's still been used"
             )
-        }
-    )
+        })
     public SchemaDto deleteSchema(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,
@@ -188,12 +197,12 @@ public class SchemaController {
     @RequestMapping(
         path = "/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/versions/{version}",
         method = RequestMethod.DELETE
-    )
+        )
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(
         value = "Delete schema",
         notes = "Delete the schema under the given subject and version"
-    )
+        )
     @ApiResponses(
         {
             @ApiResponse(
@@ -205,7 +214,7 @@ public class SchemaController {
                 message = "The requested schema cannot be found or it's still been used"
             )
         }
-    )
+        )
     public SchemaDto deleteSchema(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,
@@ -224,16 +233,15 @@ public class SchemaController {
         );
     }
 
-
     @RequestMapping(
         path = "/subject/{subject-name}/schema/{schema-name}",
         method = RequestMethod.PUT,
         consumes = MediaType.APPLICATION_JSON_VALUE
-    )
+        )
     @ApiOperation(
         value = "Update schema and generate new schema version",
         notes = "Update the given schema"
-    )
+        )
     @ApiResponses(
         {
             @ApiResponse(
@@ -245,7 +253,7 @@ public class SchemaController {
                 message = "The requested schema cannot be found"
             )
         }
-    )
+        )
     public SchemaDto updateSchema(
         @ApiParam(value = "The subject of the schema", required = true)
         @PathVariable(value = "subject-name") final String subject,
@@ -261,11 +269,11 @@ public class SchemaController {
         path = "/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/{schema-name}",
         method = RequestMethod.PUT,
         consumes = MediaType.APPLICATION_JSON_VALUE
-    )
+        )
     @ApiOperation(
         value = "Update schema and generate new schema version",
         notes = "Update the given schema"
-    )
+        )
     @ApiResponses(
         {
             @ApiResponse(
@@ -277,7 +285,7 @@ public class SchemaController {
                 message = "The requested schema cannot be found"
             )
         }
-    )
+        )
     public SchemaDto updateSchema(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,
@@ -298,11 +306,10 @@ public class SchemaController {
         );
     }
 
-
     @RequestMapping(
         method = RequestMethod.GET,
         path = "/subject/{subject-name}/schema"
-    )
+        )
     @ApiOperation(
         value = "Schema information",
         notes = "Schema information with the latest version under the subject")
@@ -317,7 +324,7 @@ public class SchemaController {
                 message = "The requested tenant or schema cannot be found"
             )
         }
-    )
+        )
     public SchemaRecordDto getSchemaBySubject(
         @ApiParam(value = "The name of the subject", required = true)
         @PathVariable(value = "subject-name") String subject
@@ -328,7 +335,7 @@ public class SchemaController {
     @RequestMapping(
         method = RequestMethod.GET,
         path = "/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema"
-    )
+        )
     @ApiOperation(
         value = "Schema information",
         notes = "Schema information with the latest version under the subject")
@@ -343,7 +350,7 @@ public class SchemaController {
                 message = "The requested tenant or schema cannot be found"
             )
         }
-    )
+        )
     public SchemaRecordDto getSchemaBySubject(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,
@@ -364,7 +371,7 @@ public class SchemaController {
     @RequestMapping(
         method = RequestMethod.GET,
         path = "/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/versions/{version}"
-    )
+        )
     @ApiOperation(
         value = "Schema information",
         notes = "Schema information with the given version under the subject")
@@ -379,7 +386,7 @@ public class SchemaController {
                 message = "The requested tenant or schema cannot be found"
             )
         }
-    )
+        )
     public SchemaRecordDto getSchemaBySubject(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,
@@ -401,7 +408,7 @@ public class SchemaController {
     @RequestMapping(
         method = RequestMethod.GET,
         path = "/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/versions"
-    )
+        )
     @ApiOperation(
         value = "Schema information",
         notes = "Schema information with a list of versions under the subject")
@@ -416,7 +423,7 @@ public class SchemaController {
                 message = "The requested tenant or schema cannot be found"
             )
         }
-    )
+        )
     public List<SchemaRecordDto> getSchemaListBySubject(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,

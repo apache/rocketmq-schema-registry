@@ -17,8 +17,8 @@
 
 package org.apache.rocketmq.schema.registry.common.auth;
 
-import org.apache.rocketmq.schema.registry.common.model.SchemaOperation;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaAuthorizedException;
+import org.apache.rocketmq.schema.registry.common.model.SchemaOperation;
 
 public interface AccessControlService {
 

@@ -46,5 +46,4 @@ public class RocketmqConfigConstants {
 
     public static final String DELETE_KEYS = "%DEL%";
 
-
 }

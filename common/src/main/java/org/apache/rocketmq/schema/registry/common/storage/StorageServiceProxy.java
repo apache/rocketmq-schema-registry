@@ -18,13 +18,12 @@
 package org.apache.rocketmq.schema.registry.common.storage;
 
 import java.util.List;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.context.RequestContext;
+import org.apache.rocketmq.schema.registry.common.context.RequestContextManager;
 import org.apache.rocketmq.schema.registry.common.context.StorageServiceContext;
 import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
-import org.apache.rocketmq.schema.registry.common.context.RequestContextManager;
 import org.apache.rocketmq.schema.registry.common.model.SchemaRecordInfo;
 import org.apache.rocketmq.schema.registry.common.utils.StorageUtil;
 import org.springframework.cache.annotation.CacheConfig;
@@ -41,8 +40,8 @@ public class StorageServiceProxy {
     /**
      * Constructor for storage service proxy.
      *
-     * @param storageManager    storage manager
-     * @param storageUtil       convert from Dto to storage instance or vice versa
+     * @param storageManager storage manager
+     * @param storageUtil    convert from Dto to storage instance or vice versa
      */
     public StorageServiceProxy(final StorageManager storageManager, final StorageUtil storageUtil) {
         this.storageManager = storageManager;
@@ -51,8 +50,9 @@ public class StorageServiceProxy {
 
     /**
      * Proxy calls the StorageService's register method.
+     *
      * @param qualifiedName Qualified name with tenant / name of schema
-     * @param schemaInfo schema object
+     * @param schemaInfo    schema object
      */
     public SchemaInfo register(
         final QualifiedName qualifiedName,
@@ -82,7 +82,7 @@ public class StorageServiceProxy {
     /**
      * Proxy calls the StorageService's update method.
      *
-     * @param name schema qualified name
+     * @param name       schema qualified name
      * @param schemaInfo schema information instance
      * @return true if errors after this should be ignored.
      */
@@ -96,10 +96,9 @@ public class StorageServiceProxy {
     }
 
     /**
-     * Proxy calls the StorageService's get method. Returns schema from store
-     * if <code>useCache</code> is false.
+     * Proxy calls the StorageService's get method. Returns schema from store if <code>useCache</code> is false.
      *
-     * @param name Qualified name with tenant / name of schema
+     * @param name     Qualified name with tenant / name of schema
      * @param useCache if schema can be retrieved from cache
      * @return schema information instance
      */

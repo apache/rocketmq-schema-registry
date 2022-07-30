@@ -28,7 +28,7 @@ public class StoragePluginManager {
     private final GlobalConfig config;
     private final StorageManager storageManager;
 
-    private static final AtomicReference<PluginLoadState> state = new AtomicReference<>();
+    private static final AtomicReference<PluginLoadState> STATE = new AtomicReference<>();
 
     /**
      * Constructor.

@@ -29,7 +29,6 @@ public class ServiceConfig {
      * create rocketmq storage service.
      *
      * @param storageClient rocketmq storage Client
-     *
      * @return talos connector table Service
      */
     @Bean

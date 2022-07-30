@@ -23,5 +23,5 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 
 public class JacksonMapper {
     public static final ObjectMapper INSTANCE = JsonMapper.builder().
-            enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS).build();
+        enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS).build();
 }
