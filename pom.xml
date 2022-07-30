@@ -13,7 +13,6 @@
     <artifactId>rocketmq-schema-registry-all</artifactId>
     <version>0.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>rocketmq-schema-registry-${project.version}</name>
     <description>rocketmq-schema-registry</description>
 
     <modules>

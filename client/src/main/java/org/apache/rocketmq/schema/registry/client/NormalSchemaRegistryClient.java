@@ -73,13 +73,14 @@ public class NormalSchemaRegistryClient implements SchemaRegistryClient {
         return restService.getSchemaBySubject(subject);
     }
 
+    @Override
     public SchemaRecordDto getSchemaBySubject(String cluster, String tenant,
         String subject) throws RestClientException, IOException {
         return restService.getSchemaBySubject(cluster, tenant, subject);
     }
 
     @Override
-    public SchemaRecordDto getSchemaBySubject(String cluster, String tenant, String subject,
+    public SchemaRecordDto getSchemaBySubjectAndVersion(String cluster, String tenant, String subject,
         long version) throws IOException, RestClientException {
         return restService.getSchemaBySubject(cluster, tenant, subject, version);
     }
@@ -88,16 +89,6 @@ public class NormalSchemaRegistryClient implements SchemaRegistryClient {
     public List<SchemaRecordDto> getSchemaListBySubject(String cluster, String tenant,
         String subject) throws RestClientException, IOException {
         return restService.getSchemaListBySubject(cluster, tenant, subject);
-    }
-
-    @Override
-    public SchemaRecordDto getSchemaById(long schemaId) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public SchemaRecordDto getSchemaBySubjectAndId(String subject, long schemaId) {
-        throw new UnsupportedOperationException();
     }
 
 }
