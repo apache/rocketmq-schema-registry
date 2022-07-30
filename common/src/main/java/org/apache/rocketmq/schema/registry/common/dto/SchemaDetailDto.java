@@ -19,13 +19,11 @@ package org.apache.rocketmq.schema.registry.common.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.apache.rocketmq.schema.registry.common.exception.SchemaException;
 
 @Data
 @EqualsAndHashCode(callSuper = false)

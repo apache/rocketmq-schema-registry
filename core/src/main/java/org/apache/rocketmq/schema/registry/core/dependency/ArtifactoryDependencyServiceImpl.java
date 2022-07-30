@@ -37,7 +37,6 @@ public class ArtifactoryDependencyServiceImpl implements DependencyService {
     private final String jdkPath;
     private String dependencyTemplate;
 
-
     public ArtifactoryDependencyServiceImpl(final GlobalConfig config) {
         this.config = config;
         this.parent = config.getDependencyCompilePath();
@@ -74,6 +73,5 @@ public class ArtifactoryDependencyServiceImpl implements DependencyService {
         );
         return dependencyHelper.getDependency();
     }
-
 
 }

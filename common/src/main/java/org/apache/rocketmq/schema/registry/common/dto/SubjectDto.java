@@ -18,7 +18,6 @@
 package org.apache.rocketmq.schema.registry.common.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -20,7 +20,6 @@ package org.apache.rocketmq.schema.registry.common.utils;
 public interface IdGenerator {
 
     /**
-     *
      * @return unique id
      */
     public long nextId();

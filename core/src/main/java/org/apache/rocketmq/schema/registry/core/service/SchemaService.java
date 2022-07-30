@@ -32,7 +32,7 @@ public interface SchemaService<T extends BaseDto> {
      * Register the given schema.
      *
      * @param qualifiedName tenant / name of the schema
-     * @param dto register resource information
+     * @param dto           register resource information
      * @return registered schema object
      */
     RegisterSchemaResponse register(QualifiedName qualifiedName, RegisterSchemaRequest dto);
@@ -41,7 +41,7 @@ public interface SchemaService<T extends BaseDto> {
      * Register the schema.
      *
      * @param qualifiedName tenant / name of the schema
-     * @param dto update information
+     * @param dto           update information
      * @return updated schema object
      */
     UpdateSchemaResponse update(QualifiedName qualifiedName, UpdateSchemaRequest dto);

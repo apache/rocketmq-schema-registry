@@ -17,13 +17,8 @@
 package org.apache.rocketmq.schema.registry.common.dto;
 
 import java.io.Serializable;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.apache.rocketmq.schema.registry.common.json.JsonConverter;
 import org.apache.rocketmq.schema.registry.common.json.JsonConverterImpl;
-
 
 /**
  * Base class for all DTOs, and all DTOs should be READ-ONLY.

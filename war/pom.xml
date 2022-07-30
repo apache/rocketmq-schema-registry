@@ -26,8 +26,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>war</artifactId>
-    <name>rocketmq-schema-registry-war-${project.version}</name>
+    <artifactId>schema-registry-war</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -52,7 +51,6 @@
         </plugins>
 
     </build>
-
 
 
 </project>

@@ -26,10 +26,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>common</artifactId>
+    <artifactId>schema-registry-common</artifactId>
     <packaging>jar</packaging>
-    <name>rocketmq-schema-registry-common-${project.version}</name>
-    <description>rocketmq-schema-registry-core</description>
+    <description>rocketmq-schema-registry-common</description>
 
 
     <properties>

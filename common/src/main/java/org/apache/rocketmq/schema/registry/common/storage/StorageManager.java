@@ -22,10 +22,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.schema.registry.common.model.PluginLoadState;
-import org.apache.rocketmq.schema.registry.common.properties.GlobalConfig;
-import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
 import org.apache.rocketmq.schema.registry.common.context.StoragePluginContext;
+import org.apache.rocketmq.schema.registry.common.model.PluginLoadState;
+import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
+import org.apache.rocketmq.schema.registry.common.properties.GlobalConfig;
 import org.springframework.context.ApplicationContext;
 
 @Slf4j

@@ -18,7 +18,6 @@
 package org.apache.rocketmq.schema.registry.core.config;
 
 import java.util.ArrayList;
-
 import java.util.Collection;
 import java.util.List;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.CorsEndpointProperties;
@@ -37,7 +36,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
-
 import org.springframework.util.StringUtils;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.oas.annotations.EnableOpenApi;
@@ -58,14 +56,14 @@ public class SwaggerConfig {
         boolean isEnable = environment.acceptsProfiles(profiles);
 
         return new Docket(DocumentationType.OAS_30)
-                .apiInfo(apiInfo())
-                .enable(isEnable)
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("org.apache.rocketmq.schema.registry.core"))
-                .build();
+            .apiInfo(apiInfo())
+            .enable(isEnable)
+            .select()
+            .apis(RequestHandlerSelectors.basePackage("org.apache.rocketmq.schema.registry.core"))
+            .build();
     }
 
-    private ApiInfo apiInfo(){
+    private ApiInfo apiInfo() {
 
         Contact contact = new Contact(
             "Apache rocketmq-schema-registry",
@@ -105,7 +103,7 @@ public class SwaggerConfig {
         return new WebMvcEndpointHandlerMapping(endpointMapping, webEndpoints, endpointMediaTypes, corsEndpointProperties.toCorsConfiguration(), new EndpointLinksResolver(allEndpoints, basePath), shouldRegister, null);
     }
 
-    private boolean should (WebEndpointProperties webEndpointProperties, Environment environment, String basePath) {
+    private boolean should(WebEndpointProperties webEndpointProperties, Environment environment, String basePath) {
         return webEndpointProperties.getDiscovery().isEnabled() && (StringUtils.hasText(basePath) || ManagementPortType.get(environment).equals(ManagementPortType.DIFFERENT));
     }
 }

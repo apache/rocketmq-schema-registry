@@ -112,7 +112,7 @@ public class DependencyHelper {
                 .collect(Collectors.toList());
             log.info("Success flush java files: " + javaFileList);
             return CommonUtil.compileJavaFile(javaFileList);
-        } catch (Throwable e){
+        } catch (Throwable e) {
             throw new SchemaException("Compile schema failed", e);
         }
     }

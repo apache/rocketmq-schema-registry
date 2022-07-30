@@ -29,7 +29,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Dependency implements Serializable {
     private static final long serialVersionUID = -5947555406026133852L;
-    
+
     private String groupId;
     private String artifactId;
     private String version;

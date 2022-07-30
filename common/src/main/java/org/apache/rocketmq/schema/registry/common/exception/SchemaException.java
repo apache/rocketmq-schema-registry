@@ -24,7 +24,9 @@ public class SchemaException extends RuntimeException {
 
     private final int errorCode = 50001;
 
-    /** Constructor. */
+    /**
+     * Constructor.
+     */
     public SchemaException() {
         super();
     }
@@ -41,7 +43,7 @@ public class SchemaException extends RuntimeException {
     /**
      * Constructor.
      *
-     * @param msg The error message
+     * @param msg   The error message
      * @param cause The cause of the error
      */
     public SchemaException(final String msg, final Throwable cause) {
