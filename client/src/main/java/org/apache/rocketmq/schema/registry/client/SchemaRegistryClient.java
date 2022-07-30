@@ -47,14 +47,10 @@ public interface SchemaRegistryClient {
     SchemaRecordDto getSchemaBySubject(String cluster, String tenant,
         String subject) throws IOException, RestClientException;
 
-    SchemaRecordDto getSchemaBySubject(String cluster, String tenant, String subject,
+    SchemaRecordDto getSchemaBySubjectAndVersion(String cluster, String tenant, String subject,
         long version) throws IOException, RestClientException;
 
     List<SchemaRecordDto> getSchemaListBySubject(String cluster, String tenant,
         String subject) throws RestClientException, IOException;
-
-    SchemaRecordDto getSchemaById(long schemaId);
-
-    SchemaRecordDto getSchemaBySubjectAndId(String subject, long schemaId);
 
 }
