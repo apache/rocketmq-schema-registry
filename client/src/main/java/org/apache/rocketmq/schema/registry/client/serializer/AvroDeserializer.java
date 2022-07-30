@@ -17,14 +17,27 @@
 
 package org.apache.rocketmq.schema.registry.client.serializer;
 
-import java.io.Closeable;
+import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
+
 import java.util.Map;
 
-public interface Serializer<T> extends Closeable {
+public class AvroDeserializer<T> extends AbstractAvroDeserializer implements Deserializer<T> {
+    public AvroDeserializer(){}
 
-    default void configure(Map<String, ?> configs) {}
+    public AvroDeserializer(SchemaRegistryClient schemaRegistryClient) {
+        schemaRegistry = schemaRegistryClient;
+    }
 
-    byte[] serialize(String subject, T originMessage);
+    @Override
+    public void configure(Map<String, ?> configs) {
+    }
 
-    default void close(){}
+    @Override
+    public T deserialize(String subject, byte[] bytes) {
+        return (T) deserializeImpl(subject, bytes);
+    }
+
+    @Override
+    public void close() {
+    }
 }

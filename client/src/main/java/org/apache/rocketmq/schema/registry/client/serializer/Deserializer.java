@@ -20,11 +20,10 @@ package org.apache.rocketmq.schema.registry.client.serializer;
 import java.io.Closeable;
 import java.util.Map;
 
-public interface Serializer<T> extends Closeable {
-
+public interface Deserializer<T> extends Closeable {
     default void configure(Map<String, ?> configs) {}
 
-    byte[] serialize(String subject, T originMessage);
+    T deserialize(String subject, byte[] bytes);
 
-    default void close(){}
+    default void close(){};
 }
