@@ -15,36 +15,38 @@
  * limitations under the License.
  */
 
-package org.apache.rocketmq.schema.registry.common.model;
+package org.apache.rocketmq.schema.registry.common.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.apache.rocketmq.schema.registry.common.dto.SchemaRecordDto;
-import org.apache.rocketmq.schema.registry.common.exception.SchemaException;
+import org.apache.rocketmq.schema.registry.common.model.Compatibility;
+import org.apache.rocketmq.schema.registry.common.model.SchemaType;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SchemaDetailInfo implements Serializable {
-    private static final long serialVersionUID = 3113021009662503334L;
+public class RegisterSchemaRequest extends BaseDto {
+    private static final long serialVersionUID = 7890248374919863930L;
 
-    private List<SchemaRecordInfo> schemaRecords = new ArrayList<>();
+    @ApiModelProperty(value = "First IDL of this schema", example = "{\"type\": \"string\"}", required = true)
+    private String schemaIdl;
 
-    public SchemaDetailInfo(SchemaRecordInfo firstSchemaRecord) {
-        this.schemaRecords.add(firstSchemaRecord);
-    }
+    @ApiModelProperty(value = "Schema type")
+    private SchemaType schemaType = SchemaType.AVRO;
 
-    public SchemaRecordInfo lastRecord() {
-        if (schemaRecords == null || schemaRecords.isEmpty()) {
-            throw new SchemaException("Schema record could not been empty");
-        }
-        return schemaRecords.get(schemaRecords.size() - 1);
-    }
+    @ApiModelProperty(value = "Schema owner", example = "li")
+    private String owner = "";
+
+    @ApiModelProperty(value = "Schema compatibility")
+    private Compatibility compatibility = Compatibility.BACKWARD;
+
+    @ApiModelProperty(value = "Schema description", example = "my first schema")
+    private String desc = "";
+
 }

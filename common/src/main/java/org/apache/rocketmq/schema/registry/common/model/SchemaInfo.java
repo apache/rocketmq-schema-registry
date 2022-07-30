@@ -17,12 +17,14 @@
 
 package org.apache.rocketmq.schema.registry.common.model;
 
+import java.util.HashMap;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.apache.rocketmq.schema.registry.common.QualifiedName;
 
 @Data
 @Builder
@@ -32,13 +34,23 @@ import lombok.NoArgsConstructor;
 public class SchemaInfo extends BaseInfo {
     private static final long serialVersionUID = -5143258312429353896L;
 
-    private SchemaMetaInfo meta;
+    private SchemaMetaInfo meta = new SchemaMetaInfo();
 
-    private SchemaDetailInfo details;
+    private SchemaDetailInfo details = new SchemaDetailInfo();
 
-    private SchemaStorageInfo storage;
+    private SchemaStorageInfo storage = new SchemaStorageInfo();
 
-    private Map<String, String> extras;
+    private Map<String, String> extras = new HashMap<>();
+
+    public SchemaInfo(final QualifiedName qualifiedName,
+        final AuditInfo audit,
+        final SchemaMetaInfo meta,
+        final SchemaDetailInfo details
+    ) {
+        super(qualifiedName, audit);
+        this.meta = meta;
+        this.details = details;
+    }
 
     public String getSchemaName() {
         return getQualifiedName().getSchema();
@@ -77,6 +89,7 @@ public class SchemaInfo extends BaseInfo {
         return getLastRecord().getVersion();
     }
 
+    @Deprecated
     public void setLastRecordVersion(long version) {
         getLastRecord().setVersion(version);
     }

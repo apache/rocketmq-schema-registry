@@ -18,12 +18,13 @@
 package org.apache.rocketmq.schema.registry.core.service;
 
 import java.util.List;
-import java.util.Optional;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.dto.BaseDto;
-import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
+import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaRequest;
+import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaResponse;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaRecordDto;
-import org.apache.rocketmq.schema.registry.common.model.SchemaRecordInfo;
+import org.apache.rocketmq.schema.registry.common.dto.UpdateSchemaRequest;
+import org.apache.rocketmq.schema.registry.common.dto.UpdateSchemaResponse;
 
 public interface SchemaService<T extends BaseDto> {
 
@@ -34,7 +35,7 @@ public interface SchemaService<T extends BaseDto> {
      * @param dto register resource information
      * @return registered schema object
      */
-    T register(QualifiedName qualifiedName, T dto);
+    RegisterSchemaResponse register(QualifiedName qualifiedName, RegisterSchemaRequest dto);
 
     /**
      * Register the schema.
@@ -43,7 +44,7 @@ public interface SchemaService<T extends BaseDto> {
      * @param dto update information
      * @return updated schema object
      */
-    T update(QualifiedName qualifiedName, T dto);
+    UpdateSchemaResponse update(QualifiedName qualifiedName, UpdateSchemaRequest dto);
 
     /**
      * Deletes the schema.

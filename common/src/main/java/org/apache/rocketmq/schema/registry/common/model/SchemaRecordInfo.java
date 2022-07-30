@@ -33,17 +33,14 @@ public class SchemaRecordInfo implements Serializable {
 
     private String schema;
     private long schemaId;
-    private long version;
+    private long version = 1L;
     private String idl;
     private Dependency dependency;
-    private List<SubjectInfo> subjects;
+    private List<SubjectInfo> subjects = new ArrayList<>();
     private SchemaType type;
     //    private List<FieldInfo> fields;
 
     public void bindSubject(final SubjectInfo subjectInfo) {
-        if (getSubjects() == null) {
-            setSubjects(new ArrayList<>());
-        }
         getSubjects().add(subjectInfo);
     }
 

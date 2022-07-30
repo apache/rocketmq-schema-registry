@@ -14,29 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.rocketmq.schema.registry.common.dto;
 
-import java.io.Serializable;
-
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.apache.rocketmq.schema.registry.common.json.JsonConverter;
-import org.apache.rocketmq.schema.registry.common.json.JsonConverterImpl;
 
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class UpdateSchemaResponse extends BaseDto {
+    private static final long serialVersionUID = 822296169833367618L;
 
-/**
- * Base class for all DTOs, and all DTOs should be READ-ONLY.
- */
-public abstract class BaseDto implements Serializable {
-    protected static final JsonConverter JSON_CONVERTER = new JsonConverterImpl();
+    @ApiModelProperty(value = "Schema unique id", required = true)
+    private long schemaId;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return JSON_CONVERTER.toString(this);
-    }
-
+    @ApiModelProperty(value = "Version of this schema record")
+    private long version;
 }

@@ -16,9 +16,9 @@ Getting started
 #### Installation
 
 ```shell
-git clone git@github.com:apache/rocketmq-schema-registry.git
-cd rocketmq-schema-registry
-./mvnw clean package
+$ git clone git@github.com:apache/rocketmq-schema-registry.git
+$ cd rocketmq-schema-registry
+$ mvn clean package
 ```
 
 #### Prepare storage layer
@@ -41,18 +41,18 @@ $ nohup sh mqnamesrv &
 $ nohup sh bin/mqbroker -n localhost:9876 &
 ```
 
-#### Edit configuration
+#### Edit configuration (Optional)
 
 * Config storage local cache path
 ```shell
-$ storage.local.cache.path="" >> schema-storage-rocketmq/src/main/resources
+$ echo "storage.local.cache.path=${user.dir}" >> storage-rocketmq/src/main/resources/rocketmq.properties
 ```
 
 #### Deployment & Running locally
 
-Take the build JAR in target/build/schema-register.jar and run `java -cp schema-register.jar` to start service.
+Take the build JAR in core/target/ and run `java -jar rocketmq-schema-registry-core-0.0.3-SNAPSHOT.jar` to start service.
 
-The REST API can be accessed from http://localhost:8080/schema-registry/v1
+Then REST API can be accessed from http://localhost:8080/schema-registry/v1
 
 Swagger API documentation can be accessed from http://localhost:8080/swagger-ui/index.html
 
@@ -80,31 +80,31 @@ API Reference
 ```shell
 
 # Register new schema on specified subject with default cluster and tenant
-$ curl -X post -H "Content-Type: application/json" \
---data '{"details":{"schemaRecords":[{"idl":"{\"type\":\"record\",\"name\":\"Demo\",\"namespace\":\"com.schema.example\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"id\",\"type\":\"int\"}]}"}]}, "meta":{"compatibility":"BACKWARD","namespace":"com.schema.example","owner":"test","schemaName":"Demo","tenant":"default","type":"AVRO"}}' \
-http://localhost:8080/schema-registry/v1/subject/{subject-name}/schema/{schema-name}
+$ curl -X POST -H "Content-Type: application/json" \
+-d '{"schemaIdl":"{\"type\":\"record\",\"name\":\"SchemaName\",\"namespace\":\"rocketmq.schema.example\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}"}' \
+http://localhost:8080/schema-registry/v1/subject/RMQTopic/schema/SchemaName
 
 # Register new schema with cluster specified cluster and tenant
-$ curl -X post -H "Content-Type: application/json" \
---data '{"details":{"schemaRecords":[{"idl":"{\"type\":\"record\",\"name\":\"Demo\",\"namespace\":\"com.schema.example\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"id\",\"type\":\"int\"}]}"}]}, "meta":{"compatibility":"BACKWARD","namespace":"com.schema.example","owner":"test","schemaName":"Demo","tenant":"default","type":"AVRO"}}' \
-http://localhost:8080/schema-registry/v1/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/{schema-name}
+$ curl -X POST -H "Content-Type: application/json" \
+-d '{"schema": "{\"type\": \"string\"}"}' \
+http://localhost:8080/schema-registry/v1/cluster/default/tenant/default/subject/RMQTopic2/schema/Text
 
 # Delete schema all version
-$ curl -X delete http://localhost:8080/schema-registry/v1/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema
+$ curl -X DELETE http://localhost:8080/schema-registry/v1/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema
 
 # Update schema and generate a new version, you can also use default cluster and tenant like register interface
-$ curl -X put -H "Content-Type: application/json" \
---data '{"details":{"schemaRecords":[{"idl":"{\"type\":\"record\",\"name\":\"Demo\",\"namespace\":\"com.schema.example\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"type\",\"type\":\"string\"}]}"}]}, "meta":{"compatibility":"BACKWARD","namespace":"com.schema.example","owner":"test","schemaName":"Demo","tenant":"default","type":"AVRO"}}' \
-http://localhost:8080/schema-registry/v1/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/{schema-name}
+$ curl -X PUT -H "Content-Type: application/json" \
+-d '{"schemaIdl":"{\"type\":\"record\",\"name\":\"SchemaName\",\"namespace\":\"rocketmq.schema.example\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"id\",\"type\":\"string\",\"default\":\"0\"}]}"}' \
+http://localhost:8080/schema-registry/v1/subject/RMQTopic/schema/SchemaName
 
 # Get binding schema version by subject with specified cluster and tenant, , you can also use default cluster and tenant like register interface
-$ curl -X GET http://localhost:8081/schema-registry/v1/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema
+$ curl -X GET http://localhost:8080/schema-registry/v1/subject/RMQTopic/schema
 
 # Get schema record by specified version
-$ curl -X GET http://localhost:8081/schema-registry/v1/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/versions/{version}
+$ curl -X GET http://localhost:8080/schema-registry/v1/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/versions/{version}
 
 # Get all schema record
-$ curl -X GET http://localhost:8081/schema-registry/v1/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/versions
+$ curl -X GET http://localhost:8080/schema-registry/v1/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/versions
 ```
 
 Contribute

@@ -39,4 +39,16 @@ public class AuditInfo implements Serializable {
     private Date createdTime;
     private String lastModifiedBy;
     private Date lastModifiedTime;
+
+    public void createBy(String user, String desc) {
+        this.desc = desc;
+        this.createdBy = user;
+        this.lastModifiedBy = user;
+        this.createdTime = this.lastModifiedTime = new Date(System.currentTimeMillis());
+    }
+
+    public void updateBy(String user) {
+        this.lastModifiedBy = user;
+        this.lastModifiedTime = new Date(System.currentTimeMillis());
+    }
 }

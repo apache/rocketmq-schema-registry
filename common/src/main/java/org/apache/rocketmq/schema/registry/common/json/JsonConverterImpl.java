@@ -19,6 +19,7 @@ package org.apache.rocketmq.schema.registry.common.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import java.nio.charset.StandardCharsets;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -89,7 +90,7 @@ public class JsonConverterImpl implements JsonConverter {
 
     @Override
     public String toString(Object o) {
-        return null;
+        return gson.toJson(o);
     }
 
     @Override

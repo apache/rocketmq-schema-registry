@@ -35,7 +35,6 @@ public class SchemaStorageInfo implements Serializable {
     private static final long serialVersionUID = -6655281552098217740L;
 
     private String serdeProtocol;
-    // TODO  delete?
     private String serializationLib;
     private Map<String, String> serdeInfo;
     private String uri;

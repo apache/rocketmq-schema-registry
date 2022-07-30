@@ -14,29 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.rocketmq.schema.registry.common.dto;
 
-import java.io.Serializable;
-
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.apache.rocketmq.schema.registry.common.json.JsonConverter;
-import org.apache.rocketmq.schema.registry.common.json.JsonConverterImpl;
+import org.apache.rocketmq.schema.registry.common.model.Compatibility;
+import org.apache.rocketmq.schema.registry.common.model.SchemaType;
 
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class UpdateSchemaRequest extends BaseDto {
+    private static final long serialVersionUID = 2966846398643703675L;
 
-/**
- * Base class for all DTOs, and all DTOs should be READ-ONLY.
- */
-public abstract class BaseDto implements Serializable {
-    protected static final JsonConverter JSON_CONVERTER = new JsonConverterImpl();
+    @ApiModelProperty(value = "Update IDL of this schema", example = "{\"type\": \"int\"}", required = true)
+    private String schemaIdl;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return JSON_CONVERTER.toString(this);
-    }
+    @ApiModelProperty(value = "Schema owner", example = "li")
+    private String owner = "";
 
+    @ApiModelProperty(value = "Schema description", example = "update schema")
+    private String desc = "";
 }

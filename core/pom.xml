@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.apache.rocketmq</groupId>
         <artifactId>rocketmq-schema-registry-all</artifactId>
-        <version>0.0.2-SNAPSHOT</version>
+        <version>0.0.3-SNAPSHOT</version>
     </parent>
 
     <packaging>jar</packaging>
@@ -22,7 +22,7 @@
 
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
-            <artifactId>schema-storage-rocketmq</artifactId>
+            <artifactId>storage-rocketmq</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
@@ -70,12 +70,12 @@
                     <include>**/*.*</include>
                 </includes>
             </resource>
-            <resource>
-                <directory>../storage-rocketmq/src/main/resources</directory>
-                <includes>
-                    <include>**/*.*</include>
-                </includes>
-            </resource>
+<!--            <resource>-->
+<!--                <directory>../storage-rocketmq/src/main/resources</directory>-->
+<!--                <includes>-->
+<!--                    <include>**/*.*</include>-->
+<!--                </includes>-->
+<!--            </resource>-->
         </resources>
     </build>
 
