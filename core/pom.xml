@@ -9,20 +9,19 @@
     </parent>
 
     <packaging>jar</packaging>
-    <artifactId>core</artifactId>
-    <name>rocketmq-schema-registry-core-${project.version}</name>
+    <artifactId>schema-registry-core</artifactId>
     <description>rocketmq-schema-registry-core</description>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
-            <artifactId>common</artifactId>
+            <artifactId>schema-registry-common</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
-            <artifactId>storage-rocketmq</artifactId>
+            <artifactId>schema-registry-storage-rocketmq</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

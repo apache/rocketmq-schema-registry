@@ -26,8 +26,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>storage-rocketmq</artifactId>
-    <name>rocketmq-schema-registry-storage-rocketmq-${project.version}</name>
+    <artifactId>schema-registry-storage-rocketmq</artifactId>
     <packaging>jar</packaging>
 
     <properties>
@@ -37,7 +36,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
-            <artifactId>common</artifactId>
+            <artifactId>schema-registry-common</artifactId>
             <version>${project.version}</version>
         </dependency>
 

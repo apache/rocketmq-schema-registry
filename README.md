@@ -25,7 +25,7 @@ Getting started
 ```shell
 git clone git@github.com:apache/rocketmq-schema-registry.git
 cd rocketmq-schema-registry
-./mvnw clean package
+./mvn clean package
 ```
 
 #### Prepare storage layer
