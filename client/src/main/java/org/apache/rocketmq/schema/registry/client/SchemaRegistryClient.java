@@ -20,34 +20,39 @@ package org.apache.rocketmq.schema.registry.client;
 import java.io.IOException;
 import java.util.List;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
-import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
+import org.apache.rocketmq.schema.registry.common.dto.DeleteSchemeResponse;
+import org.apache.rocketmq.schema.registry.common.dto.GetSchemaResponse;
+import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaRequest;
+import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaResponse;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaRecordDto;
+import org.apache.rocketmq.schema.registry.common.dto.UpdateSchemaRequest;
+import org.apache.rocketmq.schema.registry.common.dto.UpdateSchemaResponse;
 
 public interface SchemaRegistryClient {
 
-    SchemaDto registerSchema(String subject, String schemaName,
-        SchemaDto schemaDto) throws RestClientException, IOException;
+    RegisterSchemaResponse registerSchema(String subject, String schemaName,
+        RegisterSchemaRequest request) throws RestClientException, IOException;
 
-    SchemaDto registerSchema(String clusterName, String tenant, String subjectName, String schemaName,
-        SchemaDto schemaDto) throws IOException, RestClientException;
+    RegisterSchemaResponse registerSchema(String clusterName, String tenant, String subjectName, String schemaName,
+        RegisterSchemaRequest request) throws IOException, RestClientException;
 
-    SchemaDto deleteSchema(String cluster, String tenant, String subject) throws IOException, RestClientException;
+    DeleteSchemeResponse deleteSchema(String cluster, String tenant, String subject) throws IOException, RestClientException;
 
-    SchemaDto deleteSchema(String cluster, String tenant, String subject,
+    DeleteSchemeResponse deleteSchema(String cluster, String tenant, String subject,
         long version) throws IOException, RestClientException;
 
-    SchemaDto updateSchema(String subject, String schemaName,
-        SchemaDto schemaDto) throws RestClientException, IOException;
+    UpdateSchemaResponse updateSchema(String subject, String schemaName,
+        UpdateSchemaRequest request) throws RestClientException, IOException;
 
-    SchemaDto updateSchema(String cluster, String tenant, String subjectName, String schemaName,
-        SchemaDto schemaDto) throws IOException, RestClientException;
+    UpdateSchemaResponse updateSchema(String cluster, String tenant, String subjectName, String schemaName,
+        UpdateSchemaRequest request) throws IOException, RestClientException;
 
-    SchemaRecordDto getSchemaBySubject(String subject) throws RestClientException, IOException;
+    GetSchemaResponse getSchemaBySubject(String subject) throws RestClientException, IOException;
 
-    SchemaRecordDto getSchemaBySubject(String cluster, String tenant,
+    GetSchemaResponse getSchemaBySubject(String cluster, String tenant,
         String subject) throws IOException, RestClientException;
 
-    SchemaRecordDto getSchemaBySubjectAndVersion(String cluster, String tenant, String subject,
+    GetSchemaResponse getSchemaBySubjectAndVersion(String cluster, String tenant, String subject,
         long version) throws IOException, RestClientException;
 
     List<SchemaRecordDto> getSchemaListBySubject(String cluster, String tenant,
