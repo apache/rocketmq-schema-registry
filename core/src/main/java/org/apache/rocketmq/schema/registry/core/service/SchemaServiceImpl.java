@@ -26,6 +26,8 @@ import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.auth.AccessControlService;
 import org.apache.rocketmq.schema.registry.common.context.RequestContext;
 import org.apache.rocketmq.schema.registry.common.context.RequestContextManager;
+import org.apache.rocketmq.schema.registry.common.dto.DeleteSchemeResponse;
+import org.apache.rocketmq.schema.registry.common.dto.GetSchemaBySubjectResponse;
 import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaRequest;
 import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaResponse;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
@@ -188,20 +190,20 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
      * {@inheritDoc}
      */
     @Override
-    public SchemaDto delete(QualifiedName qualifiedName) {
+    public DeleteSchemeResponse delete(QualifiedName qualifiedName) {
         final RequestContext requestContext = RequestContextManager.getContext();
         log.info("delete request context: " + requestContext);
 
         this.accessController.checkPermission("", qualifiedName.getTenant(), SchemaOperation.DELETE);
 
-        SchemaInfo current = storageServiceProxy.get(qualifiedName, config.isCacheEnabled());
+        SchemaRecordInfo current = storageServiceProxy.getBySubject(qualifiedName, config.isCacheEnabled());
         if (current == null) {
             throw new SchemaNotFoundException("Schema " + qualifiedName + " not exist, ignored update.");
         }
 
         log.info("delete schema {}", qualifiedName);
         storageServiceProxy.delete(qualifiedName);
-        return storageUtil.convertToSchemaDto(current);
+        return new DeleteSchemeResponse(current.getSchemaId(), current.getVersion());
     }
 
     // TODO add get last record query
@@ -231,11 +233,10 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
      * {@inheritDoc}
      */
     @Override
-    public SchemaRecordDto getBySubject(QualifiedName qualifiedName) {
+    public GetSchemaBySubjectResponse getBySubject(QualifiedName qualifiedName) {
         final RequestContext requestContext = RequestContextManager.getContext();
         log.info("register get request context: " + requestContext);
 
-//        CommonUtil.validateName(qualifiedName);
         this.accessController.checkPermission("", qualifiedName.getSubject(), SchemaOperation.GET);
 
         SchemaRecordInfo recordInfo = storageServiceProxy.getBySubject(qualifiedName, config.isCacheEnabled());
@@ -244,7 +245,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
         }
 
         log.info("get schema by subject: {}", qualifiedName.getSubject());
-        return storageUtil.convertToSchemaRecordDto(recordInfo);
+        return new GetSchemaBySubjectResponse(qualifiedName, recordInfo);
     }
 
     @Override
@@ -252,7 +253,6 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
         final RequestContext requestContext = RequestContextManager.getContext();
         log.info("register get request context: " + requestContext);
 
-        //        CommonUtil.validateName(qualifiedName);
         this.accessController.checkPermission("", qualifiedName.getSubject(), SchemaOperation.GET);
 
         List<SchemaRecordInfo> recordInfos = storageServiceProxy.listBySubject(qualifiedName, config.isCacheEnabled());

@@ -20,6 +20,8 @@ package org.apache.rocketmq.schema.registry.core.service;
 import java.util.List;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.dto.BaseDto;
+import org.apache.rocketmq.schema.registry.common.dto.DeleteSchemeResponse;
+import org.apache.rocketmq.schema.registry.common.dto.GetSchemaBySubjectResponse;
 import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaRequest;
 import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaResponse;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaRecordDto;
@@ -52,7 +54,7 @@ public interface SchemaService<T extends BaseDto> {
      * @param qualifiedName tenant / name of the schema
      * @return deleted schema object
      */
-    T delete(QualifiedName qualifiedName);
+    DeleteSchemeResponse delete(QualifiedName qualifiedName);
 
     /**
      * Query the schema object with the given name.
@@ -68,7 +70,7 @@ public interface SchemaService<T extends BaseDto> {
      * @param qualifiedName subject of the schema binding
      * @return schema object with the schemaName
      */
-    SchemaRecordDto getBySubject(QualifiedName qualifiedName);
+    GetSchemaBySubjectResponse getBySubject(QualifiedName qualifiedName);
 
     /**
      * Query the schema object with the given subject name.
