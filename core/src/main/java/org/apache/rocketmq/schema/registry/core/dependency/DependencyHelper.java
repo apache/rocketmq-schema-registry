@@ -17,6 +17,8 @@
 
 package org.apache.rocketmq.schema.registry.core.dependency;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -64,6 +66,12 @@ public class DependencyHelper {
     public DependencyHelper(final String jdkPath, final String parentDir, final SchemaInfo schemaInfo) {
         this.schemaName = schemaInfo.getSchemaName();
 
+        JsonObject object = JsonParser.parseString(schemaInfo.getLastRecordIdl()).getAsJsonObject();
+        if (object.get("namespace") == null) {
+            throw new SchemaException("namespace field should not be empty");
+        }
+
+        schemaInfo.getMeta().setNamespace(object.get("namespace").getAsString());
         this.dependency = Dependency.builder()
             .groupId(schemaInfo.getNamespace())
             .artifactId(schemaInfo.getSchemaName())

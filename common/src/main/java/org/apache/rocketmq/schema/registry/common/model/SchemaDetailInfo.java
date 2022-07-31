@@ -18,6 +18,7 @@
 package org.apache.rocketmq.schema.registry.common.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,7 +31,11 @@ import org.apache.rocketmq.schema.registry.common.exception.SchemaException;
 public class SchemaDetailInfo implements Serializable {
     private static final long serialVersionUID = 3113021009662503334L;
 
-    private List<SchemaRecordInfo> schemaRecords;
+    private List<SchemaRecordInfo> schemaRecords = new ArrayList<>();
+
+    public SchemaDetailInfo(SchemaRecordInfo firstSchemaRecord) {
+        this.schemaRecords.add(firstSchemaRecord);
+    }
 
     public SchemaRecordInfo lastRecord() {
         if (schemaRecords == null || schemaRecords.isEmpty()) {

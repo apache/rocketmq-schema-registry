@@ -20,7 +20,13 @@ package org.apache.rocketmq.schema.registry.core.service;
 import java.util.List;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.dto.BaseDto;
+import org.apache.rocketmq.schema.registry.common.dto.DeleteSchemeResponse;
+import org.apache.rocketmq.schema.registry.common.dto.GetSchemaResponse;
+import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaRequest;
+import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaResponse;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaRecordDto;
+import org.apache.rocketmq.schema.registry.common.dto.UpdateSchemaRequest;
+import org.apache.rocketmq.schema.registry.common.dto.UpdateSchemaResponse;
 
 public interface SchemaService<T extends BaseDto> {
 
@@ -31,7 +37,7 @@ public interface SchemaService<T extends BaseDto> {
      * @param dto           register resource information
      * @return registered schema object
      */
-    T register(QualifiedName qualifiedName, T dto);
+    RegisterSchemaResponse register(QualifiedName qualifiedName, RegisterSchemaRequest dto);
 
     /**
      * Register the schema.
@@ -40,7 +46,7 @@ public interface SchemaService<T extends BaseDto> {
      * @param dto           update information
      * @return updated schema object
      */
-    T update(QualifiedName qualifiedName, T dto);
+    UpdateSchemaResponse update(QualifiedName qualifiedName, UpdateSchemaRequest dto);
 
     /**
      * Deletes the schema.
@@ -48,7 +54,7 @@ public interface SchemaService<T extends BaseDto> {
      * @param qualifiedName tenant / name of the schema
      * @return deleted schema object
      */
-    T delete(QualifiedName qualifiedName);
+    DeleteSchemeResponse delete(QualifiedName qualifiedName);
 
     /**
      * Query the schema object with the given name.
@@ -64,7 +70,7 @@ public interface SchemaService<T extends BaseDto> {
      * @param qualifiedName subject of the schema binding
      * @return schema object with the schemaName
      */
-    SchemaRecordDto getBySubject(QualifiedName qualifiedName);
+    GetSchemaResponse getBySubject(QualifiedName qualifiedName);
 
     /**
      * Query the schema object with the given subject name.

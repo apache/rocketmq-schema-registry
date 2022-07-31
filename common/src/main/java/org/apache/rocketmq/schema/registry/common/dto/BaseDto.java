@@ -33,32 +33,5 @@ public abstract class BaseDto implements Serializable {
     public String toString() {
         return JSON_CONVERTER.toString(this);
     }
-//
-//    /**
-//     * Deserialize data from the input stream.
-//     *
-//     * @param inputStream input stream
-//     * @return Json ObjectNode
-//     * @throws IOException exception deserializing the stream
-//     */
-//    @Nullable
-//    public static ObjectNode deserializeObjectNode(
-//        @Nonnull @NonNull final ObjectInputStream inputStream
-//    ) throws IOException {
-//        return JSON_CONVERTER.deserializeObjectNode(inputStream);
-//    }
-//
-//    /**
-//     * Serialize data in the output stream.
-//     *
-//     * @param outputStream output stream
-//     * @param jsonObject         jsonObject
-//     * @throws IOException exception serializing the json
-//     */
-//    public static void serializeObjectNode(
-//        @Nonnull @NonNull final ObjectOutputStream outputStream,
-//        @Nullable final ObjectNode jsonObject
-//    ) throws IOException {
-//        JSON_CONVERTER.serializeObjectNode(outputStream, jsonObject);
-//    }
+
 }

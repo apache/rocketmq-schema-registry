@@ -87,7 +87,7 @@ public class JsonConverterImpl implements JsonConverter {
 
     @Override
     public String toString(Object o) {
-        return null;
+        return gson.toJson(o);
     }
 
     @Override

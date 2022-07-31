@@ -26,8 +26,14 @@ import java.net.HttpURLConnection;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
+import org.apache.rocketmq.schema.registry.common.dto.DeleteSchemeResponse;
+import org.apache.rocketmq.schema.registry.common.dto.GetSchemaResponse;
+import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaRequest;
+import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaResponse;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaRecordDto;
+import org.apache.rocketmq.schema.registry.common.dto.UpdateSchemaRequest;
+import org.apache.rocketmq.schema.registry.common.dto.UpdateSchemaResponse;
 import org.apache.rocketmq.schema.registry.core.api.RequestProcessor;
 import org.apache.rocketmq.schema.registry.core.service.SchemaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,15 +106,15 @@ public class SchemaController {
             )
         }
         )
-    public SchemaDto registerSchema(
+    public RegisterSchemaResponse registerSchema(
         @ApiParam(value = "The subject of the schema", required = true)
         @PathVariable(value = "subject-name") final String subject,
         @ApiParam(value = "The name of the schema", required = true)
         @PathVariable(value = "schema-name") final String schemaName,
         @ApiParam(value = "The schema detail", required = true)
-        @RequestBody final SchemaDto schemaDto
+        @RequestBody final RegisterSchemaRequest registerSchemaRequest
     ) {
-        return registerSchema(DEFAULT_CLUSTER, DEFAULT_TENANT, subject, schemaName, schemaDto);
+        return registerSchema(DEFAULT_CLUSTER, DEFAULT_TENANT, subject, schemaName, registerSchemaRequest);
     }
 
     @RequestMapping(
@@ -133,7 +139,7 @@ public class SchemaController {
             )
         }
         )
-    public SchemaDto registerSchema(
+    public RegisterSchemaResponse registerSchema(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,
         @ApiParam(value = "The tenant of the schema", required = true)
@@ -143,17 +149,16 @@ public class SchemaController {
         @ApiParam(value = "The name of the schema", required = true)
         @PathVariable(value = "schema-name") final String schemaName,
         @ApiParam(value = "The schema detail", required = true)
-        @RequestBody final SchemaDto schemaDto
+        @RequestBody final RegisterSchemaRequest registerSchemaDto
     ) {
         // TODO: support register by sql
         final QualifiedName name = new QualifiedName(cluster, tenant, subject, schemaName);
-        schemaDto.setQualifiedName(name);
 
         return this.requestProcessor.processRequest(
             name,
             "register",
             () -> {
-                return this.schemaService.register(name, schemaDto);
+                return this.schemaService.register(name, registerSchemaDto);
             }
         );
     }
@@ -177,8 +182,9 @@ public class SchemaController {
                 code = HttpURLConnection.HTTP_NOT_FOUND,
                 message = "The requested schema cannot be found or it's still been used"
             )
-        })
-    public SchemaDto deleteSchema(
+        }
+        )
+    public DeleteSchemeResponse deleteSchema(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,
         @ApiParam(value = "The tenant of the schema", required = true)
@@ -215,7 +221,7 @@ public class SchemaController {
             )
         }
         )
-    public SchemaDto deleteSchema(
+    public DeleteSchemeResponse deleteSchema(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,
         @ApiParam(value = "The tenant of the schema", required = true)
@@ -254,15 +260,15 @@ public class SchemaController {
             )
         }
         )
-    public SchemaDto updateSchema(
+    public UpdateSchemaResponse updateSchema(
         @ApiParam(value = "The subject of the schema", required = true)
         @PathVariable(value = "subject-name") final String subject,
         @ApiParam(value = "The name of the schema", required = true)
         @PathVariable(value = "schema-name") final String schemaName,
         @ApiParam(value = "The schema detail", required = true)
-        @RequestBody final SchemaDto schemaDto
+        @RequestBody final UpdateSchemaRequest updateSchemaRequest
     ) {
-        return updateSchema(DEFAULT_CLUSTER, DEFAULT_TENANT, subject, schemaName, schemaDto);
+        return updateSchema(DEFAULT_CLUSTER, DEFAULT_TENANT, subject, schemaName, updateSchemaRequest);
     }
 
     @RequestMapping(
@@ -286,7 +292,7 @@ public class SchemaController {
             )
         }
         )
-    public SchemaDto updateSchema(
+    public UpdateSchemaResponse updateSchema(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,
         @ApiParam(value = "The tenant of the schema", required = true)
@@ -296,13 +302,13 @@ public class SchemaController {
         @ApiParam(value = "The name of the schema", required = true)
         @PathVariable(value = "schema-name") final String schemaName,
         @ApiParam(value = "The schema detail", required = true)
-        @RequestBody final SchemaDto schemaDto
+        @RequestBody final UpdateSchemaRequest updateSchemaRequest
     ) {
         QualifiedName name = new QualifiedName(cluster, tenant, subject, schemaName);
         return this.requestProcessor.processRequest(
             name,
             "updateSchema",
-            () -> this.schemaService.update(name, schemaDto)
+            () -> this.schemaService.update(name, updateSchemaRequest)
         );
     }
 
@@ -325,7 +331,7 @@ public class SchemaController {
             )
         }
         )
-    public SchemaRecordDto getSchemaBySubject(
+    public GetSchemaResponse getSchemaBySubject(
         @ApiParam(value = "The name of the subject", required = true)
         @PathVariable(value = "subject-name") String subject
     ) {
@@ -351,7 +357,7 @@ public class SchemaController {
             )
         }
         )
-    public SchemaRecordDto getSchemaBySubject(
+    public GetSchemaResponse getSchemaBySubject(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,
         @ApiParam(value = "The tenant of the schema", required = true)
@@ -387,7 +393,7 @@ public class SchemaController {
             )
         }
         )
-    public SchemaRecordDto getSchemaBySubject(
+    public GetSchemaResponse getSchemaBySubject(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,
         @ApiParam(value = "The tenant of the schema", required = true)

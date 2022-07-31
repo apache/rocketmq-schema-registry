@@ -6,6 +6,7 @@ target/
 log/
 log/*
 tools/
+schema-registry/
 
 ### STS ###
 .apt_generated

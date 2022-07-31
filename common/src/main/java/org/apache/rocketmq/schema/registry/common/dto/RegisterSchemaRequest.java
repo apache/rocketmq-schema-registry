@@ -15,39 +15,38 @@
  * limitations under the License.
  */
 
-package org.apache.rocketmq.schema.registry.common.model;
+package org.apache.rocketmq.schema.registry.common.dto;
 
-import java.io.Serializable;
-import java.util.Date;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.apache.rocketmq.schema.registry.common.model.Compatibility;
+import org.apache.rocketmq.schema.registry.common.model.SchemaType;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class AuditInfo implements Serializable {
-    private static final long serialVersionUID = 2258089775496856662L;
+@AllArgsConstructor
+public class RegisterSchemaRequest extends BaseDto {
+    private static final long serialVersionUID = 7890248374919863930L;
 
-    private String desc;
-    private String createdBy;
-    private Date createdTime;
-    private String lastModifiedBy;
-    private Date lastModifiedTime;
+    @ApiModelProperty(value = "First IDL of this schema", example = "{\"type\": \"string\"}", required = true)
+    private String schemaIdl;
 
-    public void createBy(String user, String desc) {
-        this.desc = desc;
-        this.createdBy = user;
-        this.lastModifiedBy = user;
-        this.createdTime = this.lastModifiedTime = new Date(System.currentTimeMillis());
-    }
+    @ApiModelProperty(value = "Schema type")
+    private SchemaType schemaType = SchemaType.AVRO;
 
-    public void updateBy(String user) {
-        this.lastModifiedBy = user;
-        this.lastModifiedTime = new Date(System.currentTimeMillis());
-    }
+    @ApiModelProperty(value = "Schema owner", example = "li")
+    private String owner = "";
+
+    @ApiModelProperty(value = "Schema compatibility")
+    private Compatibility compatibility = Compatibility.BACKWARD;
+
+    @ApiModelProperty(value = "Schema description", example = "my first schema")
+    private String desc = "";
+
 }

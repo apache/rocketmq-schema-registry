@@ -52,6 +52,7 @@ import org.apache.rocketmq.schema.registry.common.json.JsonConverterImpl;
 import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
 import org.apache.rocketmq.schema.registry.common.model.SchemaRecordInfo;
 import org.apache.rocketmq.schema.registry.common.model.SubjectInfo;
+import org.apache.rocketmq.schema.registry.common.utils.CommonUtil;
 import org.apache.rocketmq.tools.admin.DefaultMQAdminExt;
 import org.rocksdb.ColumnFamilyDescriptor;
 import org.rocksdb.ColumnFamilyHandle;
@@ -156,6 +157,7 @@ public class RocketmqClient {
 
     private void startLocalCache() {
         try {
+            CommonUtil.mkdir(cachePath);
             List<byte[]> cfs = RocksDB.listColumnFamilies(options, cachePath);
             if (cfs.size() <= 1) {
                 List<byte[]> columnFamilies = Arrays.asList(STORAGE_ROCKSDB_SCHEMA_COLUMN_FAMILY,

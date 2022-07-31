@@ -38,7 +38,7 @@ public class RocketmqConfigConstants {
     public static final String STORAGE_ROCKETMQ_TOPIC_DEFAULT = "RMQ_SYS_schema_registry_storage";
 
     public static final String STORAGE_LOCAL_CACHE_PATH = "storage.local.cache.path";
-    public static final String STORAGE_LOCAL_CACHE_PATH_DEFAULT = "/tmp/schema-registry/cache";
+    public static final String STORAGE_LOCAL_CACHE_PATH_DEFAULT = "schema-registry/cache";
 
     public static final byte[] STORAGE_ROCKSDB_SCHEMA_DEFAULT_FAMILY = "default".getBytes(StandardCharsets.UTF_8);
     public static final byte[] STORAGE_ROCKSDB_SCHEMA_COLUMN_FAMILY = "schema".getBytes(StandardCharsets.UTF_8);

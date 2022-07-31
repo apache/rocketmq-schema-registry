@@ -15,10 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.rocketmq.schema.registry.common.model;
+package org.apache.rocketmq.schema.registry.common.dto;
 
-import java.io.Serializable;
-import java.util.Date;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,26 +27,14 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class AuditInfo implements Serializable {
-    private static final long serialVersionUID = 2258089775496856662L;
+@AllArgsConstructor
+public class UpdateSchemaResponse extends BaseDto {
+    private static final long serialVersionUID = 822296169833367618L;
 
-    private String desc;
-    private String createdBy;
-    private Date createdTime;
-    private String lastModifiedBy;
-    private Date lastModifiedTime;
+    @ApiModelProperty(value = "Schema unique id", required = true)
+    private long schemaId;
 
-    public void createBy(String user, String desc) {
-        this.desc = desc;
-        this.createdBy = user;
-        this.lastModifiedBy = user;
-        this.createdTime = this.lastModifiedTime = new Date(System.currentTimeMillis());
-    }
-
-    public void updateBy(String user) {
-        this.lastModifiedBy = user;
-        this.lastModifiedTime = new Date(System.currentTimeMillis());
-    }
+    @ApiModelProperty(value = "Version of this schema record")
+    private long version;
 }
