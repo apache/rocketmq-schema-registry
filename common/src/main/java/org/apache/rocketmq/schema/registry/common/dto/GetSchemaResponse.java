@@ -34,7 +34,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetSchemaBySubjectResponse extends BaseDto {
+public class GetSchemaResponse extends BaseDto {
     private static final long serialVersionUID = -4612593696179069203L;
 
     @ApiModelProperty(value = "Schema dependency")
@@ -58,7 +58,7 @@ public class GetSchemaBySubjectResponse extends BaseDto {
     @ApiModelProperty(value = "Schema type")
     private SchemaType type;
 
-    public GetSchemaBySubjectResponse(QualifiedName name, SchemaRecordInfo schemaRecordInfo) {
+    public GetSchemaResponse(QualifiedName name, SchemaRecordInfo schemaRecordInfo) {
         this.subjectFullName = name.subjectFullName();
         this.schemaId = schemaRecordInfo.getSchemaId();
         this.version = schemaRecordInfo.getVersion();

@@ -27,7 +27,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.dto.DeleteSchemeResponse;
-import org.apache.rocketmq.schema.registry.common.dto.GetSchemaBySubjectResponse;
+import org.apache.rocketmq.schema.registry.common.dto.GetSchemaResponse;
 import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaRequest;
 import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaResponse;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
@@ -331,7 +331,7 @@ public class SchemaController {
             )
         }
         )
-    public GetSchemaBySubjectResponse getSchemaBySubject(
+    public GetSchemaResponse getSchemaBySubject(
         @ApiParam(value = "The name of the subject", required = true)
         @PathVariable(value = "subject-name") String subject
     ) {
@@ -357,7 +357,7 @@ public class SchemaController {
             )
         }
         )
-    public GetSchemaBySubjectResponse getSchemaBySubject(
+    public GetSchemaResponse getSchemaBySubject(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,
         @ApiParam(value = "The tenant of the schema", required = true)
@@ -393,7 +393,7 @@ public class SchemaController {
             )
         }
         )
-    public GetSchemaBySubjectResponse getSchemaBySubject(
+    public GetSchemaResponse getSchemaBySubject(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,
         @ApiParam(value = "The tenant of the schema", required = true)

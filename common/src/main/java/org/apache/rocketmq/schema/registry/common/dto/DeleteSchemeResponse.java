@@ -35,7 +35,7 @@ public class DeleteSchemeResponse extends BaseDto {
     @ApiModelProperty(value = "Deleted schema id")
     private long schemaId;
 
-    @ApiModelProperty(value = "Deleted schema id")
+    @ApiModelProperty(value = "Deleted schema version")
     private long version;
 
 }

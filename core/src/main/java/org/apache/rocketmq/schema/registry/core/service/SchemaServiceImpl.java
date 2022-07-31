@@ -27,7 +27,7 @@ import org.apache.rocketmq.schema.registry.common.auth.AccessControlService;
 import org.apache.rocketmq.schema.registry.common.context.RequestContext;
 import org.apache.rocketmq.schema.registry.common.context.RequestContextManager;
 import org.apache.rocketmq.schema.registry.common.dto.DeleteSchemeResponse;
-import org.apache.rocketmq.schema.registry.common.dto.GetSchemaBySubjectResponse;
+import org.apache.rocketmq.schema.registry.common.dto.GetSchemaResponse;
 import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaRequest;
 import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaResponse;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
@@ -233,7 +233,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
      * {@inheritDoc}
      */
     @Override
-    public GetSchemaBySubjectResponse getBySubject(QualifiedName qualifiedName) {
+    public GetSchemaResponse getBySubject(QualifiedName qualifiedName) {
         final RequestContext requestContext = RequestContextManager.getContext();
         log.info("register get request context: " + requestContext);
 
@@ -245,7 +245,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
         }
 
         log.info("get schema by subject: {}", qualifiedName.getSubject());
-        return new GetSchemaBySubjectResponse(qualifiedName, recordInfo);
+        return new GetSchemaResponse(qualifiedName, recordInfo);
     }
 
     @Override
