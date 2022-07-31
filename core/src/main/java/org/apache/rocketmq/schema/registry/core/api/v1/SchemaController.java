@@ -103,7 +103,7 @@ public class SchemaController {
                 message = "The requested schema cannot be registered"
             )
         }
-    )
+        )
     public RegisterSchemaResponse registerSchema(
         @ApiParam(value = "The subject of the schema", required = true)
         @PathVariable(value = "subject-name") final String subject,
@@ -136,7 +136,7 @@ public class SchemaController {
                 message = "The requested schema cannot be registered"
             )
         }
-    )
+        )
     public RegisterSchemaResponse registerSchema(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,
@@ -180,7 +180,8 @@ public class SchemaController {
                 code = HttpURLConnection.HTTP_NOT_FOUND,
                 message = "The requested schema cannot be found or it's still been used"
             )
-        })
+        }
+        )
     public SchemaDto deleteSchema(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,
@@ -256,7 +257,7 @@ public class SchemaController {
                 message = "The requested schema cannot be found"
             )
         }
-    )
+        )
     public UpdateSchemaResponse updateSchema(
         @ApiParam(value = "The subject of the schema", required = true)
         @PathVariable(value = "subject-name") final String subject,
@@ -288,7 +289,7 @@ public class SchemaController {
                 message = "The requested schema cannot be found"
             )
         }
-    )
+        )
     public UpdateSchemaResponse updateSchema(
         @ApiParam(value = "The cluster of the subject", required = true)
         @PathVariable(value = "cluster-name") final String cluster,

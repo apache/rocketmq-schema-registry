@@ -43,7 +43,6 @@ import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
 import org.apache.rocketmq.schema.registry.common.model.SchemaMetaInfo;
 import org.apache.rocketmq.schema.registry.common.model.SchemaOperation;
 import org.apache.rocketmq.schema.registry.common.model.SchemaRecordInfo;
-import org.apache.rocketmq.schema.registry.common.model.SubjectInfo;
 import org.apache.rocketmq.schema.registry.common.properties.GlobalConfig;
 import org.apache.rocketmq.schema.registry.common.storage.StorageServiceProxy;
 import org.apache.rocketmq.schema.registry.common.utils.CommonUtil;
