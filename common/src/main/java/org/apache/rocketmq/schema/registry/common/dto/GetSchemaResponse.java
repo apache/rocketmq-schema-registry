@@ -60,7 +60,7 @@ public class GetSchemaResponse extends BaseDto {
 
     public GetSchemaResponse(QualifiedName name, SchemaRecordInfo schemaRecordInfo) {
         this.subjectFullName = name.subjectFullName();
-        this.schemaFullName = name.schemaFullName();
+        this.schemaFullName = schemaRecordInfo.getSchema();
         this.schemaId = schemaRecordInfo.getSchemaId();
         this.version = schemaRecordInfo.getVersion();
         this.idl = schemaRecordInfo.getIdl();

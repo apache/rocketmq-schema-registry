@@ -123,7 +123,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
         }
 
         log.info("Creating schema info {}: {}", qualifiedName, schemaInfo);
-        storageServiceProxy.register(qualifiedName, schemaInfo);
+        storageServiceProxy.register(schemaInfo);
         return new RegisterSchemaResponse(schemaInfo.getUniqueId(), schemaInfo.getLastRecordVersion());
     }
 
@@ -137,7 +137,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         this.accessController.checkPermission("", "", SchemaOperation.UPDATE);
 
-        SchemaInfo current = storageServiceProxy.get(qualifiedName, config.isCacheEnabled());
+        SchemaInfo current = storageServiceProxy.get(qualifiedName);
         if (current == null) {
             throw new SchemaNotFoundException("Schema " + qualifiedName + " not exist, ignored update.");
         }
@@ -182,7 +182,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
         }
 
         log.info("Updating schema info {}: {}", qualifiedName, update);
-        storageServiceProxy.update(qualifiedName, update);
+        storageServiceProxy.update(update);
         return new UpdateSchemaResponse(updateRecord.getSchemaId(), updateRecord.getVersion());
     }
 
@@ -196,7 +196,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         this.accessController.checkPermission("", qualifiedName.getTenant(), SchemaOperation.DELETE);
 
-        SchemaRecordInfo current = storageServiceProxy.getBySubject(qualifiedName, config.isCacheEnabled());
+        SchemaRecordInfo current = storageServiceProxy.getBySubject(qualifiedName);
         if (current == null) {
             throw new SchemaNotFoundException("Schema " + qualifiedName + " not exist, ignored update.");
         }
@@ -220,7 +220,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         this.accessController.checkPermission("", qualifiedName.getTenant(), SchemaOperation.GET);
 
-        SchemaInfo schemaInfo = storageServiceProxy.get(qualifiedName, config.isCacheEnabled());
+        SchemaInfo schemaInfo = storageServiceProxy.get(qualifiedName);
         if (schemaInfo == null) {
             throw new SchemaNotFoundException(qualifiedName);
         }
@@ -239,7 +239,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         this.accessController.checkPermission("", qualifiedName.getSubject(), SchemaOperation.GET);
 
-        SchemaRecordInfo recordInfo = storageServiceProxy.getBySubject(qualifiedName, config.isCacheEnabled());
+        SchemaRecordInfo recordInfo = storageServiceProxy.getBySubject(qualifiedName);
         if (recordInfo == null) {
             throw new SchemaException("Subject: " + qualifiedName + " not exist");
         }
@@ -255,7 +255,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         this.accessController.checkPermission("", qualifiedName.getSubject(), SchemaOperation.GET);
 
-        List<SchemaRecordInfo> recordInfos = storageServiceProxy.listBySubject(qualifiedName, config.isCacheEnabled());
+        List<SchemaRecordInfo> recordInfos = storageServiceProxy.listBySubject(qualifiedName);
         if (recordInfos == null) {
             throw new SchemaException("Subject: " + qualifiedName + " not exist");
         }
@@ -265,7 +265,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
     }
 
     private void checkSchemaExist(final QualifiedName qualifiedName) {
-        if (storageServiceProxy.get(qualifiedName, config.isCacheEnabled()) != null) {
+        if (storageServiceProxy.get(qualifiedName) != null) {
             throw new SchemaExistException(qualifiedName);
         }
     }

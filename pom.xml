@@ -37,6 +37,7 @@
         <module>storage-rocketmq</module>
         <module>war</module>
         <module>client</module>
+        <module>example</module>
     </modules>
 
     <properties>
@@ -210,6 +211,23 @@
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>3.0.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.avro</groupId>
+                    <artifactId>avro-maven-plugin</artifactId>
+                    <version>1.8.0</version>
+                    <executions>
+                        <execution>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>schema</goal>
+                            </goals>
+                            <configuration>
+                                <sourceDirectory>${project.basedir}/src/main/avro/</sourceDirectory>
+                                <outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>

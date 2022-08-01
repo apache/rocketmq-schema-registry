@@ -26,12 +26,8 @@ import org.apache.rocketmq.schema.registry.common.context.StorageServiceContext;
 import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
 import org.apache.rocketmq.schema.registry.common.model.SchemaRecordInfo;
 import org.apache.rocketmq.schema.registry.common.utils.StorageUtil;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 
 @Slf4j
-@CacheConfig(cacheNames = "storage")
 public class StorageServiceProxy {
 
     private final StorageManager storageManager;
@@ -51,13 +47,9 @@ public class StorageServiceProxy {
     /**
      * Proxy calls the StorageService's register method.
      *
-     * @param qualifiedName Qualified name with tenant / name of schema
      * @param schemaInfo    schema object
      */
-    public SchemaInfo register(
-        final QualifiedName qualifiedName,
-        final SchemaInfo schemaInfo
-    ) {
+    public SchemaInfo register(final SchemaInfo schemaInfo) {
         final RequestContext requestContext = RequestContextManager.getContext();
         final StorageServiceContext storageContext = storageUtil.convertToStorageServiceContext(requestContext);
         final StorageService<SchemaInfo> storageService = storageManager.getStorageService();
@@ -70,7 +62,6 @@ public class StorageServiceProxy {
      *
      * @param name Qualified name with tenant / name of schema
      */
-    @CacheEvict(key = "'schema.' + #name.getTenant() + '/' + #name.getSchema()")
     public void delete(final QualifiedName name) {
         final RequestContext requestContext = RequestContextManager.getContext();
         final StorageServiceContext storageServiceContext = storageUtil.convertToStorageServiceContext(requestContext);
@@ -82,12 +73,10 @@ public class StorageServiceProxy {
     /**
      * Proxy calls the StorageService's update method.
      *
-     * @param name       schema qualified name
      * @param schemaInfo schema information instance
      * @return true if errors after this should be ignored.
      */
-    @CacheEvict(key = "'schema.' + #name.getTenant() + '/' + #name.getSchema()")
-    public SchemaInfo update(final QualifiedName name, final SchemaInfo schemaInfo) {
+    public SchemaInfo update(final SchemaInfo schemaInfo) {
         final RequestContext requestContext = RequestContextManager.getContext();
         final StorageServiceContext storageServiceContext = storageUtil.convertToStorageServiceContext(requestContext);
         final StorageService<SchemaInfo> service = storageManager.getStorageService();
@@ -99,11 +88,9 @@ public class StorageServiceProxy {
      * Proxy calls the StorageService's get method. Returns schema from store if <code>useCache</code> is false.
      *
      * @param name     Qualified name with tenant / name of schema
-     * @param useCache if schema can be retrieved from cache
      * @return schema information instance
      */
-    @Cacheable(key = "'schema.' + #name.getTenant() + '/' + #name.getSchema()", condition = "#useCache")
-    public SchemaInfo get(final QualifiedName name, final boolean useCache) {
+    public SchemaInfo get(final QualifiedName name) {
         final RequestContext requestContext = RequestContextManager.getContext();
         final StorageServiceContext storageServiceContext = storageUtil.convertToStorageServiceContext(requestContext);
         final StorageService<SchemaInfo> storageService = storageManager.getStorageService();
@@ -111,7 +98,7 @@ public class StorageServiceProxy {
         return storageService.get(storageServiceContext, name);
     }
 
-    public SchemaRecordInfo getBySubject(final QualifiedName name, final boolean useCache) {
+    public SchemaRecordInfo getBySubject(final QualifiedName name) {
         final RequestContext requestContext = RequestContextManager.getContext();
         final StorageServiceContext storageServiceContext = storageUtil.convertToStorageServiceContext(requestContext);
         final StorageService<SchemaInfo> storageService = storageManager.getStorageService();
@@ -119,7 +106,7 @@ public class StorageServiceProxy {
         return storageService.getBySubject(storageServiceContext, name);
     }
 
-    public List<SchemaRecordInfo> listBySubject(final QualifiedName name, final boolean useCache) {
+    public List<SchemaRecordInfo> listBySubject(final QualifiedName name) {
         final RequestContext requestContext = RequestContextManager.getContext();
         final StorageServiceContext storageServiceContext = storageUtil.convertToStorageServiceContext(requestContext);
         final StorageService<SchemaInfo> storageService = storageManager.getStorageService();

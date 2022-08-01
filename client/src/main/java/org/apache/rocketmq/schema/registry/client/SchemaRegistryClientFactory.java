@@ -23,6 +23,11 @@ import java.util.Map;
 
 public class SchemaRegistryClientFactory {
 
+    /**
+     * @param baseUrl  schema-registry base url (http://ip:port/schema-registry/v1)
+     * @param map      optional http request headers
+     * @return
+     */
     public static SchemaRegistryClient newClient(String baseUrl, Map<String, String> map) {
         RestService restService = null == map ? new RestService(baseUrl) : new RestService(baseUrl, map);
         return new NormalSchemaRegistryClient(restService);

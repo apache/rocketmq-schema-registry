@@ -1,0 +1,15 @@
+{
+    "type":"record",
+    "name":"Charge",
+    "namespace":"org.apache.rocketmq.schema.registry.example.serde",
+    "fields":[
+        {
+            "name":"item",
+            "type":"string"
+        },
+        {
+            "name":"amount",
+            "type":"double"
+        }
+    ]
+}
