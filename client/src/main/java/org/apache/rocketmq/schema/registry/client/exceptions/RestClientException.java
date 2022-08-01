@@ -18,21 +18,20 @@
 package org.apache.rocketmq.schema.registry.client.exceptions;
 
 public class RestClientException extends Exception {
+    private static final long serialVersionUID = 5169207805322753739L;
 
     private final int status;
-    private final int errorCode;
 
-    public RestClientException(final String message, final int status, final int errorCode) {
-        super(message + "; error code: " + errorCode);
+    public RestClientException(int status, String detailMessage) {
+        super(detailMessage);
         this.status = status;
-        this.errorCode = errorCode;
     }
 
     public int getStatus() {
         return status;
     }
 
-    public int getErrorCode() {
-        return errorCode;
+    public String getMessage() {
+        return super.getMessage();
     }
 }

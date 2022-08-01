@@ -17,22 +17,25 @@
 
 package org.apache.rocketmq.schema.registry.client.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
 import org.apache.rocketmq.schema.registry.client.rest.JacksonMapper;
+import org.apache.rocketmq.schema.registry.common.utils.ErrorMessage;
 
 public class HttpUtil {
     public static ObjectMapper jsonParser = JacksonMapper.INSTANCE;
     private static final int HTTP_CONNECT_TIMEOUT_MS = 30000;
     private static final int HTTP_READ_TIMEOUT_MS = 30000;
-    private static final int ERROR_CODE = 5001;
+    private static final int PARSE_ERROR_CODE = 5001;
 
     public static <T> T sendHttpRequest(String requestUrl, String method, String requestBodyData,
         Map<String, String> requestProperties,
@@ -47,8 +50,8 @@ public class HttpUtil {
 
             if (requestBodyData != null) {
                 connection.setDoOutput(true);
-                try (DataOutputStream os = new DataOutputStream(connection.getOutputStream())) {
-                    os.writeBytes(requestBodyData);
+                try (OutputStream os = connection.getOutputStream()) {
+                    os.write(requestBodyData.getBytes(StandardCharsets.UTF_8));
                     os.flush();
                 } catch (IOException e) {
                     throw e;
@@ -56,16 +59,24 @@ public class HttpUtil {
             }
 
             int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
+            if (responseCode == HttpURLConnection.HTTP_OK) {
                 InputStream is = connection.getInputStream();
                 T result = jsonParser.readValue(is, responseFormat);
                 is.close();
                 return result;
-            } else if (responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
-                return null;
             } else {
-                throw new RestClientException("send request failed", responseCode,
-                    ERROR_CODE);
+                ErrorMessage errorMessage;
+                try (InputStream es = connection.getErrorStream()) {
+                    if (es != null) {
+                        errorMessage = jsonParser.readValue(es, ErrorMessage.class);
+                    } else {
+                        errorMessage = new ErrorMessage(PARSE_ERROR_CODE, "request error");
+                    }
+                } catch (JsonProcessingException e) {
+                    errorMessage = new ErrorMessage(PARSE_ERROR_CODE, e.getMessage());
+                }
+
+                throw new RestClientException(errorMessage.getStatus(), errorMessage.getMessage());
             }
 
         } finally {

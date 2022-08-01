@@ -21,10 +21,11 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaException;
+import org.apache.rocketmq.schema.registry.common.utils.ErrorMessage;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice
+@ControllerAdvice
 @Slf4j
 public class RequestExceptionHandler {
 
@@ -37,11 +38,15 @@ public class RequestExceptionHandler {
      */
     @ExceptionHandler(SchemaException.class)
     public void handleException(
-        final HttpServletResponse response,
-        final SchemaException e
+        final SchemaException e,
+        final HttpServletResponse response
     ) throws IOException {
-        log.error("Global handle SchemaException: " + e.getMessage(), e);
-        response.sendError(e.getErrorCode(), e.getMessage());
+        ErrorMessage errorMessage = new ErrorMessage(e);
+        log.error("Global handle SchemaException: " + errorMessage, e);
+        response.setContentType("application/json");
+        response.setStatus(e.getErrorCode());
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(errorMessage.toString());
     }
 
 }
