@@ -64,6 +64,7 @@ import org.rocksdb.RocksDBException;
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.DELETE_KEYS;
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_LOCAL_CACHE_PATH;
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_LOCAL_CACHE_PATH_DEFAULT;
+import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_ROCKETMQ_COMPACT_TOPIC_DEFAULT;
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_ROCKETMQ_CONSUMER_GROUP;
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_ROCKETMQ_CONSUMER_GROUP_DEFAULT;
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_ROCKETMQ_NAMESRV;
@@ -72,6 +73,8 @@ import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.Rocke
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_ROCKETMQ_PRODUCER_GROUP_DEFAULT;
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_ROCKETMQ_TOPIC;
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_ROCKETMQ_TOPIC_DEFAULT;
+import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_ROCKETMQ_USE_COMPACT_TOPIC;
+import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_ROCKETMQ_USE_COMPACT_TOPIC_DEFAULT;
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_ROCKSDB_SCHEMA_COLUMN_FAMILY;
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_ROCKSDB_SUBJECT_COLUMN_FAMILY;
 
@@ -82,6 +85,7 @@ public class RocketmqClient {
     private DefaultLitePullConsumer scheduleConsumer;
     private DefaultMQAdminExt mqAdminExt;
     private String storageTopic;
+    private boolean useCompactTopic;
     private String cachePath;
     private JsonConverter converter;
     private final List<ColumnFamilyHandle> cfHandleList = new ArrayList<>();
@@ -136,10 +140,11 @@ public class RocketmqClient {
                     topicConfig.setTopicName(storageTopic);
                     topicConfig.setReadQueueNums(8);
                     topicConfig.setWriteQueueNums(8);
-                    // create compact topic
-                    Map<String, String> attributes = new HashMap<>(1);
-                    attributes.put("+delete.policy", "COMPACTION");
-                    topicConfig.setAttributes(attributes);
+                    if (useCompactTopic) {
+                        Map<String, String> attributes = new HashMap<>(1);
+                        attributes.put("+delete.policy", "COMPACTION");
+                        topicConfig.setAttributes(attributes);
+                    }
                     String brokerAddr = brokerData.selectBrokerAddr();
                     mqAdminExt.createAndUpdateTopicConfig(brokerAddr, topicConfig);
                 }
@@ -259,6 +264,11 @@ public class RocketmqClient {
                         } else {
                             SchemaInfo current = converter.fromJson(result, SchemaInfo.class);
                             boolean isDeleted = current.getRecordCount() > update.getRecordCount();
+                            if (current.getLastModifiedTime() != null && update.getLastModifiedTime() != null &&
+                                current.getLastModifiedTime().after(update.getLastModifiedTime())) {
+                                log.info("Current Schema is later version, no need to update.");
+                                return;
+                            }
                             if (current.getLastRecordVersion() == update.getLastRecordVersion() && !isDeleted) {
                                 log.info("Schema version is the same, no need to update.");
                                 return;
@@ -415,7 +425,10 @@ public class RocketmqClient {
     }
 
     private void init(Properties props) {
-        this.storageTopic = props.getProperty(STORAGE_ROCKETMQ_TOPIC, STORAGE_ROCKETMQ_TOPIC_DEFAULT);
+        this.useCompactTopic = Boolean.parseBoolean(props.getProperty(STORAGE_ROCKETMQ_USE_COMPACT_TOPIC,
+            STORAGE_ROCKETMQ_USE_COMPACT_TOPIC_DEFAULT));
+        String defaultTopic = useCompactTopic ? STORAGE_ROCKETMQ_COMPACT_TOPIC_DEFAULT : STORAGE_ROCKETMQ_TOPIC_DEFAULT;
+        this.storageTopic = props.getProperty(STORAGE_ROCKETMQ_TOPIC, defaultTopic);
         this.cachePath = props.getProperty(STORAGE_LOCAL_CACHE_PATH, STORAGE_LOCAL_CACHE_PATH_DEFAULT);
 
         this.producer = new DefaultMQProducer(

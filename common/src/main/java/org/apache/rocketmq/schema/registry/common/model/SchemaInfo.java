@@ -17,6 +17,7 @@
 
 package org.apache.rocketmq.schema.registry.common.model;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -89,12 +90,11 @@ public class SchemaInfo extends BaseInfo {
         return getLastRecord().getVersion();
     }
 
-    @Deprecated
-    public void setLastRecordVersion(long version) {
-        getLastRecord().setVersion(version);
-    }
-
     public int getRecordCount() {
         return getDetails().getSchemaRecords().size();
+    }
+
+    public Date getLastModifiedTime() {
+        return getAudit() != null ? getAudit().getLastModifiedTime() : null;
     }
 }

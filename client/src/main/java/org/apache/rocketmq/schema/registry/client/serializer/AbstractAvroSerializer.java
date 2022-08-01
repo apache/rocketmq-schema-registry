@@ -30,7 +30,6 @@ import org.apache.rocketmq.schema.registry.common.dto.GetSchemaResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.concurrent.ExecutionException;
 
 public class AbstractAvroSerializer<T> {
 
@@ -70,8 +69,6 @@ public class AbstractAvroSerializer<T> {
             byte[] bytes = out.toByteArray();
             out.close();
             return bytes;
-        } catch (ExecutionException e) {
-            throw new SerializationException("serialize Avro message failed", e.getCause());
         } catch (IOException | RuntimeException e) {
             throw new SerializationException("serialize Avro message failed", e);
         } catch (RestClientException e) {
@@ -79,13 +76,11 @@ public class AbstractAvroSerializer<T> {
         }
     }
 
-    private void writeDatum(ByteArrayOutputStream out, Object originMessage, Schema schema)
-            throws ExecutionException, IOException {
+    private void writeDatum(ByteArrayOutputStream out, T originMessage, Schema schema)
+            throws IOException {
         BinaryEncoder encoder = encoderFactory.directBinaryEncoder(out, null);
 
-        DatumWriter<Object> datumWriter = new SpecificDatumWriter<>(schema);
-        datumWriter.write(originMessage, encoder);
-        encoder.flush();
+        DatumWriter<T> datumWriter = new SpecificDatumWriter<>(schema);
         datumWriter.write(originMessage, encoder);
         encoder.flush();
     }

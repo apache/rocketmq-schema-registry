@@ -35,7 +35,11 @@ public class RocketmqConfigConstants {
     public static final String STORAGE_ROCKETMQ_NAMESRV_DEFAULT = "http://localhost:9876";
 
     public static final String STORAGE_ROCKETMQ_TOPIC = "storage.rocketmq.topic";
-    public static final String STORAGE_ROCKETMQ_TOPIC_DEFAULT = "RMQ_SYS_schema_registry_storage";
+    public static final String STORAGE_ROCKETMQ_TOPIC_DEFAULT = "RMQ_SYS_schema_registry_storage_topic";
+    public static final String STORAGE_ROCKETMQ_COMPACT_TOPIC_DEFAULT = "RMQ_SYS_schema_registry_storage_compact_topic";
+
+    public static final String STORAGE_ROCKETMQ_USE_COMPACT_TOPIC = "storage.rocketmq.use.compact.topic";
+    public static final String STORAGE_ROCKETMQ_USE_COMPACT_TOPIC_DEFAULT = "false";
 
     public static final String STORAGE_LOCAL_CACHE_PATH = "storage.local.cache.path";
     public static final String STORAGE_LOCAL_CACHE_PATH_DEFAULT = "schema-registry/cache";
