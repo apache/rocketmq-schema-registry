@@ -27,10 +27,10 @@ import org.springframework.context.annotation.Configuration;
 public class ClientConfig {
 
     /**
-     * Talos client instance.
+     * RocketMQ client instance.
      *
-     * @param context connector context
-     * @return MetacatTalosClient
+     * @param context storage plugin context
+     * @return RocketmqStorageClient
      */
     @Bean
     public RocketmqStorageClient rocketmqStorageClient(StoragePluginContext context) {

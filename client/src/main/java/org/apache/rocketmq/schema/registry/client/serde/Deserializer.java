@@ -15,16 +15,15 @@
  * limitations under the License.
  */
 
-package org.apache.rocketmq.schema.registry.client.serializer;
+package org.apache.rocketmq.schema.registry.client.serde;
 
 import java.io.Closeable;
 import java.util.Map;
 
-public interface Serializer<T> extends Closeable {
+public interface Deserializer<T> extends Closeable {
+    default void configure(Map<String, Object> configs) {}
 
-    default void configure(Map<String, ?> configs) {}
+    T deserialize(String subject, byte[] bytes);
 
-    byte[] serialize(String subject, T originMessage);
-
-    default void close(){}
+    default void close(){};
 }

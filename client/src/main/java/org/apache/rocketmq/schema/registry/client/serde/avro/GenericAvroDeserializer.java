@@ -14,30 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.rocketmq.schema.registry.client.serde.avro;
 
-package org.apache.rocketmq.schema.registry.client.serializer;
-
+import org.apache.avro.generic.GenericRecord;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
+import org.apache.rocketmq.schema.registry.client.serde.Deserializer;
 
 import java.util.Map;
 
-public class AvroDeserializer<T> extends AbstractAvroDeserializer implements Deserializer<T> {
-    public AvroDeserializer(){}
+public class GenericAvroDeserializer implements Deserializer<GenericRecord> {
+    private final AvroDeserializer<GenericRecord> inner;
 
-    public AvroDeserializer(SchemaRegistryClient schemaRegistryClient) {
-        schemaRegistry = schemaRegistryClient;
+    public GenericAvroDeserializer() {
+        this.inner = new AvroDeserializer<>();
+    }
+
+    public GenericAvroDeserializer(final SchemaRegistryClient client) {
+        this.inner = new AvroDeserializer<>(client);
     }
 
     @Override
-    public void configure(Map<String, ?> configs) {
+    public void configure(final Map<String, Object> configs) {
+        this.inner.configure(configs);
     }
 
     @Override
-    public T deserialize(String subject, byte[] bytes) {
-        return (T) deserializeImpl(subject, bytes);
+    public GenericRecord deserialize(String subject, byte[] bytes) {
+        return this.inner.deserialize(subject, bytes);
     }
 
     @Override
     public void close() {
+        this.inner.close();
     }
 }

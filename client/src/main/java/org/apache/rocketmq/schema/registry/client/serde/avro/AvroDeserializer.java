@@ -15,16 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.rocketmq.schema.registry.client.serializer;
+package org.apache.rocketmq.schema.registry.client.serde.avro;
 
 import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.io.BinaryDecoder;
 import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
+import org.apache.rocketmq.schema.registry.client.config.AvroDeserializerConfig;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
 import org.apache.rocketmq.schema.registry.client.exceptions.SerializationException;
+import org.apache.rocketmq.schema.registry.client.serde.Deserializer;
 import org.apache.rocketmq.schema.registry.common.dto.GetSchemaResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,15 +35,31 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Map;
 
-public class AbstractAvroDeserializer<T> {
+public class AvroDeserializer<T> implements Deserializer<T> {
 
     Logger log = LoggerFactory.getLogger(AvroDeserializer.class);
 
     private final DecoderFactory decoderFactory = DecoderFactory.get();
     protected SchemaRegistryClient schemaRegistry;
 
-    protected T deserializeImpl(String subject, byte[] payload)
+    private boolean useGenericReader;
+
+    public AvroDeserializer(){}
+
+    public AvroDeserializer(SchemaRegistryClient schemaRegistryClient) {
+        schemaRegistry = schemaRegistryClient;
+    }
+
+    @Override
+    public void configure(Map<String, Object> configs) {
+        AvroDeserializerConfig config = new AvroDeserializerConfig(configs);
+        this.useGenericReader = config.useGenericReader();
+    }
+
+    @Override
+    public T deserialize(String subject, byte[] payload)
             throws SerializationException {
         if (schemaRegistry == null) {
             throw new SerializationException("please initialize the schema registry client first");
@@ -73,9 +92,20 @@ public class AbstractAvroDeserializer<T> {
         long schemaId = buffer.getLong();
         long version = buffer.getLong();
 
-        DatumReader<T> datumReader = new SpecificDatumReader<T>(schema);
-        T originMessage = datumReader.read(null, decoder);
-        return originMessage;
+        DatumReader<T> datumReader = getDatumReader(schema);
+        T record = datumReader.read(null, decoder);
+        return record;
     }
 
+    private DatumReader<T> getDatumReader(Schema schema) {
+        if (useGenericReader) {
+            return new GenericDatumReader<>(schema);
+        } else {
+            return new SpecificDatumReader<>(schema);
+        }
+    }
+
+    @Override
+    public void close() {
+    }
 }

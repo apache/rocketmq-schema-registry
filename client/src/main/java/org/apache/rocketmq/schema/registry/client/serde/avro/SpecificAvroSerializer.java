@@ -14,35 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.rocketmq.schema.registry.client.serde.avro;
 
-package org.apache.rocketmq.schema.registry.client.serializer;
-
+import org.apache.avro.specific.SpecificRecord;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
+import org.apache.rocketmq.schema.registry.client.serde.Serializer;
 
 import java.util.Map;
 
-public class AvroSerializer<T> extends AbstractAvroSerializer implements Serializer<T> {
+public class SpecificAvroSerializer implements Serializer<SpecificRecord> {
 
-    public AvroSerializer() {}
+    private final AvroSerializer<SpecificRecord> inner;
 
-    public AvroSerializer(SchemaRegistryClient schemaRegistryClient) {
-        schemaRegistry = schemaRegistryClient;
+    public SpecificAvroSerializer() {
+        this.inner = new AvroSerializer<>();
+    }
+
+    public SpecificAvroSerializer(final SchemaRegistryClient client) {
+        this.inner = new AvroSerializer<>(client);
     }
 
     @Override
-    public void configure(Map<String, ?> configs) {
-        Serializer.super.configure(configs);
+    public void configure(final Map<String, Object> configs) {
+        this.inner.configure(configs);
     }
 
     @Override
-    public byte[] serialize(String subject, T originMessage) {
-        if (originMessage == null) {
-            return null;
-        }
-        return serializeImpl(subject, originMessage);
+    public byte[] serialize(String subject, SpecificRecord record) {
+        return this.inner.serialize(subject, record);
     }
 
     @Override
     public void close() {
+        this.inner.close();
     }
 }
