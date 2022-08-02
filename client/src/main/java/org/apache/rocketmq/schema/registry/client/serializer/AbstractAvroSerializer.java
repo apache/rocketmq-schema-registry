@@ -50,12 +50,6 @@ public class AbstractAvroSerializer<T> {
         }
 
         try {
-
-        } catch (Exception e) {
-            throw new SerializationException("get schema by subject failed", e);
-        }
-
-        try {
             GetSchemaResponse response = getSchemaBySubject(subject);
             long schemaId = response.getSchemaId();
             long schemaVersion = response.getVersion();

@@ -48,7 +48,7 @@ $ cd rocketmq-4.9.3/bin
 
 # Start namesrv & broker
 $ nohup sh mqnamesrv &
-$ nohup sh bin/mqbroker -n localhost:9876 &
+$ nohup sh mqbroker -n localhost:9876 &
 ```
 
 #### Edit configuration (Optional)
