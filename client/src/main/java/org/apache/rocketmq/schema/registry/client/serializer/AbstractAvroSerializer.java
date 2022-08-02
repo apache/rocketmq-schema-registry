@@ -33,8 +33,8 @@ import java.nio.ByteBuffer;
 
 public class AbstractAvroSerializer<T> {
 
-    private static final int SCHEMA_ID_LENGTH = 64;
-    private static final int SCHEMA_VERSION_LENGTH = 64;
+    private static final int SCHEMA_ID_LENGTH = 8;
+    private static final int SCHEMA_VERSION_LENGTH = 8;
     protected SchemaRegistryClient schemaRegistry;
     private final EncoderFactory encoderFactory = EncoderFactory.get();
 
@@ -56,10 +56,13 @@ public class AbstractAvroSerializer<T> {
             String schemaIdl = response.getIdl();
             Schema schema = new Schema.Parser().parse(schemaIdl);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            out.write(ByteBuffer.allocate(SCHEMA_ID_LENGTH).putLong(schemaId).array());
-            out.write(ByteBuffer.allocate(SCHEMA_VERSION_LENGTH).putLong(schemaVersion).array());
-            writeDatum(out, originMessage, schema);
+            BinaryEncoder encoder = encoderFactory.directBinaryEncoder(out, null);
+            ByteBuffer buffer = ByteBuffer.allocate(SCHEMA_ID_LENGTH + SCHEMA_VERSION_LENGTH);
+            encoder.writeBytes(buffer.putLong(schemaId).putLong(schemaVersion).array());
 
+            DatumWriter<T> datumWriter = new SpecificDatumWriter<>(schema);
+            datumWriter.write(originMessage, encoder);
+            encoder.flush();
             byte[] bytes = out.toByteArray();
             out.close();
             return bytes;
@@ -68,15 +71,6 @@ public class AbstractAvroSerializer<T> {
         } catch (RestClientException e) {
             throw new SerializationException("get schema by subject failed", e);
         }
-    }
-
-    private void writeDatum(ByteArrayOutputStream out, T originMessage, Schema schema)
-            throws IOException {
-        BinaryEncoder encoder = encoderFactory.directBinaryEncoder(out, null);
-
-        DatumWriter<T> datumWriter = new SpecificDatumWriter<>(schema);
-        datumWriter.write(originMessage, encoder);
-        encoder.flush();
     }
 
     private GetSchemaResponse getSchemaBySubject(String subject) throws RestClientException, IOException {

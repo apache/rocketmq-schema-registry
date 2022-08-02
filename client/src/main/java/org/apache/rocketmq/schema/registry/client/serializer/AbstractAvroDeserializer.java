@@ -70,7 +70,7 @@ public class AbstractAvroDeserializer<T> {
             log.error("read bytes error: ", e);
         }
 
-        long id = buffer.getLong();
+        long schemaId = buffer.getLong();
         long version = buffer.getLong();
 
         DatumReader<T> datumReader = new SpecificDatumReader<T>(schema);
