@@ -43,8 +43,6 @@ public class SchemaInfo extends BaseInfo {
 
     private Map<String, String> extras = new HashMap<>();
 
-    private Boolean deleted;
-
     public SchemaInfo(final QualifiedName qualifiedName,
         final AuditInfo audit,
         final SchemaMetaInfo meta,
@@ -104,13 +102,5 @@ public class SchemaInfo extends BaseInfo {
         if (getAudit() != null) {
             getAudit().setLastModifiedTime(date);
         }
-    }
-
-    public Boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
     }
 }

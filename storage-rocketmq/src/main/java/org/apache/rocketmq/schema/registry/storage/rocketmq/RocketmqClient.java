@@ -52,6 +52,7 @@ import org.apache.rocketmq.schema.registry.common.exception.SchemaExistException
 import org.apache.rocketmq.schema.registry.common.exception.SchemaNotFoundException;
 import org.apache.rocketmq.schema.registry.common.json.JsonConverter;
 import org.apache.rocketmq.schema.registry.common.json.JsonConverterImpl;
+import org.apache.rocketmq.schema.registry.common.model.SchemaDetailInfo;
 import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
 import org.apache.rocketmq.schema.registry.common.model.SchemaRecordInfo;
 import org.apache.rocketmq.schema.registry.common.model.SubjectInfo;
@@ -64,6 +65,7 @@ import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
 
+import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.DELETE_KEYS;
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_LOCAL_CACHE_PATH;
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_LOCAL_CACHE_PATH_DEFAULT;
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_ROCKETMQ_COMPACT_TOPIC_DEFAULT;
@@ -247,7 +249,8 @@ public class RocketmqClient {
                     byte[] schemaFullName = converter.toBytes(msg.getKeys());
                     byte[] schemaInfoBytes = msg.getBody();
                     SchemaInfo update = converter.fromJson(schemaInfoBytes, SchemaInfo.class);
-                    if (BooleanUtils.isTrue(update.getDeleted())) {
+                    boolean isSchemaDeleted = Boolean.parseBoolean(msg.getUserProperty(DELETE_KEYS));
+                    if (isSchemaDeleted) {
                         // delete
                         deleteAllSubject(update);
                         cache.delete(schemaCfHandle(), schemaFullName);
@@ -330,9 +333,10 @@ public class RocketmqClient {
 
         try {
             synchronized (this) {
-                schemaInfo.setDeleted(true);
                 schemaInfo.setLastModifiedTime(new Date());
+                schemaInfo.setDetails(new SchemaDetailInfo());
                 Message msg = new Message(storageTopic, "", schemaInfo.schemaFullName(), converter.toJsonAsBytes(schemaInfo));
+                msg.putUserProperty(DELETE_KEYS, "true");
                 SendResult result = sendOrderMessageToRocketmq(msg);
                 if (!result.getSendStatus().equals(SendStatus.SEND_OK)) {
                     throw new SchemaException("Delete schema: " + name + " failed: " + result.getSendStatus());
