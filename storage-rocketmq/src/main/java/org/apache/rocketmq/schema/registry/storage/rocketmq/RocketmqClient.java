@@ -20,6 +20,7 @@ package org.apache.rocketmq.schema.registry.storage.rocketmq;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +31,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.rocketmq.client.consumer.DefaultLitePullConsumer;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.client.producer.MessageQueueSelector;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.client.producer.SendStatus;
 import org.apache.rocketmq.common.ThreadFactoryImpl;
@@ -61,7 +64,6 @@ import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
 
-import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.DELETE_KEYS;
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_LOCAL_CACHE_PATH;
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_LOCAL_CACHE_PATH_DEFAULT;
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_ROCKETMQ_COMPACT_TOPIC_DEFAULT;
@@ -242,18 +244,15 @@ public class RocketmqClient {
                 try {
                     log.info("receive msg, queue={}, offset={}, key={}, the content is {}", msg.getQueueId(),
                         msg.getQueueOffset(), msg.getKeys(), new String(msg.getBody()));
-                    if (msg.getKeys().equals(DELETE_KEYS)) {
+                    byte[] schemaFullName = converter.toBytes(msg.getKeys());
+                    byte[] schemaInfoBytes = msg.getBody();
+                    SchemaInfo update = converter.fromJson(schemaInfoBytes, SchemaInfo.class);
+                    if (BooleanUtils.isTrue(update.getDeleted())) {
                         // delete
-                        byte[] schemaFullName = msg.getBody();
-                        byte[] schemaInfoBytes = cache.get(schemaCfHandle(), schemaFullName);
-                        if (schemaInfoBytes != null) {
-                            deleteAllSubject(converter.fromJson(schemaInfoBytes, SchemaInfo.class));
-                            cache.delete(schemaCfHandle(), schemaFullName);
-                        }
-                    } else {
-                        byte[] schemaFullName = converter.toBytes(msg.getKeys());
-                        byte[] schemaInfoBytes = msg.getBody();
-                        SchemaInfo update = converter.fromJson(schemaInfoBytes, SchemaInfo.class);
+                        deleteAllSubject(update);
+                        cache.delete(schemaCfHandle(), schemaFullName);
+                    }
+                    else {
                         byte[] lastRecordBytes = converter.toJsonAsBytes(update.getLastRecord());
 
                         byte[] result = cache.get(schemaCfHandle(), schemaFullName);
@@ -263,17 +262,17 @@ public class RocketmqClient {
                             cache.put(subjectCfHandle(), converter.toBytes(update.subjectFullName()), lastRecordBytes);
                         } else {
                             SchemaInfo current = converter.fromJson(result, SchemaInfo.class);
-                            boolean isDeleted = current.getRecordCount() > update.getRecordCount();
+                            boolean isVersionDeleted = current.getRecordCount() > update.getRecordCount();
                             if (current.getLastModifiedTime() != null && update.getLastModifiedTime() != null &&
                                 current.getLastModifiedTime().after(update.getLastModifiedTime())) {
                                 log.info("Current Schema is later version, no need to update.");
                                 return;
                             }
-                            if (current.getLastRecordVersion() == update.getLastRecordVersion() && !isDeleted) {
+                            if (current.getLastRecordVersion() == update.getLastRecordVersion() && !isVersionDeleted) {
                                 log.info("Schema version is the same, no need to update.");
                                 return;
                             }
-                            if (current.getLastRecordVersion() > update.getLastRecordVersion() && !isDeleted) {
+                            if (current.getLastRecordVersion() > update.getLastRecordVersion() && !isVersionDeleted) {
                                 throw new SchemaException("Schema version is invalid, update: "
                                     + update.getLastRecordVersion() + ", but current: " + current.getLastRecordVersion());
                             }
@@ -307,7 +306,8 @@ public class RocketmqClient {
                     throw new SchemaExistException(schema.getQualifiedName());
                 }
 
-                SendResult result = producer.send(new Message(storageTopic, "", schema.schemaFullName(), schemaInfo));
+                Message message = new Message(storageTopic, "", schema.schemaFullName(), schemaInfo);
+                SendResult result = sendOrderMessageToRocketmq(message);
                 if (!result.getSendStatus().equals(SendStatus.SEND_OK)) {
                     throw new SchemaException("Register schema: " + schema.getQualifiedName() + " failed: " + result.getSendStatus());
                 }
@@ -330,10 +330,10 @@ public class RocketmqClient {
 
         try {
             synchronized (this) {
-
-                byte[] schemaFullName = converter.toBytes(schemaInfo.schemaFullName());
-                Message msg = new Message(storageTopic, "", DELETE_KEYS, schemaFullName);
-                SendResult result = producer.send(msg);
+                schemaInfo.setDeleted(true);
+                schemaInfo.setLastModifiedTime(new Date());
+                Message msg = new Message(storageTopic, "", schemaInfo.schemaFullName(), converter.toJsonAsBytes(schemaInfo));
+                SendResult result = sendOrderMessageToRocketmq(msg);
                 if (!result.getSendStatus().equals(SendStatus.SEND_OK)) {
                     throw new SchemaException("Delete schema: " + name + " failed: " + result.getSendStatus());
                 }
@@ -366,7 +366,7 @@ public class RocketmqClient {
         try {
             synchronized (this) {
                 Message msg = new Message(storageTopic, "", schemaInfo.schemaFullName(), schemaInfoBytes);
-                SendResult result = producer.send(msg);
+                SendResult result = sendOrderMessageToRocketmq(msg);
                 if (result.getSendStatus() != SendStatus.SEND_OK) {
                     throw new SchemaException("Update " + name + " failed: " + result.getSendStatus());
                 }
@@ -384,7 +384,7 @@ public class RocketmqClient {
         try {
             synchronized (this) {
                 Message msg = new Message(storageTopic, "", update.schemaFullName(), schemaInfo);
-                SendResult result = producer.send(msg);
+                SendResult result = sendOrderMessageToRocketmq(msg);
                 if (result.getSendStatus() != SendStatus.SEND_OK) {
                     throw new SchemaException("Update " + update.getQualifiedName() + " failed: " + result.getSendStatus());
                 }
@@ -480,5 +480,18 @@ public class RocketmqClient {
                 throw new SchemaException("Delete schema " + current.getQualifiedName() + "'s subjects failed", e);
             }
         });
+    }
+
+    private SendResult sendOrderMessageToRocketmq(Message msg) throws Exception {
+        return this.producer.send(msg, new MessageQueueSelector() {
+            @Override
+            public MessageQueue select(List<MessageQueue> mqs, Message message, Object shardingKey) {
+                int select = Math.abs(shardingKey.hashCode());
+                if (select < 0) {
+                    select = 0;
+                }
+                return mqs.get(select % mqs.size());
+            }
+        }, msg.getKeys());
     }
 }
