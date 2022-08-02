@@ -18,10 +18,12 @@
 package org.apache.rocketmq.schema.registry.client.serializer;
 
 import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.io.BinaryEncoder;
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.specific.SpecificDatumWriter;
+import org.apache.avro.specific.SpecificRecord;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
 import org.apache.rocketmq.schema.registry.client.exceptions.SerializationException;
@@ -60,7 +62,12 @@ public class AbstractAvroSerializer<T> {
             ByteBuffer buffer = ByteBuffer.allocate(SCHEMA_ID_LENGTH + SCHEMA_VERSION_LENGTH);
             encoder.writeBytes(buffer.putLong(schemaId).putLong(schemaVersion).array());
 
-            DatumWriter<T> datumWriter = new SpecificDatumWriter<>(schema);
+            DatumWriter<T> datumWriter;
+            if (originMessage instanceof SpecificRecord) {
+                datumWriter = new SpecificDatumWriter<>(schema);
+            } else {
+                datumWriter = new GenericDatumWriter<>(schema);
+            }
             datumWriter.write(originMessage, encoder);
             encoder.flush();
             byte[] bytes = out.toByteArray();
