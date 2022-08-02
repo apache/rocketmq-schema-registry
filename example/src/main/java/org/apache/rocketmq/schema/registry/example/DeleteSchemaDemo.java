@@ -35,10 +35,14 @@ public class DeleteSchemaDemo {
         try {
             DeleteSchemeResponse response
                 = schemaRegistryClient.deleteSchema("default", "default", topic, 2);
-            System.out.println("delete schema by version success, schemaId: " + response.getSchemaId());
+            System.out.println("delete schema by subject and version success, schemaId: " + response.getSchemaId());
 
             Thread.sleep(5000);
             System.out.println("current schema: " + schemaRegistryClient.getSchemaBySubject(topic));
+
+            DeleteSchemeResponse response1
+                = schemaRegistryClient.deleteSchema("default", "default", topic);
+            System.out.println("delete schema by subject success, schemaId: " + response1.getSchemaId());
         } catch (RestClientException | IOException | InterruptedException e) {
             e.printStackTrace();
         }

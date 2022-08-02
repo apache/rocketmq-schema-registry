@@ -24,6 +24,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -46,8 +47,13 @@ public class AuditInfo implements Serializable {
         this.createdTime = this.lastModifiedTime = new Date(System.currentTimeMillis());
     }
 
-    public void updateBy(String user) {
-        this.lastModifiedBy = user;
+    public void updateBy(String user, String desc) {
+        if (StringUtils.isNotBlank(user)) {
+            this.lastModifiedBy = user;
+        }
+        if (StringUtils.isNotBlank(desc)) {
+            this.desc = desc;
+        }
         this.lastModifiedTime = new Date(System.currentTimeMillis());
     }
 }

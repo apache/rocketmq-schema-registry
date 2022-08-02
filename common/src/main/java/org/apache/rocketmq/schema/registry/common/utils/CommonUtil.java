@@ -254,7 +254,7 @@ public class CommonUtil {
                     existing.add(new Schema.Parser().parse(current.getLastRecordIdl()));
                     validator.validate(toValidate, existing);
                 } catch (SchemaValidationException e) {
-                    throw new SchemaCompatibilityException("Schema validation failed", e);
+                    throw new SchemaCompatibilityException("Schema compatibility validation failed", e);
                 }
                 break;
             default:

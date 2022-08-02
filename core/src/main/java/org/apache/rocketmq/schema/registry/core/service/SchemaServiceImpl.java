@@ -139,10 +139,8 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         SchemaInfo current = storageServiceProxy.get(qualifiedName);
         if (current == null) {
-            throw new SchemaNotFoundException("Schema " + qualifiedName + " not exist, ignored update.");
+            throw new SchemaNotFoundException("Schema " + qualifiedName.toString() + " not exist, ignored update.");
         }
-
-        current.getAudit().updateBy(updateSchemaRequest.getOwner());
 
         final SchemaRecordInfo updateRecord = new SchemaRecordInfo();
         updateRecord.setSchema(qualifiedName.schemaFullName());
@@ -170,8 +168,13 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
             update.setStorage(current.getStorage());
         }
 
-        if (update.getExtras() != null) {
+        if (current.getExtras() != null) {
             update.setExtras(current.getExtras());
+        }
+
+        if (current.getAudit() != null) {
+            update.setAudit(current.getAudit());
+            update.getAudit().updateBy(updateSchemaRequest.getOwner(), updateSchemaRequest.getDesc());
         }
 
         CommonUtil.validateCompatibility(update, current, current.getMeta().getCompatibility());
@@ -198,7 +201,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         SchemaRecordInfo current = storageServiceProxy.getBySubject(qualifiedName);
         if (current == null) {
-            throw new SchemaNotFoundException("Schema " + qualifiedName + " not exist, ignored update.");
+            throw new SchemaNotFoundException("Schema " + qualifiedName.toString() + " not exist, ignored update.");
         }
 
         log.info("delete schema {}", qualifiedName);
@@ -241,7 +244,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         SchemaRecordInfo recordInfo = storageServiceProxy.getBySubject(qualifiedName);
         if (recordInfo == null) {
-            throw new SchemaException("Subject: " + qualifiedName + " not exist");
+            throw new SchemaException("Subject: " + qualifiedName.toString() + " not exist");
         }
 
         log.info("get schema by subject: {}", qualifiedName.getSubject());
@@ -257,7 +260,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         List<SchemaRecordInfo> recordInfos = storageServiceProxy.listBySubject(qualifiedName);
         if (recordInfos == null) {
-            throw new SchemaException("Subject: " + qualifiedName + " not exist");
+            throw new SchemaException("Subject: " + qualifiedName.toString() + " not exist");
         }
 
         log.info("list schema by subject: {}", qualifiedName.getSubject());
