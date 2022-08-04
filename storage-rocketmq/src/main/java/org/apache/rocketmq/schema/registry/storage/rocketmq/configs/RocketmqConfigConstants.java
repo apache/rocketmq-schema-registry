@@ -48,6 +48,5 @@ public class RocketmqConfigConstants {
     public static final byte[] STORAGE_ROCKSDB_SCHEMA_COLUMN_FAMILY = "schema".getBytes(StandardCharsets.UTF_8);
     public static final byte[] STORAGE_ROCKSDB_SUBJECT_COLUMN_FAMILY = "subject".getBytes(StandardCharsets.UTF_8);
 
-    public static final String DELETE_KEYS = "%DEL%";
-
+    public static final String DELETE_KEYS = "deleted";
 }

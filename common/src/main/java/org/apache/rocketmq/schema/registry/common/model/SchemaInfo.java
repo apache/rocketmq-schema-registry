@@ -97,4 +97,10 @@ public class SchemaInfo extends BaseInfo {
     public Date getLastModifiedTime() {
         return getAudit() != null ? getAudit().getLastModifiedTime() : null;
     }
+
+    public void setLastModifiedTime(Date date) {
+        if (getAudit() != null) {
+            getAudit().setLastModifiedTime(date);
+        }
+    }
 }
