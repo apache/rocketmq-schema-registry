@@ -15,24 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.rocketmq.schema.registry.storage.rocketmq.configs;
+package org.apache.rocketmq.schema.registry.client.serde;
 
-import org.apache.rocketmq.schema.registry.storage.rocketmq.RocketmqStorageClient;
-import org.apache.rocketmq.schema.registry.storage.rocketmq.RocketmqStorageService;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import java.io.Closeable;
+import java.util.Map;
 
-@Configuration
-public class ServiceConfig {
+public interface Serializer<T> extends Closeable {
 
-    /**
-     * create rocketmq storage service.
-     *
-     * @param storageClient rocketmq storage Client
-     * @return rocketmq storage Service
-     */
-    @Bean
-    public RocketmqStorageService rocketmqStorageService(RocketmqStorageClient storageClient) {
-        return new RocketmqStorageService(storageClient);
-    }
+    default void configure(Map<String, Object> configs) {}
+
+    byte[] serialize(String subject, T originMessage);
+
+    default void close(){}
 }

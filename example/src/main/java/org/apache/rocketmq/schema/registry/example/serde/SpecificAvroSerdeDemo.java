@@ -19,26 +19,28 @@ package org.apache.rocketmq.schema.registry.example.serde;
 
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClientFactory;
-import org.apache.rocketmq.schema.registry.client.serializer.AvroDeserializer;
-import org.apache.rocketmq.schema.registry.client.serializer.AvroSerializer;
-import org.apache.rocketmq.schema.registry.client.serializer.Deserializer;
-import org.apache.rocketmq.schema.registry.client.serializer.Serializer;
+import org.apache.rocketmq.schema.registry.client.serde.avro.SpecificAvroSerde;
 
-public class AvroSerdeDemo {
+import java.io.IOException;
+
+public class SpecificAvroSerdeDemo {
 
     public static void main(String[] args) {
 
         String baseUrl = "http://localhost:8080/schema-registry/v1";
         SchemaRegistryClient schemaRegistryClient = SchemaRegistryClientFactory.newClient(baseUrl, null);
 
-        //serialize
-        Charge charge = new Charge("fee1", 100.0);
-        Serializer<Charge> serializer = new AvroSerializer<>(schemaRegistryClient);
-        byte[] bytes = serializer.serialize("TopicTest", charge);
+        try (SpecificAvroSerde serde = new SpecificAvroSerde(schemaRegistryClient)) {
+            //serialize
+            Charge charge = new Charge("specific", 100.0);
+            byte[] bytes = serde.serializer().serialize("TopicTest", charge);
 
-        //deserialize
-        Deserializer<Charge> deserializer = new AvroDeserializer<>(schemaRegistryClient);
-        Charge charge1 = deserializer.deserialize("TopicTest", bytes);
-        System.out.println("the origin object after ser/de is " + charge1);
+            //deserialize
+            Charge charge1 = (Charge) serde.deserializer().deserialize("TopicTest", bytes);
+            System.out.println("the origin object after ser/de is " + charge1);
+        } catch (IOException e) {
+            System.out.println("serde shutdown failed");
+        }
+
     }
 }

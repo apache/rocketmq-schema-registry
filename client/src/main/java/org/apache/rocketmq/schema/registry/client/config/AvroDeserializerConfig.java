@@ -14,16 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.rocketmq.schema.registry.client.config;
 
-package org.apache.rocketmq.schema.registry.client.serializer;
-
-import java.io.Closeable;
 import java.util.Map;
 
-public interface Deserializer<T> extends Closeable {
-    default void configure(Map<String, ?> configs) {}
+public class AvroDeserializerConfig {
+    public final static String USE_GENERIC_DATUM_READER =
+            "use.generic.datum.reader";
+    public final static boolean USE_GENERIC_DATUM_READER_DEFAULT = false;
 
-    T deserialize(String subject, byte[] bytes);
+    private final Map<String, Object> configs;
 
-    default void close(){};
+    public AvroDeserializerConfig(Map<String, Object> configs) {
+        this.configs = configs;
+    }
+
+    public boolean useGenericReader() {
+        return (boolean) configs.getOrDefault(USE_GENERIC_DATUM_READER, USE_GENERIC_DATUM_READER_DEFAULT);
+    }
 }
