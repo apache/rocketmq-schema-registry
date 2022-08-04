@@ -1,13 +1,14 @@
-rocketmq-schema-registry
+RocketMQ Schema Registry
 ================
 
-RocketMQ schema registry is a management platform for Avro schema of RocketMQ Topic, which provides a restful interface
-for store, delete, update and query schema. Schema register will generate new schema version in every update request.
-Therefore, during schema evolution, the platform supports formatting and verification based on specified compatibility
-configurations. By default, seven compatibility policies are supported. Schemas can evolve based on a unique subject,
-and each Schema version in the evolution can be individually referenced to other subjects. By binding subject to the
-Schema, the New RocketMQ client can send data based on a user-specified structure without requiring the user to care
-about the details of serialization and deserialization
+RocketMQ Schema Registry is a Topic Schema's management center. It provides a RESTful interface for register,
+delete, update, get and reference schema to subject(RocketMQ Topic). By associating Schema with subject, the New 
+RocketMQ client can send a structured date directly. User no longer need to care about the details of serialization
+and deserialization.
+
+Schema struct can change, it will generate a new version number with each update. During schema evolution, the 
+service needs to verify that changes comply with user-specified compatibility configuration. And each Schema Record
+in the evolution can be individually referenced to other subject.
 
 It offers a variety of features:
 
@@ -20,21 +21,13 @@ It offers a variety of features:
 Getting started
 --------------
 
-#### Installation
-
-```shell
-$ git clone git@github.com:apache/rocketmq-schema-registry.git
-$ cd rocketmq-schema-registry
-$ mvn clean package
-```
-
 #### Prepare storage layer
 
-Currently, only RocketMQ is supported as the storage layer. And relies on the Compact Topic feature of RocketMQ 5.0,
-although previous versions can also be worked, but there is a risk of data loss if the machine disk fails. Similarly,
+Currently, Schema registry only supports RocketMQ storage, and relies on the Compact Topic feature of RocketMQ-5.0.
+Previous RocketMQ versions can also be worked, but there are some risk of data loss if the machine disk fails. 
 DB-type storage layers will be extended in the future.
 
-On rocketmq storage type, we need to start a RocketMQ namesrv and broker service first.
+You can use the existing RocketMQ service or start a new one.
 
 ```shell
 # Download release from the Apache mirror
@@ -51,15 +44,13 @@ $ nohup sh mqnamesrv &
 $ nohup sh mqbroker -n localhost:9876 &
 ```
 
-#### Edit configuration (Optional)
-
-* Config storage local cache path
+#### Install & Running locally
 
 ```shell
-$ echo "storage.local.cache.path=${user.dir}" >> storage-rocketmq/src/main/resources/rocketmq.properties
+$ git clone git@github.com:apache/rocketmq-schema-registry.git
+$ cd rocketmq-schema-registry
+$ mvn clean package
 ```
-
-#### Deployment & Running locally
 
 Take the build JAR in core/target/ and run `java -jar rocketmq-schema-registry-core-0.0.3-SNAPSHOT.jar` to start service.
 
@@ -67,8 +58,15 @@ Then REST API can be accessed from http://localhost:8080/schema-registry/v1
 
 Swagger API documentation can be accessed from http://localhost:8080/swagger-ui/index.html
 
-Package management
---------------
+#### Customized configurations (Optional)
+
+##### Local cache
+
+```shell
+$ echo "storage.local.cache.path=${dir}" >> storage-rocketmq/src/main/resources/rocketmq.properties
+```
+
+##### Package management
 
 If you want to upload binary resources to your package repository like artifactory, schema-registry
 support `schema.dependency.upload-enabled = true` to enable package management.
@@ -119,6 +117,37 @@ $ curl -X GET http://localhost:8080/schema-registry/v1/cluster/{cluster-name}/te
 $ curl -X GET http://localhost:8080/schema-registry/v1/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/versions
 ```
 
+Compatibility
+--------------
+Default compatibility is BACKWARD, which means that each change of Schema has no impact on the running programs. 
+Transitivity specifies the compatibility check scope for each change.
+
+| Compatible strategy | Permitted changes                 | Transitivity          | Upgrade order |
+|---------------------|-----------------------------------|-----------------------|---------------|
+| BACKWARD            | Delete fields Add optional fields | Last version          | Consumers     |
+| BACKWARD_TRANSITIVE | Delete fields Add optional fields | All previous versions | Consumers     |
+| FORWARD             | Add fields Delete optional fields | Last version          | Producers     |
+| FORWARD_TRANSITIVE  | Add fields Delete optional fields | All previous versions | Producers     |
+| FULL                | Modify optional fields            | Last version          | Any order     |
+| FULL_TRANSITIVE     | Modify optional fields            | All previous versions | Any order     |
+| NONE                | All changes are accepted          | Disabled              | Depends       |
+
+Architecture
+--------------
+
+Once Schema Registry enabled, the process for publishing and subscribing will become to:
+1. During the sending message, the Schema will be parsed and be checked whether it comply with the Topic Schema
+compatibility. If it passes, producer will serialize data and prefix it with an SchemaId. If the verification fails,
+the send request will be rejected;
+2. The consumer will deserialize message with SchemaId. And what user sees is always structured data similar to
+`public class User {  String name;  int id;  }`
+
+![architecture](docs/architecture.png)
+
+To reduce the coupling between Schema Registry and RocketMQ, Concept "Subject" were introduced to represent which combination of RocketMQ Topic and Schema.
+
+![subject](docs/subject.png)
+
 Contribute
 --------------
 
@@ -129,4 +158,3 @@ rewards, more details see [here](http://rocketmq.apache.org/docs/how-to-contribu
 License
 ----------
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html) Copyright (C) Apache Software Foundation
-
