@@ -32,9 +32,6 @@ import lombok.NoArgsConstructor;
 public class RegisterSchemaResponse extends BaseDto {
     private static final long serialVersionUID = 5961720146684473323L;
 
-    @ApiModelProperty(value = "Schema unique id", required = true)
-    private long schemaId;
-
-    @ApiModelProperty(value = "Version of this schema record")
-    private long version;
+    @ApiModelProperty(value = "Schema record unique id", required = true)
+    private long recordId;
 }

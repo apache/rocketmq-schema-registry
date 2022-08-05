@@ -89,8 +89,7 @@ public class AvroDeserializer<T> implements Deserializer<T> {
             log.error("read bytes error: ", e);
         }
 
-        long schemaId = buffer.getLong();
-        long version = buffer.getLong();
+        long schemaRecordId = buffer.getLong();
 
         DatumReader<T> datumReader = getDatumReader(schema);
         T record = datumReader.read(null, decoder);

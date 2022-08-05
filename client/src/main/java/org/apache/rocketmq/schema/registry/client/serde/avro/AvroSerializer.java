@@ -67,14 +67,13 @@ public class AvroSerializer<T> implements Serializer<T> {
 
         try {
             GetSchemaResponse response = getSchemaBySubject(subject);
-            long schemaId = response.getSchemaId();
-            long schemaVersion = response.getVersion();
+            long schemaRecordId = response.getRecordId();
             String schemaIdl = response.getIdl();
             Schema schema = new Schema.Parser().parse(schemaIdl);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             BinaryEncoder encoder = encoderFactory.directBinaryEncoder(out, null);
             ByteBuffer buffer = ByteBuffer.allocate(SCHEMA_ID_LENGTH + SCHEMA_VERSION_LENGTH);
-            encoder.writeBytes(buffer.putLong(schemaId).putLong(schemaVersion).array());
+            encoder.writeBytes(buffer.putLong(schemaRecordId).array());
 
             DatumWriter<T> datumWriter;
             if (record instanceof SpecificRecord) {

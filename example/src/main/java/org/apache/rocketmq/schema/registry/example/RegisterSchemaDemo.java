@@ -44,7 +44,7 @@ public class RegisterSchemaDemo {
         try {
             RegisterSchemaResponse response
                 = schemaRegistryClient.registerSchema(topic, "Charge", request);
-            System.out.println("register schema success, schemaId: " + response.getSchemaId());
+            System.out.println("register schema success, schemaId: " + response.getRecordId());
 
             Thread.sleep(5000);
             System.out.println("current schema: " + schemaRegistryClient.getSchemaBySubject(topic));

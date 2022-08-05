@@ -148,6 +148,24 @@ To reduce the coupling between Schema Registry and RocketMQ, Concept "Subject" w
 
 ![subject](docs/subject.png)
 
+Concept
+--------------
+
+* SchemaId  
+
+Service will generate a 64 bit globally unique ID by snowflake algorithm after Schema is created. 
+Its last 14 bits are reserved for the version number. And SchemaId doesn't change during Schema lifetime.
+
+* SchemaVersion  
+
+Each schema update doesn't change SchemaId, but generates a new 14 bit monotonically increasing version number.
+
+* RecordId  
+
+The client uses RecordId that can uniquely locate a schema version to serialize and deserialize the message.
+
+![id](docs/id.png)
+
 Contribute
 --------------
 

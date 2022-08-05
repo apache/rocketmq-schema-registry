@@ -40,8 +40,7 @@ public class UpdateSchemaDemo {
         try {
             UpdateSchemaResponse response
                 = schemaRegistryClient.updateSchema(topic, "Charge", request);
-            System.out.println("update schema success, schemaId: " + response.getSchemaId()
-                + ", version: " + response.getVersion());
+            System.out.println("update schema success, schemaId: " + response.getRecordId());
 
             Thread.sleep(5000);
             System.out.println("current schema: " + schemaRegistryClient.getSchemaBySubject(topic));

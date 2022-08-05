@@ -49,8 +49,7 @@ public class GenericAvroSerdeTest {
         Schema schema = new Schema.Parser().parse(idl);
 
         getSchemaResponse = mock(GetSchemaResponse.class);
-        when(getSchemaResponse.getSchemaId()).thenReturn(1111L);
-        when(getSchemaResponse.getVersion()).thenReturn(11111L);
+        when(getSchemaResponse.getRecordId()).thenReturn(1111L);
         when(getSchemaResponse.getIdl()).thenReturn(idl);
 
         registryClient = mock(SchemaRegistryClient.class);
