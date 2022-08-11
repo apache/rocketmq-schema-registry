@@ -50,6 +50,7 @@ import org.apache.rocketmq.schema.registry.common.storage.StorageServiceProxy;
 import org.apache.rocketmq.schema.registry.common.utils.CommonUtil;
 import org.apache.rocketmq.schema.registry.common.utils.IdGenerator;
 import org.apache.rocketmq.schema.registry.common.utils.StorageUtil;
+import org.apache.rocketmq.schema.registry.core.compatibility.CompatibilityChecker;
 import org.apache.rocketmq.schema.registry.core.dependency.DependencyService;
 
 @Slf4j
@@ -139,7 +140,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         SchemaInfo current = storageServiceProxy.get(qualifiedName);
         if (current == null) {
-            throw new SchemaNotFoundException("Schema " + qualifiedName.fullName() + " not exist, ignored update.");
+            throw new SchemaNotFoundException("Schema " + qualifiedName.toString() + " not exist, ignored update.");
         }
 
         final SchemaRecordInfo updateRecord = new SchemaRecordInfo();
@@ -177,7 +178,8 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
             update.getAudit().updateBy(updateSchemaRequest.getOwner(), updateSchemaRequest.getDesc());
         }
 
-        CommonUtil.validateCompatibility(update, current, current.getMeta().getCompatibility());
+        // check compatibility
+        CompatibilityChecker.getValidator(update.getMeta().getType()).validate(update, current);
 
         if (config.isUploadEnabled()) {
             Dependency dependency = dependencyService.compile(update);
@@ -201,7 +203,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         SchemaRecordInfo current = storageServiceProxy.getBySubject(qualifiedName);
         if (current == null) {
-            throw new SchemaNotFoundException("Schema " + qualifiedName.fullName() + " not exist, ignored update.");
+            throw new SchemaNotFoundException("Schema " + qualifiedName.toString() + " not exist, ignored update.");
         }
 
         log.info("delete schema {}", qualifiedName);
@@ -244,7 +246,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         SchemaRecordInfo recordInfo = storageServiceProxy.getBySubject(qualifiedName);
         if (recordInfo == null) {
-            throw new SchemaException("Subject: " + qualifiedName.fullName() + " not exist");
+            throw new SchemaException("Schema: " + qualifiedName.toString() + " not exist");
         }
 
         log.info("get schema by subject: {}", qualifiedName.getSubject());
@@ -260,7 +262,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         List<SchemaRecordInfo> recordInfos = storageServiceProxy.listBySubject(qualifiedName);
         if (recordInfos == null) {
-            throw new SchemaException("Subject: " + qualifiedName.fullName() + " not exist");
+            throw new SchemaException("Schema: " + qualifiedName.toString() + " not exist");
         }
 
         log.info("list schema by subject: {}", qualifiedName.getSubject());

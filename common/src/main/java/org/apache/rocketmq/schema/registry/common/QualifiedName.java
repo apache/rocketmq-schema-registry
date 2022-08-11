@@ -80,18 +80,17 @@ public class QualifiedName implements Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("{");
-        sb.append("\"cluster\":\"")
-            .append(cluster).append('\"');
-        sb.append("\"tenant\":\"")
-            .append(tenant).append('\"');
-        sb.append(",\"subject\":\"")
-            .append(subject).append('\"');
-        sb.append(",\"name\":\"")
-            .append(schema).append('\"');
-        sb.append(",\"version\":\"")
-            .append(version).append('\"');
-        sb.append('}');
+        final StringBuilder sb = new StringBuilder("(");
+        sb.append("cluster=")
+            .append(cluster).append(", ");
+        sb.append("tenant=")
+            .append(tenant).append(", ");
+        sb.append("subject=")
+            .append(subject).append(", ");
+        sb.append("name=")
+            .append(schema).append(", ");
+        sb.append("version=")
+            .append(version).append(")");
         return sb.toString();
     }
 }

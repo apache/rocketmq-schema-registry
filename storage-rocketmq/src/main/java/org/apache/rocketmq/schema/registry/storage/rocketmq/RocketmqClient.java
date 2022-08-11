@@ -51,7 +51,6 @@ import org.apache.rocketmq.schema.registry.common.exception.SchemaExistException
 import org.apache.rocketmq.schema.registry.common.exception.SchemaNotFoundException;
 import org.apache.rocketmq.schema.registry.common.json.JsonConverter;
 import org.apache.rocketmq.schema.registry.common.json.JsonConverterImpl;
-import org.apache.rocketmq.schema.registry.common.model.SchemaDetailInfo;
 import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
 import org.apache.rocketmq.schema.registry.common.model.SchemaRecordInfo;
 import org.apache.rocketmq.schema.registry.common.model.SubjectInfo;
@@ -251,6 +250,7 @@ public class RocketmqClient {
                     boolean isSchemaDeleted = Boolean.parseBoolean(msg.getUserProperty(DELETE_KEYS));
                     if (isSchemaDeleted) {
                         // delete
+                        log.info("receive delete schema msg, schema = {}", update);
                         deleteAllSubject(update);
                         cache.delete(schemaCfHandle(), schemaFullName);
                     }
@@ -333,7 +333,6 @@ public class RocketmqClient {
         try {
             synchronized (this) {
                 schemaInfo.setLastModifiedTime(new Date());
-                schemaInfo.setDetails(new SchemaDetailInfo());
                 Message msg = new Message(storageTopic, "", schemaInfo.schemaFullName(), converter.toJsonAsBytes(schemaInfo));
                 msg.putUserProperty(DELETE_KEYS, "true");
                 SendResult result = sendOrderMessageToRocketmq(msg);
