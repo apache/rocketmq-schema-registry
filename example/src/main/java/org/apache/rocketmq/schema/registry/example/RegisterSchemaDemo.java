@@ -31,7 +31,7 @@ public class RegisterSchemaDemo {
 
     public static void main(String[] args) {
 
-        String baseUrl = "http://localhost:8080/schema-registry/v1";
+        String baseUrl = "http://localhost:8080";
         SchemaRegistryClient schemaRegistryClient = SchemaRegistryClientFactory.newClient(baseUrl, null);
 
         String topic = "TopicTest";

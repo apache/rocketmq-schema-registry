@@ -46,6 +46,7 @@ import org.apache.rocketmq.common.protocol.body.ClusterInfo;
 import org.apache.rocketmq.common.protocol.route.BrokerData;
 import org.apache.rocketmq.common.protocol.route.TopicRouteData;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
+import org.apache.rocketmq.schema.registry.common.context.StorageServiceContext;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaException;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaExistException;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaNotFoundException;
@@ -63,6 +64,7 @@ import org.rocksdb.DBOptions;
 import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
+import org.rocksdb.RocksIterator;
 
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.DELETE_KEYS;
 import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.RocketmqConfigConstants.STORAGE_LOCAL_CACHE_PATH;
@@ -425,6 +427,26 @@ public class RocketmqClient {
         SchemaRecordInfo lastRecord = converter.fromJson(lastRecordBytes, SchemaRecordInfo.class);
         byte[] result = getSchema(lastRecord.getSchema());
         return result == null ? null : converter.fromJson(result, SchemaInfo.class);
+    }
+
+    public List<String> getSubjects(StorageServiceContext context, String tenant) {
+        List<String> subjects = new ArrayList<>();
+        RocksIterator iterator = cache.newIterator(subjectCfHandle());
+        for (iterator.seekToFirst(); iterator.isValid(); iterator.next()) {
+            String subjectFullName = new String(iterator.key());
+            String[] subjectFromCache = subjectFullName.split("/");
+            String tenantFromKey = subjectFromCache[1];
+            String subjectFromKey = subjectFromCache[2];
+            if (isSuperAdmin(context.getUserName()) || tenant.equals(tenantFromKey)) {
+                subjects.add(subjectFromKey);
+            }
+        }
+        return subjects;
+    }
+
+    private boolean isSuperAdmin(String userName) {
+        // check superAdmin
+        return false;
     }
 
     private void init(Properties props) {
