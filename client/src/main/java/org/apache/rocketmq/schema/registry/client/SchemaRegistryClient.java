@@ -58,4 +58,6 @@ public interface SchemaRegistryClient {
     List<SchemaRecordDto> getSchemaListBySubject(String cluster, String tenant,
         String subject) throws RestClientException, IOException;
 
+    List<String> getSubjectsByTenant(String cluster, String tenant) throws RestClientException, IOException;
+
 }

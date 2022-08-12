@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.context.StoragePluginContext;
+import org.apache.rocketmq.schema.registry.common.context.StorageServiceContext;
 import org.apache.rocketmq.schema.registry.common.json.JsonConverter;
 import org.apache.rocketmq.schema.registry.common.json.JsonConverterImpl;
 import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
@@ -119,5 +120,9 @@ public class RocketmqStorageClientImpl implements RocketmqStorageClient {
             return null;
         }
         return schemaInfo.getDetails().getSchemaRecords();
+    }
+
+    public List<String> listSubjectsByTenant(StorageServiceContext context, QualifiedName qualifiedName) {
+        return rocketmqClient.getSubjects(context, qualifiedName.getTenant());
     }
 }

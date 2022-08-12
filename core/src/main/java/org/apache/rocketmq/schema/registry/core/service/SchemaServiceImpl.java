@@ -267,6 +267,18 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
         return recordInfos.stream().map(storageUtil::convertToSchemaRecordDto).collect(Collectors.toList());
     }
 
+    public List<String> listSubjectsByTenant(QualifiedName qualifiedName) {
+        final RequestContext requestContext = RequestContextManager.getContext();
+        log.info("get request context: " + requestContext);
+
+        this.accessController.checkPermission("", qualifiedName.getTenant(), SchemaOperation.GET);
+
+        List<String> subjects = storageServiceProxy.listSubjectsByTenant(qualifiedName);
+
+        log.info("list subjects by tenant: {}", qualifiedName.getTenant());
+        return subjects;
+    }
+
     private void checkSchemaExist(final QualifiedName qualifiedName) {
         if (storageServiceProxy.get(qualifiedName) != null) {
             throw new SchemaExistException(qualifiedName);

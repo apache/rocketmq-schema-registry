@@ -445,4 +445,26 @@ public class SchemaController {
             () -> schemaService.listBySubject(name)
         );
     }
+
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "/cluster/{cluster-name}/tenant/{tenant-name}/subjects"
+        )
+    @ApiOperation(
+            value = "subjects information",
+            notes = "all subjects from a given tenant"
+        )
+    public List<String> getSubjectListByTenant(
+            @ApiParam(value = "The cluster of the subjects", required = true)
+            @PathVariable(value = "cluster-name") final String cluster,
+            @ApiParam(value = "The tenant subjects belong to", required = true)
+            @PathVariable(value = "tenant-name") final String tenant
+    ) {
+        QualifiedName name = new QualifiedName(cluster, tenant, null, null);
+
+        return this.requestProcessor.processRequest(
+                "getSubjectListByTenant",
+            () -> schemaService.listSubjectsByTenant(name)
+        );
+    }
 }
