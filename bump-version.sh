@@ -20,5 +20,4 @@ if [[ $1 == "" ]]; then
 fi
 
 version=$1
-mvn versions:set -DnewVersion=$version
-find . -name *.versionsBackup -exec rm {} \;
+mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version
