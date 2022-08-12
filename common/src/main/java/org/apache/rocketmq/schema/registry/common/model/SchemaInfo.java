@@ -17,9 +17,13 @@
 
 package org.apache.rocketmq.schema.registry.common.model;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -102,5 +106,12 @@ public class SchemaInfo extends BaseInfo {
         if (getAudit() != null) {
             getAudit().setLastModifiedTime(date);
         }
+    }
+
+    public List<String> getAllRecordIdlInOrder() {
+        List<String> recordIdlList = getDetails().getSchemaRecords()
+            .stream().map(SchemaRecordInfo::getIdl).collect(Collectors.toList());
+        Collections.reverse(recordIdlList);
+        return recordIdlList;
     }
 }
