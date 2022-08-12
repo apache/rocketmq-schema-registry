@@ -79,4 +79,6 @@ public interface SchemaService<T extends BaseDto> {
      * @return schema object with the schemaName
      */
     List<SchemaRecordDto> listBySubject(QualifiedName qualifiedName);
+
+    List<String> listSubjectsByTenant(QualifiedName qualifiedName);
 }

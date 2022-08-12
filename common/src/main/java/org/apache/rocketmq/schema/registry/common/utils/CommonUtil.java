@@ -46,16 +46,10 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.avro.Schema;
-import org.apache.avro.SchemaValidationException;
-import org.apache.avro.SchemaValidator;
-import org.apache.avro.SchemaValidatorBuilder;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaCompatibilityException;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaException;
-import org.apache.rocketmq.schema.registry.common.model.Compatibility;
-import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
 
 @Slf4j
 public class CommonUtil {
@@ -214,21 +208,17 @@ public class CommonUtil {
             } catch (Throwable e) {
                 log.error("Read from file error", e);
             } finally {
-                if (br != null) {
-                    try {
-                        br.close();
+                try {
+                    br.close();
 
-                    } catch (IOException ioException) {
-                        log.error("", ioException);
-                    }
+                } catch (IOException ioException) {
+                    log.error("", ioException);
                 }
-                if (inputStreamReader != null) {
-                    try {
-                        inputStreamReader.close();
+                try {
+                    inputStreamReader.close();
 
-                    } catch (IOException ioException) {
-                        log.error("", ioException);
-                    }
+                } catch (IOException ioException) {
+                    log.error("", ioException);
                 }
             }
         }
@@ -240,25 +230,8 @@ public class CommonUtil {
                 break;
             case JSON:
                 throw new SchemaCompatibilityException("Unsupported schema type: " + schemaDto.getMeta().getType());
-        }
-    }
-
-    public static void validateCompatibility(SchemaInfo update, SchemaInfo current,
-        Compatibility expectCompatibility) {
-        switch (update.getMeta().getType()) {
-            case AVRO:
-                SchemaValidator validator = new SchemaValidatorBuilder().canReadStrategy().validateLatest();
-                try {
-                    Schema toValidate = new Schema.Parser().parse(update.getLastRecordIdl());
-                    List<Schema> existing = new ArrayList<>();
-                    existing.add(new Schema.Parser().parse(current.getLastRecordIdl()));
-                    validator.validate(toValidate, existing);
-                } catch (SchemaValidationException e) {
-                    throw new SchemaCompatibilityException("Schema compatibility validation failed", e);
-                }
-                break;
             default:
-                throw new SchemaCompatibilityException("Unsupported schema type: " + update.getMeta().getType());
+                throw new SchemaCompatibilityException("Unexpected value: " + schemaDto.getMeta().getType());
         }
     }
 
@@ -273,4 +246,5 @@ public class CommonUtil {
 
         return schemaId | schemaVersion;
     }
+
 }

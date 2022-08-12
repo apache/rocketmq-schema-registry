@@ -3,7 +3,7 @@ RocketMQ Schema Registry
 
 RocketMQ Schema Registry is a Topic Schema's management center. It provides a RESTful interface for register,
 delete, update, get and reference schema to subject(RocketMQ Topic). By associating Schema with subject, the New 
-RocketMQ client can send a structured date directly. User no longer need to care about the details of serialization
+RocketMQ client can send structured data directly. User no longer need to care about the details of serialization
 and deserialization.
 
 Schema struct can change, it will generate a new version number with each update. During schema evolution, the 

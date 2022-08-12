@@ -34,6 +34,8 @@ import org.apache.rocketmq.schema.registry.common.dto.UpdateSchemaRequest;
 import org.apache.rocketmq.schema.registry.common.dto.UpdateSchemaResponse;
 
 public class RestService {
+    private static final String API_PREFIX = "/schema-registry/v1";
+
     private static final TypeReference<RegisterSchemaResponse> REGISTER_SCHEMA_DTO_TYPE_REFERENCE =
         new TypeReference<RegisterSchemaResponse>() { };
 
@@ -48,6 +50,9 @@ public class RestService {
     private static final TypeReference<List<SchemaRecordDto>> SCHEMA_RECORD_DTO_TYPE_LIST_REFERENCE =
         new TypeReference<List<SchemaRecordDto>>() { };
 
+    private static final TypeReference<List<String>> GET_SUBJECTS_REFERENCE =
+        new TypeReference<List<String>>() { };
+
     public static ObjectMapper jsonParser = JacksonMapper.INSTANCE;
 
     private static final String HTTP_GET = "GET";
@@ -59,7 +64,7 @@ public class RestService {
     private final Map<String, String> httpHeaders;
 
     public RestService(String baseUri) {
-        this.baseUri = baseUri;
+        this.baseUri = baseUri + API_PREFIX;
         httpHeaders = new HashMap<>();
         httpHeaders.put("Content-Type", "application/json");
     }
@@ -140,5 +145,11 @@ public class RestService {
         UrlBuilder urlBuilder = UrlBuilder.fromPath("/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/versions");
         String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(cluster, tenant, subject).toString());
         return HttpUtil.sendHttpRequest(path, HTTP_GET, null, httpHeaders, SCHEMA_RECORD_DTO_TYPE_LIST_REFERENCE);
+    }
+
+    public List<String> getSubjectsByTenant(String cluster, String tenant) throws RestClientException, IOException {
+        UrlBuilder urlBuilder = UrlBuilder.fromPath("/cluster/{cluster-name}/tenant/{tenant-name}/subjects");
+        String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(cluster, tenant).toString());
+        return HttpUtil.sendHttpRequest(path, HTTP_GET, null, httpHeaders, GET_SUBJECTS_REFERENCE);
     }
 }
