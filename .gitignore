@@ -5,7 +5,6 @@ target/
 *.log
 log/
 log/*
-tools/
 schema-registry/
 
 ### STS ###

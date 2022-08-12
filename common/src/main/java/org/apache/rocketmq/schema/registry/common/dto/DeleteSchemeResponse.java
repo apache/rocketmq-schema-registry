@@ -32,10 +32,7 @@ import lombok.NoArgsConstructor;
 public class DeleteSchemeResponse extends BaseDto {
     private static final long serialVersionUID = 5487372544128191038L;
 
-    @ApiModelProperty(value = "Deleted schema id")
-    private long schemaId;
-
-    @ApiModelProperty(value = "Deleted schema version")
-    private long version;
+    @ApiModelProperty(value = "Deleted schema record unique id", required = true)
+    private long recordId;
 
 }

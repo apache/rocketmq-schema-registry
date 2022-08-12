@@ -125,7 +125,9 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         log.info("Creating schema info {}: {}", qualifiedName, schemaInfo);
         storageServiceProxy.register(schemaInfo);
-        return new RegisterSchemaResponse(schemaInfo.getUniqueId(), schemaInfo.getLastRecordVersion());
+        long schemaRecordId = CommonUtil.getSchemaRecordId(
+            schemaInfo.getUniqueId(), schemaInfo.getLastRecordVersion());
+        return new RegisterSchemaResponse(schemaRecordId);
     }
 
     /**
@@ -188,7 +190,10 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         log.info("Updating schema info {}: {}", qualifiedName, update);
         storageServiceProxy.update(update);
-        return new UpdateSchemaResponse(updateRecord.getSchemaId(), updateRecord.getVersion());
+
+        long schemaRecordId = CommonUtil.getSchemaRecordId(
+            update.getUniqueId(), update.getLastRecordVersion());
+        return new UpdateSchemaResponse(schemaRecordId);
     }
 
     /**
@@ -208,7 +213,9 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         log.info("delete schema {}", qualifiedName);
         storageServiceProxy.delete(qualifiedName);
-        return new DeleteSchemeResponse(current.getSchemaId(), current.getVersion());
+
+        long schemaRecordId = CommonUtil.getSchemaRecordId(current.getSchemaId(), current.getVersion());
+        return new DeleteSchemeResponse(schemaRecordId);
     }
 
     // TODO add get last record query

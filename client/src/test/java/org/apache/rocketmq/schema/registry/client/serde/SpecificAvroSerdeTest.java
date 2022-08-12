@@ -43,8 +43,7 @@ public class SpecificAvroSerdeTest {
                 + "\"fields\":[{\"name\":\"item\",\"type\":\"string\"},{\"name\":\"amount\",\"type\":\"double\"}]}";
 
         getSchemaResponse = mock(GetSchemaResponse.class);
-        when(getSchemaResponse.getSchemaId()).thenReturn(11111L);
-        when(getSchemaResponse.getVersion()).thenReturn(11111L);
+        when(getSchemaResponse.getRecordId()).thenReturn(11111L);
         when(getSchemaResponse.getSchemaFullName()).thenReturn("org.apache.rocketmq.schema.registry.example.serde.Charge");
         when(getSchemaResponse.getIdl()).thenReturn(idl);
 

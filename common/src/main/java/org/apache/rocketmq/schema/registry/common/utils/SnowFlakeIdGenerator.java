@@ -21,37 +21,58 @@ import com.google.common.base.Preconditions;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaException;
 import org.apache.rocketmq.schema.registry.common.properties.GlobalConfig;
 
+/**
+ * service limit:
+ *
+ * Expire time: 69 year
+ * Region number: 8
+ * Node number: 16
+ * Request number that can be processed in uniform milliseconds: 2
+ * Record number: 16384
+ *
+ * 63 bit: default 0
+ * 62-22 bit: expire time
+ * 21-19 bit: regionId
+ * 18-15 bit: nodeId
+ * 14    bit: sequenceId
+ * 13-0  bit: recordId
+ */
 public class SnowFlakeIdGenerator implements IdGenerator {
 
-    // machine node id [0-63]
-    private final long nodeId;
-    // region id [0-15]
+    // region id [0-7]
     private final long regionId;
-    // sequence id [0-4095]
+    // machine node id [0-15]
+    private final long nodeId;
+    // sequence id [0-1]
     private long sequenceId = 0L;
     private long lastTimestamp = -1L;
 
-    // startTime, UTC 2020-01-01 00:00:00
-    private final long startTime = 1577808000000L;
+    // startTime, UTC 2022-01-01 00:00:00
+    // TODO: reset time after the limit is exceeded
+    private final long startTime = 1640966400000L;
 
     // the using bits number by region id of master-role cluster and machine-node id
-    private final long regionIdBits = 4L;
-    private final long nodeIdBits = 6L;
-    // max machine-node id: 63
-    private final long maxNodeId = ~(-1 << nodeIdBits);
-    // max region id: 15
+    private final long regionIdBits = 3L;
+    private final long nodeIdBits = 4L;
+    // max region id: 7
     private final long maxRegionId = ~(-1 << regionIdBits);
+    // max machine-node id: 15
+    private final long maxNodeId = ~(-1 << nodeIdBits);
 
     // the bits number of sequenceId used
-    private final long sequenceIdBits = 12L;
-    // the bits number of nodeId left moving, 12bits
-    private final long nodeIdMoveBits = sequenceIdBits;
+    private final long sequenceIdBits = 1L;
+    // the bits number of recordId used, [0-16383]
+    private final long recordIdBits = 14L;
+
+    private final long sequenceIdMoveBits = recordIdBits;
+    // the bits number of nodeId left moving, 15bits
+    private final long nodeIdMoveBits = sequenceIdBits + recordIdBits;
     // the bits number of regionId left moving, 18bits
     private final long regionIdMoveBits = nodeIdMoveBits + nodeIdBits;
     // the bits number of timestamp left moving, 22bits
     private final long timestampMoveBits = regionIdMoveBits + regionIdBits;
 
-    // the mask of sequenceId, 4095
+    // the mask of sequenceId, 1
     private final long sequenceIdMask = ~(-1L << sequenceIdBits);
 
     public SnowFlakeIdGenerator(GlobalConfig config) {
@@ -91,7 +112,7 @@ public class SnowFlakeIdGenerator implements IdGenerator {
         return ((timestamp - startTime) << timestampMoveBits)
             | (regionId << regionIdMoveBits)
             | (nodeId << nodeIdMoveBits)
-            | sequenceId;
+            | (sequenceId << sequenceIdMoveBits);
     }
 
     private long waitNextMillis(long lastTimestamp) {

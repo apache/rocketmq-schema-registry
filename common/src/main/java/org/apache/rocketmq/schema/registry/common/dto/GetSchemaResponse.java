@@ -21,6 +21,7 @@ import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.model.Dependency;
 import org.apache.rocketmq.schema.registry.common.model.SchemaRecordInfo;
 import org.apache.rocketmq.schema.registry.common.model.SchemaType;
+import org.apache.rocketmq.schema.registry.common.utils.CommonUtil;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -43,11 +44,8 @@ public class GetSchemaResponse extends BaseDto {
     @ApiModelProperty(value = "Schema full name")
     private String schemaFullName;
 
-    @ApiModelProperty(value = "Schema id")
-    private long schemaId;
-
-    @ApiModelProperty(value = "Schema version")
-    private long version;
+    @ApiModelProperty(value = "Schema record unique id", required = true)
+    private long recordId;
 
     @ApiModelProperty(value = "Schema idl")
     private String idl;
@@ -61,8 +59,8 @@ public class GetSchemaResponse extends BaseDto {
     public GetSchemaResponse(QualifiedName name, SchemaRecordInfo schemaRecordInfo) {
         this.subjectFullName = name.subjectFullName();
         this.schemaFullName = schemaRecordInfo.getSchema();
-        this.schemaId = schemaRecordInfo.getSchemaId();
-        this.version = schemaRecordInfo.getVersion();
+        this.recordId = CommonUtil.getSchemaRecordId(schemaRecordInfo.getSchemaId(),
+            schemaRecordInfo.getVersion());
         this.idl = schemaRecordInfo.getIdl();
         this.dependency = schemaRecordInfo.getDependency();
         this.type = schemaRecordInfo.getType();
