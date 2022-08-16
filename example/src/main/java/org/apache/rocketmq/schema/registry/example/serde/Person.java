@@ -15,43 +15,46 @@
  * limitations under the License.
  */
 
-package org.apache.rocketmq.schema.registry.common.model;
+package org.apache.rocketmq.schema.registry.example.serde;
 
-import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.apache.rocketmq.schema.registry.common.constant.SchemaConstants;
+
+import java.util.Objects;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SubjectInfo implements Serializable {
-    private static final long serialVersionUID = -92808722007777844L;
+@JsonPropertyOrder(alphabetic = true)
+public class Person {
+    @JsonIgnore
+    private Long id;
+    private String name;
+    private int age;
 
-    private String cluster;
-    private String tenant;
-    private String subject;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return age == person.age && Objects.equals(name, person.name);
+    }
 
-    public String fullName() {
-        return cluster + SchemaConstants.SUBJECT_SEPARATOR + tenant
-                + SchemaConstants.SUBJECT_SEPARATOR + subject;
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, age);
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("{");
-        sb.append("\"cluster\":\"")
-            .append(cluster).append('\"');
-        sb.append("\"tenant\":\"")
-            .append(tenant).append('\"');
-        sb.append(",\"subject\":\"")
-            .append(subject).append('\"');
-        sb.append('}');
-        return sb.toString();
+        return "Person{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                '}';
     }
 }

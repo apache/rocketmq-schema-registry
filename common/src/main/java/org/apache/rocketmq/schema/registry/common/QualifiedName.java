@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.rocketmq.schema.registry.common.constant.SchemaConstants;
 import org.apache.rocketmq.schema.registry.common.model.SubjectInfo;
 
 @Data
@@ -67,15 +68,18 @@ public class QualifiedName implements Serializable {
     }
 
     public String fullName() {
-        return cluster + '/' + tenant + '/' + subject + '/' + schema;
+        return cluster + SchemaConstants.SUBJECT_SEPARATOR + tenant
+                + SchemaConstants.SUBJECT_SEPARATOR + subject
+                + SchemaConstants.SUBJECT_SEPARATOR + schema;
     }
 
     public String schemaFullName() {
-        return tenant + '/' + schema;
+        return tenant + SchemaConstants.SUBJECT_SEPARATOR + schema;
     }
 
     public String subjectFullName() {
-        return cluster + '/' + tenant + '/' + subject;
+        return cluster + SchemaConstants.SUBJECT_SEPARATOR + tenant
+                + SchemaConstants.SUBJECT_SEPARATOR + subject;
     }
 
     @Override
