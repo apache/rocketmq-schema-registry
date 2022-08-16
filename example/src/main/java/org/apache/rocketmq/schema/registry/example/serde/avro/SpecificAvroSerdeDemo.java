@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.rocketmq.schema.registry.example.serde;
+package org.apache.rocketmq.schema.registry.example.serde.avro;
 
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClientFactory;
 import org.apache.rocketmq.schema.registry.client.serde.avro.SpecificAvroSerde;
+import org.apache.rocketmq.schema.registry.example.serde.Charge;
 
 import java.io.IOException;
 
@@ -27,7 +28,7 @@ public class SpecificAvroSerdeDemo {
 
     public static void main(String[] args) {
 
-        String baseUrl = "http://localhost:8080/schema-registry/v1";
+        String baseUrl = "http://localhost:8080";
         SchemaRegistryClient schemaRegistryClient = SchemaRegistryClientFactory.newClient(baseUrl, null);
 
         try (SpecificAvroSerde serde = new SpecificAvroSerde(schemaRegistryClient)) {
