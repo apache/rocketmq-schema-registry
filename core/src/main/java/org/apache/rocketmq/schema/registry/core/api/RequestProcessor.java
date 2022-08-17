@@ -51,7 +51,6 @@ public class RequestProcessor {
          *  TODO: 2. add async process
          */
 
-        long time = System.currentTimeMillis();
         try {
             log.info("Handling request: {} for {}", requestName, qualifiedName);
             return supplier.get();
