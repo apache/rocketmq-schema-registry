@@ -122,7 +122,13 @@ public class RocketmqStorageClientImpl implements RocketmqStorageClient {
         return schemaInfo.getDetails().getSchemaRecords();
     }
 
+    @Override
     public List<String> listSubjectsByTenant(StorageServiceContext context, QualifiedName qualifiedName) {
         return rocketmqClient.getSubjects(context, qualifiedName.getTenant());
+    }
+
+    @Override
+    public List<String> listTenant(QualifiedName qualifiedName) {
+        return rocketmqClient.getTenants(qualifiedName.getCluster());
     }
 }

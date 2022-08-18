@@ -87,4 +87,8 @@ public class RocketmqStorageService implements StorageService<SchemaInfo> {
     public List<String> listSubjectsByTenant(StorageServiceContext context, QualifiedName name) {
         return storageClient.listSubjectsByTenant(context, name);
     }
+
+    public List<String> listTenants(StorageServiceContext storageService, QualifiedName name) {
+        return storageClient.listTenant(name);
+    }
 }

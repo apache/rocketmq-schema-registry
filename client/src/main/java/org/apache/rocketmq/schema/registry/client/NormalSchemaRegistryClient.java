@@ -102,4 +102,9 @@ public class NormalSchemaRegistryClient implements SchemaRegistryClient {
         return restService.getSubjectsByTenant(cluster, tenant);
     }
 
+    @Override
+    public List<String> getAllTenants(String cluster) throws RestClientException, IOException {
+        return restService.getAllTenants(cluster);
+    }
+
 }

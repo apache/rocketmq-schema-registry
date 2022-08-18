@@ -60,4 +60,5 @@ public interface SchemaRegistryClient {
 
     List<String> getSubjectsByTenant(String cluster, String tenant) throws RestClientException, IOException;
 
+    List<String> getAllTenants(String cluster) throws RestClientException, IOException;
 }

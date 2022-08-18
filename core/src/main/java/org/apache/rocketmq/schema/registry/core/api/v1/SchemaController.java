@@ -463,8 +463,29 @@ public class SchemaController {
         QualifiedName name = new QualifiedName(cluster, tenant, null, null);
 
         return this.requestProcessor.processRequest(
-                "getSubjectListByTenant",
+            "getSubjectListByTenant",
             () -> schemaService.listSubjectsByTenant(name)
+        );
+    }
+
+
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path =  "/cluster/{cluster-name}/tenants"
+        )
+    @ApiOperation(
+            value = "tenants list",
+            notes = "all tenant from cluster"
+        )
+    public List<String> getTenants(
+            @ApiParam(value = "The cluster of the tenant", required = true)
+            @PathVariable(value = "cluster-name") final String cluster
+    ) {
+        QualifiedName name = new QualifiedName(cluster, null, null, null);
+
+        return this.requestProcessor.processRequest(
+            "getTenants",
+            () -> schemaService.listTenants(name)
         );
     }
 }
