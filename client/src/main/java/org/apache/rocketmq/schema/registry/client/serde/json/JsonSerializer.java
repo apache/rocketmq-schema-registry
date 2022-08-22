@@ -15,18 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.rocketmq.schema.registry.client.serde.avro;
+package org.apache.rocketmq.schema.registry.client.serde.json;
 
-import org.apache.avro.Schema;
-import org.apache.avro.generic.GenericDatumWriter;
-import org.apache.avro.io.BinaryEncoder;
-import org.apache.avro.io.DatumWriter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.avro.io.EncoderFactory;
-import org.apache.avro.specific.SpecificDatumWriter;
-import org.apache.avro.specific.SpecificRecord;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
 import org.apache.rocketmq.schema.registry.client.exceptions.SerializationException;
+import org.apache.rocketmq.schema.registry.client.rest.JacksonMapper;
 import org.apache.rocketmq.schema.registry.client.serde.Serializer;
 import org.apache.rocketmq.schema.registry.common.constant.SchemaConstants;
 import org.apache.rocketmq.schema.registry.common.dto.GetSchemaResponse;
@@ -36,67 +32,50 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
-public class AvroSerializer<T> implements Serializer<T> {
-
-    protected SchemaRegistryClient schemaRegistry;
+public class JsonSerializer<T> implements Serializer<T> {
+    private final SchemaRegistryClient registryClient;
+    private final ObjectMapper objectMapper;
     private final EncoderFactory encoderFactory = EncoderFactory.get();
 
-    public AvroSerializer() {}
-
-    public AvroSerializer(SchemaRegistryClient schemaRegistryClient) {
-        schemaRegistry = schemaRegistryClient;
+    public JsonSerializer(SchemaRegistryClient registryClient) {
+        this.objectMapper = JacksonMapper.INSTANCE;
+        this.registryClient = registryClient;
     }
 
     @Override
     public void configure(Map<String, Object> configs) {
-        Serializer.super.configure(configs);
+
     }
 
     @Override
-    public byte[] serialize(
-            String subject, T record)
-            throws SerializationException {
-        if (schemaRegistry == null) {
-            throw new SerializationException("please initialize the schema registry client first");
-        }
-
-        if (record == null) {
+    public byte[] serialize(String subject, T originMessage) {
+        if (null == originMessage) {
             return null;
         }
 
-        try {
-            GetSchemaResponse response = getSchemaBySubject(subject);
-            long schemaRecordId = response.getRecordId();
-            String schemaIdl = response.getIdl();
-            Schema schema = new Schema.Parser().parse(schemaIdl);
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            BinaryEncoder encoder = encoderFactory.directBinaryEncoder(out, null);
-            ByteBuffer buffer = ByteBuffer.allocate(SchemaConstants.SCHEMA_RECORD_ID_LENGTH);
-            encoder.writeBytes(buffer.putLong(schemaRecordId).array());
+        if (null == registryClient) {
+            throw new SerializationException("please initialize the schema registry client first");
+        }
 
-            DatumWriter<T> datumWriter;
-            if (record instanceof SpecificRecord) {
-                datumWriter = new SpecificDatumWriter<>(schema);
-            } else {
-                datumWriter = new GenericDatumWriter<>(schema);
-            }
-            datumWriter.write(record, encoder);
-            encoder.flush();
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            GetSchemaResponse response = registryClient.getSchemaBySubject(subject);
+            long schemaRecordId = response.getRecordId();
+            ByteBuffer buffer = ByteBuffer.allocate(SchemaConstants.SCHEMA_RECORD_ID_LENGTH);
+            out.write(buffer.putLong(schemaRecordId).array());
+            out.write(objectMapper.writeValueAsBytes(originMessage));
+
             byte[] bytes = out.toByteArray();
-            out.close();
             return bytes;
         } catch (IOException | RuntimeException e) {
-            throw new SerializationException("serialize Avro message failed", e);
+            throw new SerializationException("JSON serialize failed", e);
         } catch (RestClientException e) {
             throw new SerializationException("get schema by subject failed", e);
         }
-    }
 
-    private GetSchemaResponse getSchemaBySubject(String subject) throws RestClientException, IOException {
-        return schemaRegistry.getSchemaBySubject(subject);
     }
 
     @Override
     public void close() {
+
     }
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.rocketmq.schema.registry.example.serde;
+package org.apache.rocketmq.schema.registry.example.serde.avro;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
@@ -32,7 +32,7 @@ public class GenericAvroSerdeDemo {
 
     public static void main(String[] args) {
 
-        String baseUrl = "http://localhost:8080/schema-registry/v1";
+        String baseUrl = "http://localhost:8080";
         SchemaRegistryClient schemaRegistryClient = SchemaRegistryClientFactory.newClient(baseUrl, null);
 
         Schema schema = new Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Charge\",\"namespace\":\"org.apache.rocketmq.schema.registry.example.serde\",\"fields\":[{\"name\":\"item\",\"type\":\"string\"},{\"name\":\"amount\",\"type\":\"double\"}]}");
