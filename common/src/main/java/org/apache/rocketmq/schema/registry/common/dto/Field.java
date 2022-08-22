@@ -32,7 +32,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class FieldDto extends BaseDto {
+public class Field extends BaseDto {
     private static final long serialVersionUID = -8336499483006254487L;
 
     @ApiModelProperty(value = "Position of the field")
@@ -50,14 +50,8 @@ public class FieldDto extends BaseDto {
     @ApiModelProperty(value = "Can the field be null, default is true")
     private Boolean isNullable = true;
 
-    @ApiModelProperty(value = "Size of the field")
-    private Integer size;
-
     @ApiModelProperty(value = "Default value of the field")
     private String defaultValue;
-
-    @ApiModelProperty(value = "Is a sorted field, default is false")
-    private Boolean isSortable = false;
 
     @ApiModelProperty(value = "This filed sorted type, like: ascending, descending, ignore")
     private String sortType;

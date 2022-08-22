@@ -20,7 +20,7 @@ package org.apache.rocketmq.schema.registry.common.utils;
 import org.apache.rocketmq.schema.registry.common.context.RequestContext;
 import org.apache.rocketmq.schema.registry.common.context.StorageServiceContext;
 import org.apache.rocketmq.schema.registry.common.dto.AuditDto;
-import org.apache.rocketmq.schema.registry.common.dto.FieldDto;
+import org.apache.rocketmq.schema.registry.common.dto.Field;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaDetailDto;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaMetaDto;
@@ -54,7 +54,7 @@ public class StorageUtil {
                 mapping(SchemaRecordDto.class, SchemaRecordInfo.class);
                 mapping(SubjectDto.class, SubjectInfo.class);
                 mapping(AuditDto.class, AuditInfo.class);
-                mapping(FieldDto.class, FieldInfo.class);
+                mapping(Field.class, FieldInfo.class);
             }
         };
         dozerBeanMapper.addMapping(builder);

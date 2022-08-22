@@ -47,7 +47,7 @@ $ nohup sh mqbroker -n localhost:9876 &
 #### Install & Running locally
 
 ```shell
-$ git clone git@github.com:apache/rocketmq-schema-registry.git
+$ git clone https://github.com/apache/rocketmq-schema-registry.git
 $ cd rocketmq-schema-registry
 $ mvn clean package
 ```
