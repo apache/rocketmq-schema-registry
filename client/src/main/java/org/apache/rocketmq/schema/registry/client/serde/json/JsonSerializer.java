@@ -17,9 +17,10 @@
 
 package org.apache.rocketmq.schema.registry.client.serde.json;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.avro.io.EncoderFactory;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
+import org.apache.rocketmq.schema.registry.client.config.JsonSerializerConfig;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
 import org.apache.rocketmq.schema.registry.client.exceptions.SerializationException;
 import org.apache.rocketmq.schema.registry.client.rest.JacksonMapper;
@@ -33,24 +34,35 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 
 public class JsonSerializer<T> implements Serializer<T> {
-    private final SchemaRegistryClient registryClient;
-    private final ObjectMapper objectMapper;
-    private final EncoderFactory encoderFactory = EncoderFactory.get();
+    private SchemaRegistryClient registryClient;
+    private final ObjectMapper objectMapper = JacksonMapper.INSTANCE;
+    private boolean skipSchemaRegistry;
+
+    public JsonSerializer() {
+    }
 
     public JsonSerializer(SchemaRegistryClient registryClient) {
-        this.objectMapper = JacksonMapper.INSTANCE;
         this.registryClient = registryClient;
     }
 
     @Override
     public void configure(Map<String, Object> configs) {
-
+        JsonSerializerConfig jsonSerializerConfig = new JsonSerializerConfig(configs);
+        this.skipSchemaRegistry = jsonSerializerConfig.skipSchemaRegistry();
     }
 
     @Override
     public byte[] serialize(String subject, T originMessage) {
         if (null == originMessage) {
             return null;
+        }
+
+        if (skipSchemaRegistry) {
+            try {
+                return objectMapper.writeValueAsBytes(originMessage);
+            } catch (JsonProcessingException e) {
+                throw new SerializationException("JSON serialize failed", e);
+            }
         }
 
         if (null == registryClient) {

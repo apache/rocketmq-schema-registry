@@ -17,51 +17,24 @@
 
 package org.apache.rocketmq.schema.registry.example.serde.json;
 
-import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
-import org.apache.rocketmq.schema.registry.client.SchemaRegistryClientFactory;
 import org.apache.rocketmq.schema.registry.client.config.JsonSerializerConfig;
-import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
 import org.apache.rocketmq.schema.registry.client.serde.json.JsonSerde;
-import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaRequest;
-import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaResponse;
-import org.apache.rocketmq.schema.registry.common.model.Compatibility;
-import org.apache.rocketmq.schema.registry.common.model.SchemaType;
 import org.apache.rocketmq.schema.registry.example.serde.Person;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class JsonSerdeDemo {
+public class JsonSerdeWithoutServerDemo {
+
     public static void main(String[] args) {
-
-        String baseUrl = "http://localhost:8080";
-        SchemaRegistryClient schemaRegistryClient = SchemaRegistryClientFactory.newClient(baseUrl, null);
-
-        // register schema first, if have registered before ignore
-        String topic = "TopicTest";
-        RegisterSchemaRequest request = RegisterSchemaRequest.builder()
-                .schemaIdl("{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"age\":{\"type\":\"int\"}}")
-                .schemaType(SchemaType.JSON)
-                .compatibility(Compatibility.BACKWARD)
-                .owner("test").build();
-        try {
-            RegisterSchemaResponse response
-                    = schemaRegistryClient.registerSchema("default", "tanant1", topic, "Person", request);
-            System.out.println("register schema success, schemaId: " + response.getRecordId());
-
-            Thread.sleep(5000);
-            System.out.println("current schema: " + schemaRegistryClient.getSchemaBySubject(topic));
-        } catch (RestClientException | IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-
         Person person = new Person(1L, "name", 18);
         System.out.printf("person before serialize is %s\n", person);
 
-        try(JsonSerde<Person> jsonSerde = new JsonSerde<>(schemaRegistryClient)) {
+        try(JsonSerde<Person> jsonSerde = new JsonSerde<>()) {
             Map<String, Object> configs = new HashMap<>();
             configs.put(JsonSerializerConfig.DESERIALIZE_TARGET_TYPE, Person.class);
+            configs.put(JsonSerializerConfig.SKIP_SCHEMA_REGISTRY, true);
             jsonSerde.configure(configs);
             byte[] bytes = jsonSerde.serializer().serialize("TopicTest", person);
 

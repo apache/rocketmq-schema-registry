@@ -24,7 +24,7 @@ import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
-import org.apache.rocketmq.schema.registry.client.config.AvroDeserializerConfig;
+import org.apache.rocketmq.schema.registry.client.config.AvroSerializerConfig;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
 import org.apache.rocketmq.schema.registry.client.exceptions.SerializationException;
 import org.apache.rocketmq.schema.registry.client.serde.Deserializer;
@@ -54,7 +54,7 @@ public class AvroDeserializer<T> implements Deserializer<T> {
 
     @Override
     public void configure(Map<String, Object> configs) {
-        AvroDeserializerConfig config = new AvroDeserializerConfig(configs);
+        AvroSerializerConfig config = new AvroSerializerConfig(configs);
         this.useGenericReader = config.useGenericReader();
     }
 

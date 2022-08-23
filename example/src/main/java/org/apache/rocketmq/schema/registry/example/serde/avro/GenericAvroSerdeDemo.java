@@ -21,7 +21,7 @@ import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.generic.GenericRecordBuilder;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClientFactory;
-import org.apache.rocketmq.schema.registry.client.config.AvroDeserializerConfig;
+import org.apache.rocketmq.schema.registry.client.config.AvroSerializerConfig;
 import org.apache.rocketmq.schema.registry.client.serde.avro.GenericAvroSerde;
 
 import java.io.IOException;
@@ -44,7 +44,7 @@ public class GenericAvroSerdeDemo {
         try (GenericAvroSerde serde = new GenericAvroSerde(schemaRegistryClient)) {
             //configure
             Map<String, Object> configs = new HashMap<>();
-            configs.put(AvroDeserializerConfig.USE_GENERIC_DATUM_READER, true);
+            configs.put(AvroSerializerConfig.USE_GENERIC_DATUM_READER, true);
             serde.configure(configs);
 
             //serialize

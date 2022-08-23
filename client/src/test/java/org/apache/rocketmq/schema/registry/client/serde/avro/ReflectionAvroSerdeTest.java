@@ -14,43 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.rocketmq.schema.registry.client.serde.avro;
 
-package org.apache.rocketmq.schema.registry.example.serde.avro;
-
-import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
-import org.apache.rocketmq.schema.registry.client.SchemaRegistryClientFactory;
 import org.apache.rocketmq.schema.registry.client.config.AvroSerializerConfig;
-import org.apache.rocketmq.schema.registry.client.serde.avro.SpecificAvroSerde;
-import org.apache.rocketmq.schema.registry.example.serde.Charge;
+import org.apache.rocketmq.schema.registry.client.serde.Charge;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SpecificAvroSerdeDemo {
+import static org.assertj.core.api.Assertions.assertThat;
 
-    public static void main(String[] args) {
-
-        String baseUrl = "http://localhost:8080";
-        SchemaRegistryClient schemaRegistryClient = SchemaRegistryClientFactory.newClient(baseUrl, null);
-        Map<String, Object> serializeConfigs = new HashMap<>();
-
-
-        try (SpecificAvroSerde serde = new SpecificAvroSerde(schemaRegistryClient)) {
-
+public class ReflectionAvroSerdeTest {
+    @Test
+    public void testReflectionAvroSerde() {
+        Charge charge = new Charge("specific", 100.0);
+        Map<String, Object> configs = new HashMap<>();
+        configs.put(AvroSerializerConfig.DESERIALIZE_TARGET_TYPE, charge.getClass());
+        try (ReflectionAvroSerde serde = new ReflectionAvroSerde()) {
             //serialize
-            Charge charge = new Charge("specific", 100.0);
-            serializeConfigs.put(AvroSerializerConfig.SKIP_SCHEMA_REGISTRY, true);
-            serializeConfigs.put(AvroSerializerConfig.DESERIALIZE_TARGET_TYPE, charge.getClass());
-            serde.configure(serializeConfigs);
-            byte[] bytes = serde.serializer().serialize("TopicTest", charge);
+            serde.configure(configs);
 
+            byte[] bytes = serde.serializer().serialize("TopicTest", charge);
             //deserialize
             Charge charge1 = (Charge) serde.deserializer().deserialize("TopicTest", bytes);
-            System.out.println("the origin object after ser/de is " + charge1);
+            assertThat(charge1).isEqualTo(charge);
         } catch (IOException e) {
             System.out.println("serde shutdown failed");
         }
-
     }
 }

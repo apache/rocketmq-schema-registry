@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.rocketmq.schema.registry.client.serde;
+package org.apache.rocketmq.schema.registry.client.serde.avro;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.generic.GenericRecordBuilder;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
-import org.apache.rocketmq.schema.registry.client.config.AvroDeserializerConfig;
+import org.apache.rocketmq.schema.registry.client.config.AvroSerializerConfig;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
-import org.apache.rocketmq.schema.registry.client.serde.avro.GenericAvroSerde;
 import org.apache.rocketmq.schema.registry.common.dto.GetSchemaResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -63,7 +62,7 @@ public class GenericAvroSerdeTest {
         try (GenericAvroSerde serde = new GenericAvroSerde(registryClient)) {
             //configure
             Map<String, Object> configs = new HashMap<>();
-            configs.put(AvroDeserializerConfig.USE_GENERIC_DATUM_READER, true);
+            configs.put(AvroSerializerConfig.USE_GENERIC_DATUM_READER, true);
             serde.configure(configs);
 
             //serialize
@@ -75,7 +74,5 @@ public class GenericAvroSerdeTest {
         } catch (IOException e) {
             System.out.println("serde shutdown failed");
         }
-
-
     }
 }
