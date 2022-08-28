@@ -18,6 +18,7 @@
 package org.apache.rocketmq.schema.registry.storage.rocketmq.configs;
 
 import java.nio.charset.StandardCharsets;
+import org.apache.rocketmq.schema.registry.common.utils.CommonUtil;
 
 public class RocketmqConfigConstants {
 
@@ -28,8 +29,8 @@ public class RocketmqConfigConstants {
     public static final String STORAGE_ROCKETMQ_PRODUCER_GROUP_DEFAULT = "default";
 
     public static final String STORAGE_ROCKETMQ_CONSUMER_GROUP = "storage.rocketmq.consumer.group";
-    // TODO : ip
-    public static final String STORAGE_ROCKETMQ_CONSUMER_GROUP_DEFAULT = "default";
+    public static final String STORAGE_ROCKETMQ_CONSUMER_GROUP_DEFAULT =
+        CommonUtil.getIp().replace(".", "_");
 
     public static final String STORAGE_ROCKETMQ_NAMESRV = "storage.rocketmq.namesrv";
     public static final String STORAGE_ROCKETMQ_NAMESRV_DEFAULT = "http://localhost:9876";

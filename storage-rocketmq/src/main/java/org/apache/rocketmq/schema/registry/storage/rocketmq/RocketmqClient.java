@@ -19,25 +19,23 @@ package org.apache.rocketmq.schema.registry.storage.rocketmq;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.rocketmq.client.consumer.DefaultLitePullConsumer;
+import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.client.consumer.listener.ConsumeOrderlyContext;
+import org.apache.rocketmq.client.consumer.listener.ConsumeOrderlyStatus;
+import org.apache.rocketmq.client.consumer.listener.MessageListenerOrderly;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.MessageQueueSelector;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.client.producer.SendStatus;
-import org.apache.rocketmq.common.ThreadFactoryImpl;
 import org.apache.rocketmq.common.TopicConfig;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.message.MessageExt;
@@ -86,7 +84,7 @@ import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.Rocke
 public class RocketmqClient {
 
     private DefaultMQProducer producer;
-    private DefaultLitePullConsumer scheduleConsumer;
+    private DefaultMQPushConsumer scheduleConsumer;
     private DefaultMQAdminExt mqAdminExt;
     private String storageTopic;
     private boolean useCompactTopic;
@@ -95,10 +93,6 @@ public class RocketmqClient {
     private final List<ColumnFamilyHandle> cfHandleList = new ArrayList<>();
     private final List<ColumnFamilyDescriptor> cfDescriptors = new ArrayList<>();
     private final Map<String, ColumnFamilyHandle> cfHandleMap = new HashMap<>();
-
-    private ScheduledExecutorService scheduledExecutorService;
-
-    private static final Integer PULL_TASK_INTERVAL = 5 * 1000;
 
     /**
      * RocksDB for cache
@@ -203,39 +197,28 @@ public class RocketmqClient {
         try {
             producer.start();
 
-            scheduleConsumer.setPullThreadNums(4);
+            scheduleConsumer.subscribe(storageTopic, "*");
+            scheduleConsumer.registerMessageListener(new MessageListener());
             scheduleConsumer.start();
-
-            Collection<MessageQueue> messageQueueList = scheduleConsumer.fetchMessageQueues(storageTopic);
-            scheduleConsumer.assign(messageQueueList);
-            messageQueueList.forEach(mq -> {
-                try {
-                    scheduleConsumer.seekToBegin(mq);
-                } catch (MQClientException e) {
-                    e.printStackTrace();
-                }
-            });
-            this.scheduledExecutorService.scheduleAtFixedRate(new RocketmqStoragePullTask(),
-                0, PULL_TASK_INTERVAL, TimeUnit.MILLISECONDS);
-
         } catch (MQClientException e) {
             throw new SchemaException("Rocketmq client start failed", e);
         }
     }
 
-    public class RocketmqStoragePullTask implements Runnable {
+    public class MessageListener implements MessageListenerOrderly {
 
         @Override
-        public void run() {
+        public ConsumeOrderlyStatus consumeMessage(List<MessageExt> msgList,
+            ConsumeOrderlyContext context) {
             try {
-                List<MessageExt> msgList = scheduleConsumer.poll(1000);
                 if (CollectionUtils.isNotEmpty(msgList)) {
                     msgList.forEach(this::consumeMessage);
                 }
-                scheduleConsumer.commitSync();
             } catch (Exception e) {
-                log.error("consume message exception, consume offset may not commit");
+                log.error("consume message exception, reconsume later");
+                return ConsumeOrderlyStatus.SUSPEND_CURRENT_QUEUE_A_MOMENT;
             }
+            return ConsumeOrderlyStatus.SUCCESS;
         }
 
         private void consumeMessage(MessageExt msg) {
@@ -463,7 +446,7 @@ public class RocketmqClient {
             props.getProperty(STORAGE_ROCKETMQ_NAMESRV, STORAGE_ROCKETMQ_NAMESRV_DEFAULT)
         );
 
-        this.scheduleConsumer = new DefaultLitePullConsumer(
+        this.scheduleConsumer = new DefaultMQPushConsumer(
             props.getProperty(STORAGE_ROCKETMQ_CONSUMER_GROUP, STORAGE_ROCKETMQ_CONSUMER_GROUP_DEFAULT)
         );
 
@@ -477,9 +460,6 @@ public class RocketmqClient {
         );
 
         this.converter = new JsonConverterImpl();
-
-        this.scheduledExecutorService =
-            Executors.newSingleThreadScheduledExecutor(new ThreadFactoryImpl("RocketmqStoragePullTask"));
     }
 
     private ColumnFamilyHandle schemaCfHandle() {
