@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+import "validation.proto";
+package validation;
+
+message RegexMatch {
+	string name = 1 [(validation.regex) = "[A-Za-z]{2}"];
+}
+
+message RegexMismatch {
+	string name = 1 [(validation.regex) = "[0-9]{2}"];
+}
+
+message Forbidden {
+	string name = 1 [(validation.forbidden) = true];
+}
+
+message Required {
+	string name = 1 [(validation.required) = true];
+}
+
+message RequiredRepeated {
+	repeated string name = 1 [(validation.required) = true];
+}
+
+
+message Future {
+	int64 future_timemilles = 1 [(validation.future) = true];
+}
+
+message Past {
+	int64 past_timemilles = 1 [(validation.past) = true];
+}
+
+message NumberMaxMin {
+	int32 age = 1 [(validation.max) = 100, (validation.min) = 18];
+}
+
+message RepeatMaxMin {
+	repeated string hobbies = 1 [(validation.repeatMax) = 5, (validation.repeatMin) = 2];
+}
