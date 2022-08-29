@@ -48,7 +48,7 @@ public class ProtobufSchemaValidator implements org.apache.rocketmq.schema.regis
 				validator.validate(toValidate);
 			}
 			
-		} catch (SchemaValidationException | InvalidProtocolBufferException | MessageValidationException e) {
+		} catch ( InvalidProtocolBufferException | MessageValidationException e) {
 			throw new SchemaCompatibilityException("Schema compatibility validation failed", e);
 		}
 	}
