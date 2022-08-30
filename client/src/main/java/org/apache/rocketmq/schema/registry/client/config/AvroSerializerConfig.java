@@ -18,14 +18,12 @@ package org.apache.rocketmq.schema.registry.client.config;
 
 import java.util.Map;
 
-public class AvroDeserializerConfig {
+public class AvroSerializerConfig extends SerializerConfig {
     public final static String USE_GENERIC_DATUM_READER =
             "use.generic.datum.reader";
     public final static boolean USE_GENERIC_DATUM_READER_DEFAULT = false;
 
-    private final Map<String, Object> configs;
-
-    public AvroDeserializerConfig(Map<String, Object> configs) {
+    public AvroSerializerConfig(Map<String, Object> configs) {
         this.configs = configs;
     }
 

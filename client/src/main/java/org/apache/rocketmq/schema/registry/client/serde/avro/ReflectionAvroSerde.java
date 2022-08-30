@@ -14,27 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.rocketmq.schema.registry.client.serde.avro;
 
-package org.apache.rocketmq.schema.registry.client.serde.json;
-
-import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
+import org.apache.avro.specific.SpecificRecord;
+import org.apache.rocketmq.schema.registry.client.serde.Deserializer;
+import org.apache.rocketmq.schema.registry.client.serde.Serializer;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
 
-public class JsonSerde<T> implements Closeable {
-    private final JsonSerializer<T> serializer;
-    private final JsonDeserializer<T> deserializer;
+public class ReflectionAvroSerde implements Closeable {
+    private final ReflectionAvroSerializer<SpecificRecord> serializer;
+    private final ReflectionAvroDeserializer<SpecificRecord> deserializer;
 
-    public JsonSerde() {
-        this.serializer = new JsonSerializer<>();
-        this.deserializer = new JsonDeserializer<>();
+    public ReflectionAvroSerde() {
+        this.serializer = new ReflectionAvroSerializer<>();
+        this.deserializer = new ReflectionAvroDeserializer<>();
     }
 
-    public JsonSerde(SchemaRegistryClient registryClient) {
-        this.serializer = new JsonSerializer<>(registryClient);
-        this.deserializer = new JsonDeserializer<>(registryClient);
+    public Serializer<SpecificRecord> serializer() {
+        return this.serializer;
+    }
+
+    public Deserializer<SpecificRecord> deserializer() {
+        return this.deserializer;
     }
 
     public void configure(final Map<String, Object> configs) {
@@ -42,16 +46,9 @@ public class JsonSerde<T> implements Closeable {
         this.deserializer.configure(configs);
     }
 
-    public JsonSerializer<T> serializer() {
-        return this.serializer;
-    }
-
-    public JsonDeserializer<T> deserializer() {
-        return this.deserializer;
-    }
-
     @Override
     public void close() throws IOException {
-
+        this.serializer.close();
+        this.deserializer.close();
     }
 }

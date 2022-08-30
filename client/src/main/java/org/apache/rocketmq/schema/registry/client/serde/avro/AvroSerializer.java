@@ -49,7 +49,6 @@ public class AvroSerializer<T> implements Serializer<T> {
 
     @Override
     public void configure(Map<String, Object> configs) {
-        Serializer.super.configure(configs);
     }
 
     @Override
@@ -64,13 +63,12 @@ public class AvroSerializer<T> implements Serializer<T> {
             return null;
         }
 
-        try {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            BinaryEncoder encoder = encoderFactory.directBinaryEncoder(out, null);
             GetSchemaResponse response = getSchemaBySubject(subject);
             long schemaRecordId = response.getRecordId();
             String schemaIdl = response.getIdl();
             Schema schema = new Schema.Parser().parse(schemaIdl);
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            BinaryEncoder encoder = encoderFactory.directBinaryEncoder(out, null);
             ByteBuffer buffer = ByteBuffer.allocate(SchemaConstants.SCHEMA_RECORD_ID_LENGTH);
             encoder.writeBytes(buffer.putLong(schemaRecordId).array());
 
@@ -83,7 +81,6 @@ public class AvroSerializer<T> implements Serializer<T> {
             datumWriter.write(record, encoder);
             encoder.flush();
             byte[] bytes = out.toByteArray();
-            out.close();
             return bytes;
         } catch (IOException | RuntimeException e) {
             throw new SerializationException("serialize Avro message failed", e);

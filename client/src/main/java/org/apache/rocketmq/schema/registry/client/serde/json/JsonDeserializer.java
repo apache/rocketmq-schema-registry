@@ -20,6 +20,7 @@ package org.apache.rocketmq.schema.registry.client.serde.json;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
+import org.apache.rocketmq.schema.registry.client.config.JsonSerializerConfig;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
 import org.apache.rocketmq.schema.registry.client.exceptions.SerializationException;
 import org.apache.rocketmq.schema.registry.client.rest.JacksonMapper;
@@ -35,29 +36,44 @@ import java.util.Map;
 
 public class JsonDeserializer<T> implements Deserializer<T> {
     Logger log = LoggerFactory.getLogger(JsonDeserializer.class);
-    private final SchemaRegistryClient registryClient;
-    private final ObjectMapper objectMapper;
-    private final Class<T> type;
+    private SchemaRegistryClient registryClient;
+    private final ObjectMapper objectMapper = JacksonMapper.INSTANCE;
+    private boolean skipSchemaRegistry;
+    private Class<T> type;
 
-    public JsonDeserializer(SchemaRegistryClient registryClient, Class<T> type) {
+    public JsonDeserializer() {
+    }
+
+    public JsonDeserializer(SchemaRegistryClient registryClient) {
         this.registryClient = registryClient;
-        objectMapper = JacksonMapper.INSTANCE;
-        this.type = type;
     }
 
     @Override
     public void configure(Map<String, Object> configs) {
-
+        JsonSerializerConfig serializerConfig = new JsonSerializerConfig(configs);
+        this.skipSchemaRegistry = serializerConfig.skipSchemaRegistry();
+        this.type = (Class<T>) serializerConfig.deserializeTargetType();
     }
 
     @Override
     public T deserialize(String subject, byte[] payload) {
-        if (null == registryClient) {
-            throw new SerializationException("please initialize the schema registry client first");
-        }
-
         if (null == payload || payload.length == 0) {
             return null;
+        }
+
+        if (skipSchemaRegistry) {
+            if (null == type) {
+                throw new SerializationException("type cannot be null");
+            }
+            try {
+                return objectMapper.readValue(payload, type);
+            } catch (Exception e) {
+                throw new SerializationException("JSON serialize failed", e);
+            }
+        }
+
+        if (null == registryClient) {
+            throw new SerializationException("please initialize the schema registry client first");
         }
 
         try {
@@ -73,9 +89,7 @@ public class JsonDeserializer<T> implements Deserializer<T> {
             jsonNode = objectMapper.readValue(buffer.array(), start, length, JsonNode.class);
 
             return objectMapper.convertValue(jsonNode, type);
-        } catch (RestClientException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (RestClientException | IOException e) {
             throw new RuntimeException(e);
         }
     }

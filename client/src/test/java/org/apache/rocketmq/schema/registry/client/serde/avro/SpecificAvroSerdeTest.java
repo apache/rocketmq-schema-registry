@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.rocketmq.schema.registry.client.serde;
+package org.apache.rocketmq.schema.registry.client.serde.avro;
 
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
-import org.apache.rocketmq.schema.registry.client.serde.avro.SpecificAvroSerde;
+import org.apache.rocketmq.schema.registry.client.serde.Charge;
 import org.apache.rocketmq.schema.registry.common.dto.GetSchemaResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -61,7 +61,5 @@ public class SpecificAvroSerdeTest {
         } catch (IOException e) {
             System.out.println("serde shutdown failed");
         }
-
-
     }
 }

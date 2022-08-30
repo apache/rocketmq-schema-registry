@@ -14,43 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.rocketmq.schema.registry.example.serde.avro;
 
-import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
-import org.apache.rocketmq.schema.registry.client.SchemaRegistryClientFactory;
 import org.apache.rocketmq.schema.registry.client.config.AvroSerializerConfig;
-import org.apache.rocketmq.schema.registry.client.serde.avro.SpecificAvroSerde;
+import org.apache.rocketmq.schema.registry.client.serde.avro.ReflectionAvroSerde;
 import org.apache.rocketmq.schema.registry.example.serde.Charge;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SpecificAvroSerdeDemo {
-
+public class ReflectionAvroSerdeDemo {
     public static void main(String[] args) {
-
-        String baseUrl = "http://localhost:8080";
-        SchemaRegistryClient schemaRegistryClient = SchemaRegistryClientFactory.newClient(baseUrl, null);
-        Map<String, Object> serializeConfigs = new HashMap<>();
-
-
-        try (SpecificAvroSerde serde = new SpecificAvroSerde(schemaRegistryClient)) {
-
+        Charge charge = new Charge("specific", 100.0);
+        Map<String, Object> configs = new HashMap<>();
+        configs.put(AvroSerializerConfig.DESERIALIZE_TARGET_TYPE, charge.getClass());
+        try (ReflectionAvroSerde serde = new ReflectionAvroSerde()) {
             //serialize
-            Charge charge = new Charge("specific", 100.0);
-            serializeConfigs.put(AvroSerializerConfig.SKIP_SCHEMA_REGISTRY, true);
-            serializeConfigs.put(AvroSerializerConfig.DESERIALIZE_TARGET_TYPE, charge.getClass());
-            serde.configure(serializeConfigs);
-            byte[] bytes = serde.serializer().serialize("TopicTest", charge);
+            serde.configure(configs);
 
+            byte[] bytes = serde.serializer().serialize("TopicTest", charge);
             //deserialize
             Charge charge1 = (Charge) serde.deserializer().deserialize("TopicTest", bytes);
-            System.out.println("the origin object after ser/de is " + charge1);
+            System.out.println("charge before ser/de is " + charge);
+            System.out.println("charge after ser/de is " + charge1);
+            System.out.printf("charge == charge1 : %b", charge.equals(charge1));
         } catch (IOException e) {
             System.out.println("serde shutdown failed");
         }
-
     }
 }
