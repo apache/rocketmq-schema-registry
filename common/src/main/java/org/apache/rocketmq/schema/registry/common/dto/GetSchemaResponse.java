@@ -75,6 +75,10 @@ public class GetSchemaResponse extends BaseDto {
 
     private List<Field> parse(String schemaIdl) {
         Schema schema = new Schema.Parser().parse(schemaIdl);
+        if (schema.getType() != Schema.Type.RECORD) {
+            return null;
+        }
+
         return schema.getFields().stream().map(field -> {
             String type = field.schema().getType().getName();
             // ["null", "double"] represent this field is nullable
