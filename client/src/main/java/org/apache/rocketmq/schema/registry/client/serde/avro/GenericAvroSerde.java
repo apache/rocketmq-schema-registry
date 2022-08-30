@@ -25,13 +25,13 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
 
-public class GenericAvroSerde implements Closeable {
-    private final Serializer<GenericRecord> serializer;
-    private final Deserializer<GenericRecord> deserializer;
+public class GenericAvroSerde<T extends GenericRecord> implements Closeable {
+    private final Serializer<T> serializer;
+    private final Deserializer<T> deserializer;
 
     public GenericAvroSerde() {
-        this.serializer = new GenericAvroSerializer();
-        this.deserializer = new GenericAvroDeserializer();
+        this.serializer = new GenericAvroSerializer<T>();
+        this.deserializer = new GenericAvroDeserializer<T>();
     }
 
     public GenericAvroSerde(final SchemaRegistryClient client) {
@@ -47,11 +47,11 @@ public class GenericAvroSerde implements Closeable {
         this.deserializer.configure(configs);
     }
 
-    public Serializer<GenericRecord> serializer() {
+    public Serializer<T> serializer() {
         return this.serializer;
     }
 
-    public Deserializer<GenericRecord> deserializer() {
+    public Deserializer<T> deserializer() {
         return this.deserializer;
     }
 

@@ -22,7 +22,7 @@ import org.apache.rocketmq.schema.registry.client.serde.Deserializer;
 
 import java.util.Map;
 
-public class SpecificAvroDeserializer implements Deserializer<SpecificRecord> {
+public class SpecificAvroDeserializer<T extends SpecificRecord> implements Deserializer<T> {
 
     private final AvroDeserializer<SpecificRecord> inner;
 
@@ -39,9 +39,10 @@ public class SpecificAvroDeserializer implements Deserializer<SpecificRecord> {
         this.inner.configure(configs);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public SpecificRecord deserialize(String subject, byte[] bytes) {
-        return this.inner.deserialize(subject, bytes);
+    public T deserialize(String subject, byte[] bytes) {
+        return (T) this.inner.deserialize(subject, bytes);
     }
 
     @Override

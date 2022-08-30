@@ -22,8 +22,8 @@ import org.apache.rocketmq.schema.registry.client.serde.Deserializer;
 
 import java.util.Map;
 
-public class GenericAvroDeserializer implements Deserializer<GenericRecord> {
-    private final AvroDeserializer<GenericRecord> inner;
+public class GenericAvroDeserializer<T extends GenericRecord> implements Deserializer<T> {
+    private final AvroDeserializer<T> inner;
 
     public GenericAvroDeserializer() {
         this.inner = new AvroDeserializer<>();
@@ -39,7 +39,7 @@ public class GenericAvroDeserializer implements Deserializer<GenericRecord> {
     }
 
     @Override
-    public GenericRecord deserialize(String subject, byte[] bytes) {
+    public T deserialize(String subject, byte[] bytes) {
         return this.inner.deserialize(subject, bytes);
     }
 
