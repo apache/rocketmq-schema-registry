@@ -25,9 +25,9 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
 
-public class SpecificAvroSerde implements Closeable {
-    private final AvroSerializer<SpecificRecord> serializer;
-    private final AvroDeserializer<SpecificRecord> deserializer;
+public class SpecificAvroSerde<T extends SpecificRecord> implements Closeable {
+    private final AvroSerializer<T> serializer;
+    private final AvroDeserializer<T> deserializer;
 
     public SpecificAvroSerde() {
         this.serializer = new AvroSerializer<>();
@@ -43,11 +43,11 @@ public class SpecificAvroSerde implements Closeable {
         this.deserializer = new AvroDeserializer<>(client);
     }
 
-    public Serializer<SpecificRecord> serializer() {
+    public Serializer<T> serializer() {
         return this.serializer;
     }
 
-    public Deserializer<SpecificRecord> deserializer() {
+    public Deserializer<T> deserializer() {
         return this.deserializer;
     }
 

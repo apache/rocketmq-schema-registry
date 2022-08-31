@@ -36,7 +36,7 @@ public class SpecificAvroSerdeDemo {
         Map<String, Object> serializeConfigs = new HashMap<>();
 
 
-        try (SpecificAvroSerde serde = new SpecificAvroSerde(schemaRegistryClient)) {
+        try (SpecificAvroSerde<Charge> serde = new SpecificAvroSerde<Charge>(schemaRegistryClient)) {
 
             //serialize
             Charge charge = new Charge("specific", 100.0);
@@ -46,7 +46,7 @@ public class SpecificAvroSerdeDemo {
             byte[] bytes = serde.serializer().serialize("TopicTest", charge);
 
             //deserialize
-            Charge charge1 = (Charge) serde.deserializer().deserialize("TopicTest", bytes);
+            Charge charge1 = serde.deserializer().deserialize("TopicTest", bytes);
             System.out.println("the origin object after ser/de is " + charge1);
         } catch (IOException e) {
             System.out.println("serde shutdown failed");

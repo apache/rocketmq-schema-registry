@@ -69,7 +69,7 @@ public class GenericAvroSerdeTest {
             byte[] bytes = serde.serializer().serialize("TopicTest", record);
 
             //deserialize
-            GenericRecord record1 = serde.deserializer().deserialize("TopicTest", bytes);
+            GenericRecord record1 = (GenericRecord) serde.deserializer().deserialize("TopicTest", bytes);
             assertThat(record1).isEqualTo(record);
         } catch (IOException e) {
             System.out.println("serde shutdown failed");

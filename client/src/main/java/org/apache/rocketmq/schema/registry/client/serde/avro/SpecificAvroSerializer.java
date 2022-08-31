@@ -16,15 +16,14 @@
  */
 package org.apache.rocketmq.schema.registry.client.serde.avro;
 
-import org.apache.avro.specific.SpecificRecord;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
 import org.apache.rocketmq.schema.registry.client.serde.Serializer;
 
 import java.util.Map;
 
-public class SpecificAvroSerializer implements Serializer<SpecificRecord> {
+public class SpecificAvroSerializer<T> implements Serializer<T> {
 
-    private final AvroSerializer<SpecificRecord> inner;
+    private final AvroSerializer<T> inner;
 
     public SpecificAvroSerializer() {
         this.inner = new AvroSerializer<>();
@@ -40,7 +39,7 @@ public class SpecificAvroSerializer implements Serializer<SpecificRecord> {
     }
 
     @Override
-    public byte[] serialize(String subject, SpecificRecord record) {
+    public byte[] serialize(String subject, T record) {
         return this.inner.serialize(subject, record);
     }
 

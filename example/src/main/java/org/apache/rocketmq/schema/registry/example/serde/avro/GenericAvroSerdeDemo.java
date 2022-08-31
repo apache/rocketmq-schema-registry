@@ -41,7 +41,7 @@ public class GenericAvroSerdeDemo {
                 .set("amount", 100.0)
                 .build();
 
-        try (GenericAvroSerde serde = new GenericAvroSerde(schemaRegistryClient)) {
+        try (GenericAvroSerde<GenericRecord> serde = new GenericAvroSerde<>(schemaRegistryClient)) {
             //configure
             Map<String, Object> configs = new HashMap<>();
             configs.put(AvroSerializerConfig.USE_GENERIC_DATUM_READER, true);
