@@ -27,6 +27,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -34,6 +37,7 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -245,6 +249,38 @@ public class CommonUtil {
         }
 
         return schemaId | schemaVersion;
+    }
+
+    public static String getIp() {
+        String ip = "";
+
+        try {
+            Enumeration<NetworkInterface> netInterfaces = NetworkInterface.getNetworkInterfaces();
+            InetAddress inetAddress;
+            boolean found = false;
+            while (netInterfaces.hasMoreElements() && !found) {
+                NetworkInterface ni = netInterfaces.nextElement();
+                Enumeration<InetAddress> address = ni.getInetAddresses();
+                while (address.hasMoreElements()) {
+                    inetAddress = address.nextElement();
+                    if (!inetAddress.isSiteLocalAddress()
+                        && !inetAddress.isLoopbackAddress()
+                        && !inetAddress.getHostAddress().contains(":")) {
+                        ip = inetAddress.getHostAddress();
+                        found = true;
+                        break;
+                    } else if (inetAddress.isSiteLocalAddress()
+                        && !inetAddress.isLoopbackAddress()
+                        && !inetAddress.getHostAddress().contains(":")) {
+                        ip = inetAddress.getHostAddress();
+                    }
+                }
+            }
+        } catch (SocketException e) {
+            throw new SchemaException("Get IP failed", e);
+        }
+
+        return ip;
     }
 
 }
