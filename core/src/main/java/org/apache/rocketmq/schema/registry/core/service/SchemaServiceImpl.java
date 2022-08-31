@@ -17,7 +17,6 @@
 
 package org.apache.rocketmq.schema.registry.core.service;
 
-import com.google.common.base.Strings;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +33,6 @@ import org.apache.rocketmq.schema.registry.common.dto.SchemaDto;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaRecordDto;
 import org.apache.rocketmq.schema.registry.common.dto.UpdateSchemaRequest;
 import org.apache.rocketmq.schema.registry.common.dto.UpdateSchemaResponse;
-import org.apache.rocketmq.schema.registry.common.exception.SchemaCompatibilityException;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaException;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaExistException;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaNotFoundException;
@@ -226,7 +224,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
     @Override
     public SchemaDto get(QualifiedName qualifiedName) {
         final RequestContext requestContext = RequestContextManager.getContext();
-        log.info("register get request context: " + requestContext);
+        log.debug("register get request context: " + requestContext);
 
         CommonUtil.validateName(qualifiedName);
 
@@ -237,7 +235,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
             throw new SchemaNotFoundException(qualifiedName);
         }
 
-        log.info("get schema {}", qualifiedName);
+        log.debug("get schema {}", qualifiedName);
         return storageUtil.convertToSchemaDto(schemaInfo);
     }
 
@@ -247,7 +245,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
     @Override
     public GetSchemaResponse getBySubject(QualifiedName qualifiedName) {
         final RequestContext requestContext = RequestContextManager.getContext();
-        log.info("register get request context: " + requestContext);
+        log.debug("register get request context: " + requestContext);
 
         this.accessController.checkPermission("", qualifiedName.getSubject(), SchemaOperation.GET);
 
@@ -256,14 +254,14 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
             throw new SchemaException("Schema: " + qualifiedName.toString() + " not exist");
         }
 
-        log.info("get schema by subject: {}", qualifiedName.getSubject());
+        log.debug("get schema by subject: {}", qualifiedName.getSubject());
         return new GetSchemaResponse(qualifiedName, recordInfo);
     }
 
     @Override
     public List<SchemaRecordDto> listBySubject(QualifiedName qualifiedName) {
         final RequestContext requestContext = RequestContextManager.getContext();
-        log.info("register get request context: " + requestContext);
+        log.debug("register get request context: " + requestContext);
 
         this.accessController.checkPermission("", qualifiedName.getSubject(), SchemaOperation.GET);
 
@@ -272,19 +270,20 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
             throw new SchemaException("Schema: " + qualifiedName.toString() + " not exist");
         }
 
-        log.info("list schema by subject: {}", qualifiedName.getSubject());
+        log.debug("list schema by subject: {}", qualifiedName.getSubject());
         return recordInfos.stream().map(storageUtil::convertToSchemaRecordDto).collect(Collectors.toList());
     }
 
+    @Override
     public List<String> listSubjectsByTenant(QualifiedName qualifiedName) {
         final RequestContext requestContext = RequestContextManager.getContext();
-        log.info("get request context: " + requestContext);
+        log.debug("get request context: " + requestContext);
 
         this.accessController.checkPermission("", qualifiedName.getTenant(), SchemaOperation.GET);
 
         List<String> subjects = storageServiceProxy.listSubjectsByTenant(qualifiedName);
 
-        log.info("list subjects by tenant: {}", qualifiedName.getTenant());
+        log.debug("list subjects by tenant: {}", qualifiedName.getTenant());
         return subjects;
     }
 
@@ -294,16 +293,4 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
         }
     }
 
-    private void checkSchemaValid(final SchemaDto schemaDto) {
-        CommonUtil.validateName(schemaDto.getQualifiedName());
-
-        // TODO: check and set namespace from idl
-        if (Strings.isNullOrEmpty(schemaDto.getMeta().getNamespace())) {
-            throw new SchemaCompatibilityException("Schema namespace is null, please check your config.");
-        }
-
-        if (schemaDto.getDetails().getSchemaRecords().size() > 1) {
-            throw new SchemaCompatibilityException("Can not register schema with multi records.");
-        }
-    }
 }

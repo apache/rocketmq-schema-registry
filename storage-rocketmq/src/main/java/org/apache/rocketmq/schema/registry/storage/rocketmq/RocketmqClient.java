@@ -298,6 +298,7 @@ public class RocketmqClient {
                 if (!result.getSendStatus().equals(SendStatus.SEND_OK)) {
                     throw new SchemaException("Register schema: " + schema.getQualifiedName() + " failed: " + result.getSendStatus());
                 }
+                log.info("send message success, msgId = {}", result.getMsgId());
             }
 
             return schema;
@@ -375,6 +376,7 @@ public class RocketmqClient {
                 if (result.getSendStatus() != SendStatus.SEND_OK) {
                     throw new SchemaException("Update " + update.getQualifiedName() + " failed: " + result.getSendStatus());
                 }
+                log.info("send message success, msgId = {}", result.getMsgId());
             }
             return update;
         } catch (SchemaException e) {
