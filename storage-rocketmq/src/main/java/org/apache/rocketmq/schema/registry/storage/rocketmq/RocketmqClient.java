@@ -165,7 +165,6 @@ public class RocketmqClient {
             if (cfs.size() <= 1) {
                 List<byte[]> columnFamilies = Arrays.asList(STORAGE_ROCKSDB_SCHEMA_COLUMN_FAMILY,
                     STORAGE_ROCKSDB_SUBJECT_COLUMN_FAMILY);
-                // TODO: add default cf in handles when needed
                 cache = org.rocksdb.RocksDB.open(options, cachePath);
                 cfDescriptors.addAll(columnFamilies.stream()
                     .map(ColumnFamilyDescriptor::new)

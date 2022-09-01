@@ -24,11 +24,6 @@ import org.rocksdb.RocksDBException;
 
 public class RocketmqStorageUtils {
 
-    public static boolean validate(byte[] value, byte[] expect) throws RocksDBException {
-        // TODO
-        return true;
-    }
-
     public static void checkAndPut(String key, byte[] value, RocksDB db) throws RocksDBException {
         byte[] oldValue = db.get(key.getBytes(StandardCharsets.UTF_8));
         if (oldValue == null || !Arrays.equals(oldValue, value)) {

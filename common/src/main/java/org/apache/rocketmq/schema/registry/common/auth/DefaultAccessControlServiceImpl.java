@@ -54,7 +54,6 @@ public class DefaultAccessControlServiceImpl implements AccessControlService {
         final SchemaOperation operation
     ) {
         final Set<String> users = null;
-//            accessACL.get(QualifiedName.ofDatabase(name.getCatalogName(), name.getDatabaseName()));
         if ((users != null) && !users.isEmpty() && !users.contains(userName)) {
             throw new SchemaAuthorizedException(String.format("%s is not permitted for %s %s", userName, operation.name(), name));
         }

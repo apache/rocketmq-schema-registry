@@ -61,11 +61,7 @@ public class RequestFilter implements Filter {
         final String method = httpServletRequest.getMethod();
 
         // TODO: get request Authorization from http header
-//        final String requestAuth =
-//            httpServletRequest.getHeader(RequestContext.MICOMPUTE_REQUEST_HEADER_AUTHORIZATION);
-//        final String metaAccount = StringUtils.isNotBlank(requestAuth)
-//            ? requestAuth.replaceAll("@<", "\\{").replaceAll("@>", "\\}")
-//            : requestAuth;
+
         final RequestContext context = RequestContext.builder().build();
         RequestContextManager.putContext(context);
         log.info("filter " + context.toString());
