@@ -140,6 +140,12 @@ public class RestService {
         return HttpUtil.sendHttpRequest(path, HTTP_GET, null, httpHeaders, GET_SCHEMA_DTO_TYPE_REFERENCE);
     }
 
+    public GetSchemaResponse getSchemaBySubject(String subject, long version)
+        throws IOException, RestClientException {
+        UrlBuilder urlBuilder = UrlBuilder.fromPath("/subject/{subject-name}/schema/versions/{version}");
+        String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(subject, version).toString());
+        return HttpUtil.sendHttpRequest(path, HTTP_GET, null, httpHeaders, GET_SCHEMA_DTO_TYPE_REFERENCE);
+    }
     public List<SchemaRecordDto> getSchemaListBySubject(String cluster, String tenant,
         String subject) throws RestClientException, IOException {
         UrlBuilder urlBuilder = UrlBuilder.fromPath("/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/versions");
@@ -157,5 +163,31 @@ public class RestService {
         UrlBuilder urlBuilder = UrlBuilder.fromPath("/cluster/{cluster-name}/tenants");
         String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(cluster).toString());
         return HttpUtil.sendHttpRequest(path, HTTP_GET, null, httpHeaders, LIST_STRING_REFERENCE);
+    }
+
+    public GetSchemaResponse getTargetSchema(String subject, String schema) throws RestClientException, IOException {
+        UrlBuilder urlBuilder = UrlBuilder.fromPath("/subject/{subject-name}/schema/schema");
+        String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(subject).toString());
+        return HttpUtil.sendHttpRequest(path, HTTP_POST, schema, httpHeaders, GET_SCHEMA_DTO_TYPE_REFERENCE);
+    }
+
+    public GetSchemaResponse getTargetSchema(String cluster, String tenant, String subject, String schema)
+        throws RestClientException, IOException {
+        UrlBuilder urlBuilder = UrlBuilder.fromPath("/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/schema");
+        String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(cluster, tenant, subject).toString());
+        return HttpUtil.sendHttpRequest(path, HTTP_POST, schema, httpHeaders, GET_SCHEMA_DTO_TYPE_REFERENCE);
+    }
+
+    public GetSchemaResponse getSchemaByRecordId(String cluster, String tenant, String subject, long recordId)
+        throws RestClientException, IOException {
+        UrlBuilder urlBuilder = UrlBuilder.fromPath("/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/recordId/{record-id}/schema");
+        String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(cluster, tenant, subject, recordId).toString());
+        return HttpUtil.sendHttpRequest(path, HTTP_GET, null, httpHeaders, GET_SCHEMA_DTO_TYPE_REFERENCE);
+    }
+
+    public GetSchemaResponse getSchemaByRecordId(String subject, long recordId) throws RestClientException, IOException {
+        UrlBuilder urlBuilder = UrlBuilder.fromPath("/subject/{subject-name}/recordId/{record-id}/schema");
+        String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(subject, recordId).toString());
+        return HttpUtil.sendHttpRequest(path, HTTP_GET, null, httpHeaders, GET_SCHEMA_DTO_TYPE_REFERENCE);
     }
 }

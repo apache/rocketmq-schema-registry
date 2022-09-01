@@ -20,4 +20,5 @@ package org.apache.rocketmq.schema.registry.common.constant;
 public class SchemaConstants {
     public static final int SCHEMA_RECORD_ID_LENGTH = 8;
     public static final char SUBJECT_SEPARATOR = '/';
+    public static final int SCHEMA_VERSION_BITS = 14;
 }

@@ -55,10 +55,23 @@ public interface SchemaRegistryClient {
     GetSchemaResponse getSchemaBySubjectAndVersion(String cluster, String tenant, String subject,
         long version) throws IOException, RestClientException;
 
+    GetSchemaResponse getSchemaBySubjectAndVersion(String subject, long version)
+        throws IOException, RestClientException;
+
+    GetSchemaResponse getTargetSchema(String cluster, String tenant, String subject, String schema)
+        throws RestClientException, IOException;
+    GetSchemaResponse getTargetSchema(String subject, String schema) throws RestClientException, IOException;
+
     List<SchemaRecordDto> getSchemaListBySubject(String cluster, String tenant,
         String subject) throws RestClientException, IOException;
 
     List<String> getSubjectsByTenant(String cluster, String tenant) throws RestClientException, IOException;
 
     List<String> getAllTenants(String cluster) throws RestClientException, IOException;
+
+    GetSchemaResponse getSchemaByRecordId(String cluster, String tenant, String subject, long recordId)
+        throws RestClientException, IOException;
+
+    GetSchemaResponse getSchemaByRecordId(String subject, long recordId)
+            throws RestClientException, IOException;
 }

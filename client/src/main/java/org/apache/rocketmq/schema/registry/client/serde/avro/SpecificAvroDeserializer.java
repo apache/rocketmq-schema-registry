@@ -16,6 +16,7 @@
  */
 package org.apache.rocketmq.schema.registry.client.serde.avro;
 
+import org.apache.avro.Schema;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
 import org.apache.rocketmq.schema.registry.client.serde.Deserializer;
@@ -43,6 +44,11 @@ public class SpecificAvroDeserializer<T extends SpecificRecord> implements Deser
     @Override
     public T deserialize(String subject, byte[] bytes) {
         return (T) this.inner.deserialize(subject, bytes);
+    }
+
+    @SuppressWarnings("unchecked")
+    public T deserialize(String subject, byte[] bytes, Schema readerSchema) {
+        return (T) this.inner.deserialize(subject, bytes, readerSchema);
     }
 
     @Override

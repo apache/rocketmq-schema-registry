@@ -16,6 +16,7 @@
  */
 package org.apache.rocketmq.schema.registry.client.serde.avro;
 
+import org.apache.avro.Schema;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
 import org.apache.rocketmq.schema.registry.client.serde.Charge;
@@ -26,6 +27,7 @@ import org.mockito.Mock;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -46,9 +48,11 @@ public class SpecificAvroSerdeTest {
         when(getSchemaResponse.getRecordId()).thenReturn(11111L);
         when(getSchemaResponse.getSchemaFullName()).thenReturn("org.apache.rocketmq.schema.registry.example.serde.Charge");
         when(getSchemaResponse.getIdl()).thenReturn(idl);
+        Schema schema = new Schema.Parser().parse(idl);
 
         registryClient = mock(SchemaRegistryClient.class);
-        when(registryClient.getSchemaBySubject("TopicTest")).thenReturn(getSchemaResponse);
+        when(registryClient.getTargetSchema("TopicTest", schema.toString())).thenReturn(getSchemaResponse);
+        when(registryClient.getSchemaByRecordId("TopicTest", 11111L)).thenReturn(getSchemaResponse);
 
         try (SpecificAvroSerde serde = new SpecificAvroSerde(registryClient)) {
             //serialize

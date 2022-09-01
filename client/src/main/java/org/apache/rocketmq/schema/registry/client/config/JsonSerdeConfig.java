@@ -14,8 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.rocketmq.schema.registry.client.config;
 
-package org.apache.rocketmq.schema.registry.common.model;
+import java.util.Map;
 
-public class SchemaDefination {
+public class JsonSerdeConfig extends SerdeConfig {
+    public JsonSerdeConfig(Map<String, Object> configs) {
+        this.configs = configs;
+    }
+
 }

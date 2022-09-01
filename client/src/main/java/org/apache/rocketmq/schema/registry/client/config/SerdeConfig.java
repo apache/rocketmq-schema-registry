@@ -18,12 +18,26 @@ package org.apache.rocketmq.schema.registry.client.config;
 
 import java.util.Map;
 
-public class SerializerConfig {
+public class SerdeConfig {
     public final static String SKIP_SCHEMA_REGISTRY =
             "skip.schema.registry";
     public final static boolean SKIP_SCHEMA_REGISTRY_DEFAULT = false;
     public final static String DESERIALIZE_TARGET_TYPE =
             "deserialize.target.type";
+    /**
+     * use target version schema to serialize/deserialize without recordId.
+     * version default null, will use the latest version.
+     */
+    public final static String USE_TARGET_VERSION_SCHEMA =
+            "use.target.version.schema";
+
+    public final static boolean USE_TARGET_VERSION_SCHEMA_DEFAULT = false;
+
+    public final static String SCHEMA_TARGET_VERSION =
+            "schema.target.version";
+
+    public final static long SCHEMA_TARGET_VERSION_DEFAULT = -1;
+
     protected Map<String, Object> configs;
 
     public boolean skipSchemaRegistry() {
@@ -32,5 +46,13 @@ public class SerializerConfig {
 
     public Class<?> deserializeTargetType() {
         return (Class) configs.get(DESERIALIZE_TARGET_TYPE);
+    }
+
+    public boolean useTargetVersionSchema() {
+        return (boolean) configs.getOrDefault(USE_TARGET_VERSION_SCHEMA, USE_TARGET_VERSION_SCHEMA_DEFAULT);
+    }
+
+    public long schemaTargetVersion() {
+        return (long) configs.getOrDefault(SCHEMA_TARGET_VERSION, SCHEMA_TARGET_VERSION_DEFAULT);
     }
 }

@@ -17,7 +17,7 @@
 
 package org.apache.rocketmq.schema.registry.example.serde.json;
 
-import org.apache.rocketmq.schema.registry.client.config.JsonSerializerConfig;
+import org.apache.rocketmq.schema.registry.client.config.JsonSerdeConfig;
 import org.apache.rocketmq.schema.registry.client.serde.json.JsonSerde;
 import org.apache.rocketmq.schema.registry.example.serde.Person;
 
@@ -33,8 +33,8 @@ public class JsonSerdeWithoutServerDemo {
 
         try(JsonSerde<Person> jsonSerde = new JsonSerde<>()) {
             Map<String, Object> configs = new HashMap<>();
-            configs.put(JsonSerializerConfig.DESERIALIZE_TARGET_TYPE, Person.class);
-            configs.put(JsonSerializerConfig.SKIP_SCHEMA_REGISTRY, true);
+            configs.put(JsonSerdeConfig.DESERIALIZE_TARGET_TYPE, Person.class);
+            configs.put(JsonSerdeConfig.SKIP_SCHEMA_REGISTRY, true);
             jsonSerde.configure(configs);
             byte[] bytes = jsonSerde.serializer().serialize("TopicTest", person);
 

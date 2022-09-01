@@ -83,4 +83,8 @@ public interface SchemaService<T extends BaseDto> {
     List<String> listSubjectsByTenant(QualifiedName qualifiedName);
 
     List<String> listTenants(QualifiedName name);
+
+    GetSchemaResponse getTargetSchema(QualifiedName qualifiedName);
+
+    GetSchemaResponse getByRecordId(QualifiedName qualifiedName, long recordId);
 }

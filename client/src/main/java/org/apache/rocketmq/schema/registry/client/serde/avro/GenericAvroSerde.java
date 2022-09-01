@@ -16,30 +16,27 @@
  */
 package org.apache.rocketmq.schema.registry.client.serde.avro;
 
-import org.apache.avro.generic.GenericRecord;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
-import org.apache.rocketmq.schema.registry.client.serde.Deserializer;
-import org.apache.rocketmq.schema.registry.client.serde.Serializer;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
 
-public class GenericAvroSerde<T extends GenericRecord> implements Closeable {
-    private final Serializer<T> serializer;
-    private final Deserializer<T> deserializer;
+public class GenericAvroSerde implements Closeable {
+    private final GenericAvroSerializer serializer;
+    private final GenericAvroDeserializer deserializer;
 
     public GenericAvroSerde() {
-        this.serializer = new GenericAvroSerializer<T>();
-        this.deserializer = new GenericAvroDeserializer<T>();
+        this.serializer = new GenericAvroSerializer();
+        this.deserializer = new GenericAvroDeserializer();
     }
 
     public GenericAvroSerde(final SchemaRegistryClient client) {
         if (null == client) {
             throw  new IllegalArgumentException("please initialize the schema registry client first");
         }
-        this.serializer = new AvroSerializer<>(client);
-        this.deserializer = new AvroDeserializer<>(client);
+        this.serializer = new GenericAvroSerializer(client);
+        this.deserializer = new GenericAvroDeserializer(client);
     }
 
     public void configure(final Map<String, Object> configs) {
@@ -47,11 +44,11 @@ public class GenericAvroSerde<T extends GenericRecord> implements Closeable {
         this.deserializer.configure(configs);
     }
 
-    public Serializer<T> serializer() {
+    public GenericAvroSerializer serializer() {
         return this.serializer;
     }
 
-    public Deserializer<T> deserializer() {
+    public GenericAvroDeserializer deserializer() {
         return this.deserializer;
     }
 

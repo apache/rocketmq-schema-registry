@@ -22,16 +22,16 @@ import org.apache.rocketmq.schema.registry.client.serde.Serializer;
 
 import java.util.Map;
 
-public class GenericAvroSerializer<T extends GenericRecord> implements Serializer<T> {
+public class GenericAvroSerializer implements Serializer<GenericRecord> {
 
-    private final AvroSerializer<T> inner;
+    private final AvroSerializer<GenericRecord> inner;
 
     public GenericAvroSerializer() {
-        this.inner = new AvroSerializer<T>();
+        this.inner = new AvroSerializer<>();
     }
 
     public GenericAvroSerializer(final SchemaRegistryClient client) {
-        this.inner = new AvroSerializer<T>(client);
+        this.inner = new AvroSerializer<>(client);
     }
     @Override
     public void configure(final Map<String, Object> configs) {
@@ -39,7 +39,7 @@ public class GenericAvroSerializer<T extends GenericRecord> implements Serialize
     }
 
     @Override
-    public byte[] serialize(final String subject, final T record) {
+    public byte[] serialize(final String subject, final GenericRecord record) {
         return this.inner.serialize(subject, record);
     }
 

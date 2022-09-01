@@ -90,6 +90,23 @@ public class NormalSchemaRegistryClient implements SchemaRegistryClient {
         return restService.getSchemaBySubject(cluster, tenant, subject, version);
     }
 
+    public GetSchemaResponse getSchemaBySubjectAndVersion(String subject, long version)
+        throws IOException, RestClientException {
+        return restService.getSchemaBySubject(subject, version);
+    }
+
+    @Override
+    public GetSchemaResponse getTargetSchema(String cluster, String tenant, String subject, String schema)
+        throws RestClientException, IOException {
+        return restService.getTargetSchema(cluster, tenant, subject, schema);
+    }
+
+    @Override
+    public GetSchemaResponse getTargetSchema(String subject, String schema)
+        throws RestClientException, IOException {
+        return restService.getTargetSchema(subject, schema);
+    }
+
     @Override
     public List<SchemaRecordDto> getSchemaListBySubject(String cluster, String tenant,
         String subject) throws RestClientException, IOException {
@@ -107,4 +124,14 @@ public class NormalSchemaRegistryClient implements SchemaRegistryClient {
         return restService.getAllTenants(cluster);
     }
 
+    public GetSchemaResponse getSchemaByRecordId(String cluster, String tenant, String subject,
+        long recordId) throws RestClientException, IOException {
+        return restService.getSchemaByRecordId(cluster, tenant, subject, recordId);
+    }
+
+    @Override
+    public GetSchemaResponse getSchemaByRecordId(String subject, long recordId)
+            throws RestClientException, IOException {
+        return restService.getSchemaByRecordId(subject, recordId);
+    }
 }

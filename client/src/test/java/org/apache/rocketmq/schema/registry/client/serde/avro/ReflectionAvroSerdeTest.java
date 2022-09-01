@@ -16,7 +16,7 @@
  */
 package org.apache.rocketmq.schema.registry.client.serde.avro;
 
-import org.apache.rocketmq.schema.registry.client.config.AvroSerializerConfig;
+import org.apache.rocketmq.schema.registry.client.config.AvroSerdeConfig;
 import org.apache.rocketmq.schema.registry.client.serde.Charge;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +31,7 @@ public class ReflectionAvroSerdeTest {
     public void testReflectionAvroSerde() {
         Charge charge = new Charge("specific", 100.0);
         Map<String, Object> configs = new HashMap<>();
-        configs.put(AvroSerializerConfig.DESERIALIZE_TARGET_TYPE, charge.getClass());
+        configs.put(AvroSerdeConfig.DESERIALIZE_TARGET_TYPE, charge.getClass());
         try (ReflectionAvroSerde serde = new ReflectionAvroSerde()) {
             //serialize
             serde.configure(configs);
