@@ -44,6 +44,7 @@ import org.apache.rocketmq.common.protocol.body.ClusterInfo;
 import org.apache.rocketmq.common.protocol.route.BrokerData;
 import org.apache.rocketmq.common.protocol.route.TopicRouteData;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
+import org.apache.rocketmq.schema.registry.common.constant.SchemaConstants;
 import org.apache.rocketmq.schema.registry.common.context.StorageServiceContext;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaException;
 import org.apache.rocketmq.schema.registry.common.exception.SchemaExistException;
@@ -417,7 +418,7 @@ public class RocketmqClient {
         RocksIterator iterator = cache.newIterator(subjectCfHandle());
         for (iterator.seekToFirst(); iterator.isValid(); iterator.next()) {
             String subjectFullName = new String(iterator.key());
-            String[] subjectFromCache = subjectFullName.split("/");
+            String[] subjectFromCache = subjectFullName.split(String.valueOf(SchemaConstants.SUBJECT_SEPARATOR));
             String tenantFromKey = subjectFromCache[1];
             String subjectFromKey = subjectFromCache[2];
             if (isSuperAdmin(context.getUserName()) || tenant.equals(tenantFromKey)) {
@@ -425,6 +426,17 @@ public class RocketmqClient {
             }
         }
         return subjects;
+    }
+
+    public List<String> getTenants(String cluster) {
+        List<String> tenants = new ArrayList<>();
+        RocksIterator iterator = cache.newIterator(subjectCfHandle());
+        for (iterator.seekToFirst(); iterator.isValid(); iterator.next()) {
+            String subjectFullName = new String(iterator.key());
+            String tenant = subjectFullName.split(String.valueOf(SchemaConstants.SUBJECT_SEPARATOR))[1];
+            tenants.add(tenant);
+        }
+        return tenants;
     }
 
     private boolean isSuperAdmin(String userName) {

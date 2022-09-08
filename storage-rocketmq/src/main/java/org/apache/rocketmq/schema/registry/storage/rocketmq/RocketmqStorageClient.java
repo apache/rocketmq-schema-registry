@@ -84,5 +84,11 @@ public interface RocketmqStorageClient {
         throw new UnsupportedOperationException(ERROR_MESSAGE_DEFAULT);
     }
 
-    List<String> listSubjectsByTenant(StorageServiceContext context, QualifiedName name);
+    default List<String> listSubjectsByTenant(StorageServiceContext context, QualifiedName name) {
+        throw new UnsupportedOperationException(ERROR_MESSAGE_DEFAULT);
+    }
+
+    default List<String> listTenant(QualifiedName name) {
+        throw new UnsupportedOperationException(ERROR_MESSAGE_DEFAULT);
+    }
 }

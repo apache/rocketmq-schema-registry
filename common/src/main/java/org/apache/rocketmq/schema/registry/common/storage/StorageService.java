@@ -87,4 +87,8 @@ public interface StorageService<T extends BaseInfo> {
     default List<String> listSubjectsByTenant(StorageServiceContext storageServiceContext, QualifiedName name) {
         throw new UnsupportedOperationException(ERROR_MESSAGE_DEFAULT);
     }
+
+    default List<String> listTenants(StorageServiceContext storageService, QualifiedName name) {
+        throw new UnsupportedOperationException(ERROR_MESSAGE_DEFAULT);
+    }
 }

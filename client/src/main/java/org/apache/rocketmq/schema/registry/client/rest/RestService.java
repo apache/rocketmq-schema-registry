@@ -50,7 +50,7 @@ public class RestService {
     private static final TypeReference<List<SchemaRecordDto>> SCHEMA_RECORD_DTO_TYPE_LIST_REFERENCE =
         new TypeReference<List<SchemaRecordDto>>() { };
 
-    private static final TypeReference<List<String>> GET_SUBJECTS_REFERENCE =
+    private static final TypeReference<List<String>> LIST_STRING_REFERENCE =
         new TypeReference<List<String>>() { };
 
     public static ObjectMapper jsonParser = JacksonMapper.INSTANCE;
@@ -150,6 +150,12 @@ public class RestService {
     public List<String> getSubjectsByTenant(String cluster, String tenant) throws RestClientException, IOException {
         UrlBuilder urlBuilder = UrlBuilder.fromPath("/cluster/{cluster-name}/tenant/{tenant-name}/subjects");
         String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(cluster, tenant).toString());
-        return HttpUtil.sendHttpRequest(path, HTTP_GET, null, httpHeaders, GET_SUBJECTS_REFERENCE);
+        return HttpUtil.sendHttpRequest(path, HTTP_GET, null, httpHeaders, LIST_STRING_REFERENCE);
+    }
+
+    public List<String> getAllTenants(String cluster) throws RestClientException, IOException {
+        UrlBuilder urlBuilder = UrlBuilder.fromPath("/cluster/{cluster-name}/tenants");
+        String path = HttpUtil.buildRequestUrl(baseUri, urlBuilder.build(cluster).toString());
+        return HttpUtil.sendHttpRequest(path, HTTP_GET, null, httpHeaders, LIST_STRING_REFERENCE);
     }
 }

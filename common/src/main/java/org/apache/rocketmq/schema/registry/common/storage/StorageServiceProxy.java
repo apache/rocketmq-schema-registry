@@ -121,4 +121,12 @@ public class StorageServiceProxy {
 
         return storageService.listSubjectsByTenant(storageServiceContext, name);
     }
+
+    public List<String> listTenants(final QualifiedName name) {
+        final RequestContext requestContext = RequestContextManager.getContext();
+        final StorageServiceContext storageServiceContext = storageUtil.convertToStorageServiceContext(requestContext);
+        final StorageService<SchemaInfo> storageService = storageManager.getStorageService();
+
+        return storageService.listTenants(storageServiceContext, name);
+    }
 }
