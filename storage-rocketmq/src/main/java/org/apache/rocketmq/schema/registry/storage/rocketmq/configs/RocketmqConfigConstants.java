@@ -29,15 +29,15 @@ public class RocketmqConfigConstants {
     public static final String STORAGE_ROCKETMQ_PRODUCER_GROUP_DEFAULT = "default";
 
     public static final String STORAGE_ROCKETMQ_CONSUMER_GROUP = "storage.rocketmq.consumer.group";
-    public static final String STORAGE_ROCKETMQ_CONSUMER_GROUP_DEFAULT =
+    public static final String STORAGE_ROCKETMQ_CONSUMER_GROUP_DEFAULT = "GID_schema_registry_" +
         CommonUtil.getIp().replace(".", "_");
 
     public static final String STORAGE_ROCKETMQ_NAMESRV = "storage.rocketmq.namesrv";
     public static final String STORAGE_ROCKETMQ_NAMESRV_DEFAULT = "http://localhost:9876";
 
     public static final String STORAGE_ROCKETMQ_TOPIC = "storage.rocketmq.topic";
-    public static final String STORAGE_ROCKETMQ_TOPIC_DEFAULT = "RMQ_SYS_schema_registry_storage_topic";
-    public static final String STORAGE_ROCKETMQ_COMPACT_TOPIC_DEFAULT = "RMQ_SYS_schema_registry_storage_compact_topic";
+    public static final String STORAGE_ROCKETMQ_TOPIC_DEFAULT = "RMQ_SYS_schema_registry_storage";
+    public static final String STORAGE_ROCKETMQ_COMPACT_TOPIC_DEFAULT = "RMQ_SYS_schema_registry_storage_compaction";
 
     public static final String STORAGE_ROCKETMQ_USE_COMPACT_TOPIC = "storage.rocketmq.use.compact.topic";
     public static final String STORAGE_ROCKETMQ_USE_COMPACT_TOPIC_DEFAULT = "false";

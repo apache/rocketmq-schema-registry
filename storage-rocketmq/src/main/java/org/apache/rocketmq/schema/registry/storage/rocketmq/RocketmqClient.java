@@ -165,7 +165,6 @@ public class RocketmqClient {
             if (cfs.size() <= 1) {
                 List<byte[]> columnFamilies = Arrays.asList(STORAGE_ROCKSDB_SCHEMA_COLUMN_FAMILY,
                     STORAGE_ROCKSDB_SUBJECT_COLUMN_FAMILY);
-                // TODO: add default cf in handles when needed
                 cache = org.rocksdb.RocksDB.open(options, cachePath);
                 cfDescriptors.addAll(columnFamilies.stream()
                     .map(ColumnFamilyDescriptor::new)
@@ -298,6 +297,7 @@ public class RocketmqClient {
                 if (!result.getSendStatus().equals(SendStatus.SEND_OK)) {
                     throw new SchemaException("Register schema: " + schema.getQualifiedName() + " failed: " + result.getSendStatus());
                 }
+                log.info("send message success, msgId = {}", result.getMsgId());
             }
 
             return schema;
@@ -375,6 +375,7 @@ public class RocketmqClient {
                 if (result.getSendStatus() != SendStatus.SEND_OK) {
                     throw new SchemaException("Update " + update.getQualifiedName() + " failed: " + result.getSendStatus());
                 }
+                log.info("send message success, msgId = {}", result.getMsgId());
             }
             return update;
         } catch (SchemaException e) {

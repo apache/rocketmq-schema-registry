@@ -63,7 +63,7 @@ public class AvroSchemaValidator implements org.apache.rocketmq.schema.registry.
         for (String schemaIdl : current.getAllRecordIdlInOrder()) {
             Schema existing = new Schema.Parser().parse(schemaIdl);
             if (existing.equals(toValidate)) {
-                throw new SchemaCompatibilityException("Schema record: " + schemaIdl + " is exist.");
+                throw new SchemaCompatibilityException("The same schemaIdl exists in the previous versions");
             }
             existingList.add(existing);
         }

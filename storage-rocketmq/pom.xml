@@ -51,6 +51,11 @@
             <artifactId>rocketmq-tools</artifactId>
             <version>${rocketmq.client.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.rocksdb</groupId>
+            <artifactId>rocksdbjni</artifactId>
+        </dependency>
     </dependencies>
 
 

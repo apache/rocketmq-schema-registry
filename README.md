@@ -75,7 +75,7 @@ Properties details:
 
 | Property                                | Description                                                                |
 |-----------------------------------------|----------------------------------------------------------------------------|
-| schema.dependency.jdk-path              | The JDK used when compiling Java files                                     |
+| schema.dependency.jdk-path              | The JDK used when compiling Java files, equal to JAVA_HOME in your server  |                                    |
 | schema.dependency.compile-path          | The root directory used when compiling Java files                          |
 | schema.dependency.local-repository-path | The local cache directory for the Jar package                              |
 | schema.dependency.repository-url        | The remote repository access url, multiple repository cannot be configured |
