@@ -14,6 +14,7 @@
 # limitations under the License.
 
 github:
+  description: "Apache RocketMQ Schema Registry"
   features:
     # Enable issue management
     issues: true
