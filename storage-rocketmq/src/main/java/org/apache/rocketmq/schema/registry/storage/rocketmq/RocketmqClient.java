@@ -120,14 +120,14 @@ public class RocketmqClient {
             try {
                 topicRouteData = mqAdminExt.examineTopicRouteInfo(storageTopic);
             } catch (MQClientException e) {
-                log.warn("maybe the storage topic not found, need to create");
+                log.warn("maybe the storage topic {} not found, need to create", storageTopic);
             } catch (Exception e) {
                 throw new SchemaException("Failed to create storage rocketmq topic", e);
             }
 
             if (topicRouteData != null && CollectionUtils.isNotEmpty(topicRouteData.getBrokerDatas())
                 && CollectionUtils.isNotEmpty(topicRouteData.getQueueDatas())) {
-                log.info("the storage topic already exist, no need to create");
+                log.info("the storage topic {} already exist, no need to create", storageTopic);
                 return;
             }
 

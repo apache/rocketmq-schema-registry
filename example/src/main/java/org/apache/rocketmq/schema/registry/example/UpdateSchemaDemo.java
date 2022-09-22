@@ -35,7 +35,8 @@ public class UpdateSchemaDemo {
         String topic = "TopicTest";
         UpdateSchemaRequest request = UpdateSchemaRequest.builder()
             .schemaIdl("{\"type\":\"record\",\"name\":\"Charge\",\"namespace\":\"org.apache.rocketmq.schema.registry.example.serde\","
-                + "\"fields\":[{\"name\":\"item\",\"type\":\"string\"},{\"name\":\"amount\",\"type\":\"double\"}]}")
+                + "\"fields\":[{\"name\":\"item\",\"type\":\"string\"},{\"name\":\"amount\",\"type\":\"double\"}"
+                + ",{\"name\":\"currency\",\"type\":\"string\",\"default\":\"CNY\"}]}")
             .build();
         try {
             UpdateSchemaResponse response
