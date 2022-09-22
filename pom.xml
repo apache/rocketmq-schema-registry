@@ -27,7 +27,7 @@
 
     <groupId>org.apache.rocketmq</groupId>
     <artifactId>rocketmq-schema-registry-all</artifactId>
-    <version>1.0.0</version>
+    <version>0.0.5-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>rocketmq-schema-registry</description>
 

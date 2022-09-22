@@ -43,7 +43,7 @@ public class SchemaRecordDto {
     @ApiModelProperty(value = "Version of this schema record")
     private long version;
 
-    @ApiModelProperty(value = "unique id of this schema record")
+    @ApiModelProperty(value = "Schema record unique id")
     private long recordId;
 
     @ApiModelProperty(value = "IDL of this schema record", required = true)

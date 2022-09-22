@@ -44,6 +44,9 @@ public class GetSchemaResponse extends BaseDto {
     @ApiModelProperty(value = "Schema full name")
     private String schemaFullName;
 
+    @ApiModelProperty(value = "Version of this schema record")
+    private long version;
+
     @ApiModelProperty(value = "Schema record unique id", required = true)
     private long recordId;
 
@@ -59,6 +62,7 @@ public class GetSchemaResponse extends BaseDto {
     public GetSchemaResponse(QualifiedName name, SchemaRecordInfo schemaRecordInfo) {
         this.subjectFullName = name.subjectFullName();
         this.schemaFullName = schemaRecordInfo.getSchema();
+        this.version = schemaRecordInfo.getVersion();
         this.recordId = CommonUtil.getSchemaRecordId(schemaRecordInfo.getSchemaId(),
             schemaRecordInfo.getVersion());
         this.idl = schemaRecordInfo.getIdl();

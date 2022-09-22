@@ -125,7 +125,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
         storageServiceProxy.register(schemaInfo);
         long schemaRecordId = CommonUtil.getSchemaRecordId(
             schemaInfo.getUniqueId(), schemaInfo.getLastRecordVersion());
-        return new RegisterSchemaResponse(schemaRecordId);
+        return new RegisterSchemaResponse(schemaRecordId, schemaInfo.getLastRecordVersion());
     }
 
     /**
@@ -191,7 +191,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         long schemaRecordId = CommonUtil.getSchemaRecordId(
             update.getUniqueId(), update.getLastRecordVersion());
-        return new UpdateSchemaResponse(schemaRecordId);
+        return new UpdateSchemaResponse(schemaRecordId, update.getLastRecordVersion());
     }
 
     /**
