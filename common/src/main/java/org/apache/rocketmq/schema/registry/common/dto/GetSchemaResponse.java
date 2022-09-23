@@ -17,9 +17,6 @@
 
 package org.apache.rocketmq.schema.registry.common.dto;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import org.apache.avro.Schema;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.model.Dependency;
 import org.apache.rocketmq.schema.registry.common.model.SchemaRecordInfo;
@@ -47,14 +44,14 @@ public class GetSchemaResponse extends BaseDto {
     @ApiModelProperty(value = "Schema full name")
     private String schemaFullName;
 
+    @ApiModelProperty(value = "Version of this schema record")
+    private long version;
+
     @ApiModelProperty(value = "Schema record unique id", required = true)
     private long recordId;
 
     @ApiModelProperty(value = "Schema idl")
     private String idl;
-
-    @ApiModelProperty(value = "Schema idl")
-    private List<Field> fields;
 
     @ApiModelProperty(value = "Schema dependency")
     private Dependency dependency;
@@ -65,37 +62,11 @@ public class GetSchemaResponse extends BaseDto {
     public GetSchemaResponse(QualifiedName name, SchemaRecordInfo schemaRecordInfo) {
         this.subjectFullName = name.subjectFullName();
         this.schemaFullName = schemaRecordInfo.getSchema();
+        this.version = schemaRecordInfo.getVersion();
         this.recordId = CommonUtil.getSchemaRecordId(schemaRecordInfo.getSchemaId(),
             schemaRecordInfo.getVersion());
         this.idl = schemaRecordInfo.getIdl();
         this.dependency = schemaRecordInfo.getDependency();
         this.type = schemaRecordInfo.getType();
-        this.fields = parse(idl);
-    }
-
-    private List<Field> parse(String schemaIdl) {
-        Schema schema = new Schema.Parser().parse(schemaIdl);
-        if (schema.getType() != Schema.Type.RECORD) {
-            return null;
-        }
-
-        return schema.getFields().stream().map(field -> {
-            String type = field.schema().getType().getName();
-            // ["null", "double"] represent this field is nullable
-            if (field.schema().isUnion() && field.schema().getTypes().size() == 2) {
-                type = field.schema().getTypes().get(1).getName();
-            }
-            String defaultVal = field.hasDefaultValue() ? field.defaultVal().toString() : "null";
-            return Field.builder()
-                    .pos(field.pos())
-                    .name(field.name())
-                    .type(type)
-                    .comment(field.doc())
-                    .isNullable(field.schema().isNullable())
-                    .defaultValue(defaultVal)
-                    .sortType(field.order().name())
-                    .extra("")
-                    .build();
-        }).collect(Collectors.toList());
     }
 }

@@ -88,7 +88,9 @@ public class StorageUtil {
      * @return schema dto
      */
     public SchemaRecordDto convertToSchemaRecordDto(final SchemaRecordInfo recordInfo) {
-        return mapper.map(recordInfo, SchemaRecordDto.class);
+        SchemaRecordDto recordDto = mapper.map(recordInfo, SchemaRecordDto.class);
+        recordDto.setRecordId(CommonUtil.getSchemaRecordId(recordDto.getSchemaId(), recordDto.getVersion()));
+        return recordDto;
     }
 
     /**

@@ -34,4 +34,7 @@ public class RegisterSchemaResponse extends BaseDto {
 
     @ApiModelProperty(value = "Schema record unique id", required = true)
     private long recordId;
+
+    @ApiModelProperty(value = "Version of this schema record")
+    private long version;
 }
