@@ -89,7 +89,7 @@ public class SchemaController {
         path = "/subject/{subject-name}/schema/{schema-name}",
         consumes = MediaType.APPLICATION_JSON_VALUE
         )
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @ApiOperation(
         value = "Register a new schema",
         notes = "Return success if there were no errors registering the schema"
@@ -97,7 +97,7 @@ public class SchemaController {
     @ApiResponses(
         {
             @ApiResponse(
-                code = HttpURLConnection.HTTP_CREATED,
+                code = HttpURLConnection.HTTP_OK,
                 message = "The schema was registered"
             ),
             @ApiResponse(
@@ -122,7 +122,7 @@ public class SchemaController {
         path = "/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/{schema-name}",
         consumes = MediaType.APPLICATION_JSON_VALUE
         )
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @ApiOperation(
         value = "Register a new schema",
         notes = "Return success if there were no errors registering the schema"
@@ -130,7 +130,7 @@ public class SchemaController {
     @ApiResponses(
         {
             @ApiResponse(
-                code = HttpURLConnection.HTTP_CREATED,
+                code = HttpURLConnection.HTTP_OK,
                 message = "The schema was registered"
             ),
             @ApiResponse(
