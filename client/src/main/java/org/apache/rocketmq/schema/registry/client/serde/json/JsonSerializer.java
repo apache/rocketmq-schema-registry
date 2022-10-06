@@ -20,7 +20,7 @@ package org.apache.rocketmq.schema.registry.client.serde.json;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
-import org.apache.rocketmq.schema.registry.client.config.JsonSerializerConfig;
+import org.apache.rocketmq.schema.registry.client.config.JsonSerdeConfig;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
 import org.apache.rocketmq.schema.registry.client.exceptions.SerializationException;
 import org.apache.rocketmq.schema.registry.client.rest.JacksonMapper;
@@ -47,8 +47,8 @@ public class JsonSerializer<T> implements Serializer<T> {
 
     @Override
     public void configure(Map<String, Object> configs) {
-        JsonSerializerConfig jsonSerializerConfig = new JsonSerializerConfig(configs);
-        this.skipSchemaRegistry = jsonSerializerConfig.skipSchemaRegistry();
+        JsonSerdeConfig jsonSerdeConfig = new JsonSerdeConfig(configs);
+        this.skipSchemaRegistry = jsonSerdeConfig.skipSchemaRegistry();
     }
 
     @Override

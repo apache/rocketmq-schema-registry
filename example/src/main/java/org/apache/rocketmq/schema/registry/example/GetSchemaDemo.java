@@ -47,5 +47,11 @@ public class GetSchemaDemo {
         } catch (RestClientException | IOException e) {
             e.printStackTrace();
         }
+        try {
+            List<SchemaRecordDto> schemas = schemaRegistryClient.getSchemaListBySubject("default", "default", topic);
+            System.out.println(schemas);
+        } catch (RestClientException | IOException e) {
+            e.printStackTrace();
+        }
     }
 }

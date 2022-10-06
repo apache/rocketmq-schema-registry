@@ -80,6 +80,11 @@ public class RocketmqStorageService implements StorageService<SchemaInfo> {
     }
 
     @Override
+    public SchemaRecordInfo getTargetSchema(StorageServiceContext context, QualifiedName name) {
+        return storageClient.getTargetSchema(name);
+    }
+
+    @Override
     public List<SchemaRecordInfo> listBySubject(StorageServiceContext context, QualifiedName name) {
         return storageClient.listBySubject(name);
     }

@@ -18,10 +18,13 @@
 package org.apache.rocketmq.schema.registry.client.serde.avro;
 
 import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericContainer;
 import org.apache.avro.generic.GenericDatumWriter;
+import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.BinaryEncoder;
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.EncoderFactory;
+import org.apache.avro.specific.SpecificData;
 import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
@@ -62,10 +65,19 @@ public class AvroSerializer<T> implements Serializer<T> {
         if (record == null) {
             return null;
         }
+        String purposeSchema;
+        if (record instanceof GenericRecord) {
+            purposeSchema = ((GenericContainer) record).getSchema().toString();
+        } else {
+            purposeSchema = SpecificData.get().getSchema(record.getClass()).toString();
+        }
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             BinaryEncoder encoder = encoderFactory.directBinaryEncoder(out, null);
-            GetSchemaResponse response = getSchemaBySubject(subject);
+            GetSchemaResponse response = schemaRegistry.getTargetSchema(subject, purposeSchema);
+            if (response == null) {
+                throw new SerializationException("there's no corresponding schema version equals to given schema : " + purposeSchema);
+            }
             long schemaRecordId = response.getRecordId();
             String schemaIdl = response.getIdl();
             Schema schema = new Schema.Parser().parse(schemaIdl);
@@ -80,17 +92,12 @@ public class AvroSerializer<T> implements Serializer<T> {
             }
             datumWriter.write(record, encoder);
             encoder.flush();
-            byte[] bytes = out.toByteArray();
-            return bytes;
+            return out.toByteArray();
         } catch (IOException | RuntimeException e) {
             throw new SerializationException("serialize Avro message failed", e);
         } catch (RestClientException e) {
-            throw new SerializationException("get schema by subject failed", e);
+            throw new SerializationException("get target schema failed", e);
         }
-    }
-
-    private GetSchemaResponse getSchemaBySubject(String subject) throws RestClientException, IOException {
-        return schemaRegistry.getSchemaBySubject(subject);
     }
 
     @Override

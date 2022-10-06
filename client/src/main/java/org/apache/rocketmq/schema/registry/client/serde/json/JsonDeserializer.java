@@ -20,7 +20,7 @@ package org.apache.rocketmq.schema.registry.client.serde.json;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
-import org.apache.rocketmq.schema.registry.client.config.JsonSerializerConfig;
+import org.apache.rocketmq.schema.registry.client.config.JsonSerdeConfig;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
 import org.apache.rocketmq.schema.registry.client.exceptions.SerializationException;
 import org.apache.rocketmq.schema.registry.client.rest.JacksonMapper;
@@ -50,7 +50,7 @@ public class JsonDeserializer<T> implements Deserializer<T> {
 
     @Override
     public void configure(Map<String, Object> configs) {
-        JsonSerializerConfig serializerConfig = new JsonSerializerConfig(configs);
+        JsonSerdeConfig serializerConfig = new JsonSerdeConfig(configs);
         this.skipSchemaRegistry = serializerConfig.skipSchemaRegistry();
         this.type = (Class<T>) serializerConfig.deserializeTargetType();
     }

@@ -21,7 +21,7 @@ import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.generic.GenericRecordBuilder;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClientFactory;
-import org.apache.rocketmq.schema.registry.client.config.AvroSerializerConfig;
+import org.apache.rocketmq.schema.registry.client.config.AvroSerdeConfig;
 import org.apache.rocketmq.schema.registry.client.serde.avro.GenericAvroSerde;
 
 import java.io.IOException;
@@ -37,14 +37,14 @@ public class GenericAvroSerdeDemo {
 
         Schema schema = new Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Charge\",\"namespace\":\"org.apache.rocketmq.schema.registry.example.serde\",\"fields\":[{\"name\":\"item\",\"type\":\"string\"},{\"name\":\"amount\",\"type\":\"double\"}]}");
         GenericRecord record = new GenericRecordBuilder(schema)
-                .set("item", "generic")
-                .set("amount", 100.0)
-                .build();
+            .set("item", "generic")
+            .set("amount", 100.0)
+            .build();
 
-        try (GenericAvroSerde<GenericRecord> serde = new GenericAvroSerde<>(schemaRegistryClient)) {
+        try (GenericAvroSerde serde = new GenericAvroSerde(schemaRegistryClient)) {
             //configure
             Map<String, Object> configs = new HashMap<>();
-            configs.put(AvroSerializerConfig.USE_GENERIC_DATUM_READER, true);
+            configs.put(AvroSerdeConfig.USE_GENERIC_DATUM_READER, true);
             serde.configure(configs);
 
             //serialize

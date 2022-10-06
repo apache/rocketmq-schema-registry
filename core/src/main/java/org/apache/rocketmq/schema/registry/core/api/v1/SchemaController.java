@@ -26,6 +26,7 @@ import java.net.HttpURLConnection;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
+import org.apache.rocketmq.schema.registry.common.constant.SchemaConstants;
 import org.apache.rocketmq.schema.registry.common.dto.DeleteSchemeResponse;
 import org.apache.rocketmq.schema.registry.common.dto.GetSchemaResponse;
 import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaRequest;
@@ -408,6 +409,181 @@ public class SchemaController {
         return this.requestProcessor.processRequest(
             "getSchemaByTenantSubject",
             () -> schemaService.getBySubject(name)
+        );
+    }
+
+    @RequestMapping(
+        method = RequestMethod.GET,
+        path = "/subject/{subject-name}/schema/versions/{version}"
+        )
+    @ApiOperation(
+        value = "Schema information",
+        notes = "Schema information with the given version under the subject")
+    @ApiResponses(
+        {
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_OK,
+                message = "The schema is returned"
+            ),
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_NOT_FOUND,
+                message = "The requested tenant or schema cannot be found"
+            )
+        }
+        )
+    public GetSchemaResponse getSchemaBySubject(
+            @ApiParam(value = "The name of the subject", required = true)
+            @PathVariable(value = "subject-name") String subject,
+            @ApiParam(value = "The version of the schema", required = true)
+            @PathVariable(value = "version") String version
+    ) {
+        return getSchemaBySubject(DEFAULT_CLUSTER, DEFAULT_TENANT, subject, version);
+    }
+
+    @RequestMapping(
+        method = RequestMethod.POST,
+        path = "/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/schema/schema"
+        )
+    @ApiOperation(
+        value = "Schema information",
+        notes = "Schema information from target schema of subject"
+        )
+    @ApiResponses(
+        {
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_OK,
+                message = "The schema is returned"
+            ),
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_NOT_FOUND,
+                message = "The requested tenant or schema cannot be found"
+            )
+        }
+        )
+    public GetSchemaResponse getTargetSchema(
+        @ApiParam(value = "The cluster of the subject", required = true)
+        @PathVariable(value = "cluster-name") final String cluster,
+        @ApiParam(value = "The tenant of the schema", required = true)
+        @PathVariable(value = "tenant-name") final String tenant,
+        @ApiParam(value = "The name of the subject", required = true)
+        @PathVariable(value = "subject-name") String subject,
+        @ApiParam(value = "The schema idl", required = true)
+        @RequestBody final String schema
+    ) {
+        QualifiedName name = new QualifiedName(cluster, tenant, subject, schema);
+
+        return this.requestProcessor.processRequest(
+            "getTargetSchema",
+            () -> schemaService.getTargetSchema(name)
+        );
+    }
+
+    @RequestMapping(
+        method = RequestMethod.POST,
+        path = "/subject/{subject-name}/schema/schema"
+        )
+    @ApiOperation(
+        value = "Schema information",
+        notes = "Schema information from target schema of subject"
+        )
+    @ApiResponses(
+        {
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_OK,
+                message = "The schema is returned"
+            ),
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_NOT_FOUND,
+                message = "The requested tenant or schema cannot be found"
+            )
+        }
+        )
+    public GetSchemaResponse getTargetSchema(
+        @ApiParam(value = "The name of the subject", required = true)
+        @PathVariable(value = "subject-name") String subject,
+        @ApiParam(value = "The schema idl", required = true)
+        @RequestBody final String schema
+    ) {
+        QualifiedName name = new QualifiedName("default", "default", subject, schema);
+
+        return this.requestProcessor.processRequest(
+            "getTargetSchema",
+            () -> schemaService.getTargetSchema(name)
+        );
+    }
+
+    @RequestMapping(
+        method = RequestMethod.GET,
+        path = "/cluster/{cluster-name}/tenant/{tenant-name}/subject/{subject-name}/recordId/{record-id}/schema"
+        )
+    @ApiOperation(
+        value = "Schema information",
+        notes = "Schema information with target recordId"
+        )
+    @ApiResponses(
+        {
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_OK,
+                message = "The schema is returned"
+            ),
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_NOT_FOUND,
+                message = "The requested tenant or schema cannot be found"
+            )
+        }
+        )
+    public GetSchemaResponse getSchemaByRecordId(
+        @ApiParam(value = "The cluster of the subject", required = true)
+        @PathVariable(value = "cluster-name") final String cluster,
+        @ApiParam(value = "The tenant of the schema", required = true)
+        @PathVariable(value = "tenant-name") final String tenant,
+        @ApiParam(value = "The name of the subject", required = true)
+        @PathVariable(value = "subject-name") String subject,
+        @ApiParam(value = "The recordId of the schema", required = true)
+        @PathVariable(value = "record-id") final String recordId
+    ) {
+        long versionMask = ~(-1L << SchemaConstants.SCHEMA_VERSION_BITS);
+        long recordIdResource = Long.parseLong(recordId);
+        Long version = recordIdResource & versionMask;
+        QualifiedName qualifiedName = new QualifiedName(cluster, tenant, subject, null, version);
+
+        return this.requestProcessor.processRequest(
+            "getSchemaByRecordId",
+            () -> schemaService.getBySubject(qualifiedName)
+        );
+    }
+
+    @RequestMapping(
+        method = RequestMethod.GET,
+        path = "/subject/{subject-name}/recordId/{record-id}/schema"
+        )
+    @ApiOperation(
+        value = "Schema information",
+        notes = "Schema information with target recordId"
+        )
+    @ApiResponses(
+        {
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_OK,
+                message = "The schema is returned"
+            ),
+            @ApiResponse(
+                code = HttpURLConnection.HTTP_NOT_FOUND,
+                message = "The requested tenant or schema cannot be found"
+            )
+        }
+        )
+    public GetSchemaResponse getSchemaByRecordId(
+        @ApiParam(value = "The name of the subject", required = true)
+        @PathVariable(value = "subject-name") String subject,
+        @ApiParam(value = "The recordId of the schema", required = true)
+        @PathVariable(value = "record-id") final String recordId
+    ) {
+        QualifiedName qualifiedName = new QualifiedName("default", "default", subject, null, null);
+
+        return this.requestProcessor.processRequest(
+            "getSchemaByRecordId",
+            () -> schemaService.getByRecordId(qualifiedName, Long.parseLong(recordId))
         );
     }
 

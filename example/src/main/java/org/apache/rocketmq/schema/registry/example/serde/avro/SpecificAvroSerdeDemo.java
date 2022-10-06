@@ -19,7 +19,7 @@ package org.apache.rocketmq.schema.registry.example.serde.avro;
 
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClientFactory;
-import org.apache.rocketmq.schema.registry.client.config.AvroSerializerConfig;
+import org.apache.rocketmq.schema.registry.client.config.AvroSerdeConfig;
 import org.apache.rocketmq.schema.registry.client.serde.avro.SpecificAvroSerde;
 import org.apache.rocketmq.schema.registry.example.serde.Charge;
 
@@ -40,8 +40,7 @@ public class SpecificAvroSerdeDemo {
 
             //serialize
             Charge charge = new Charge("specific", 100.0);
-            serializeConfigs.put(AvroSerializerConfig.SKIP_SCHEMA_REGISTRY, true);
-            serializeConfigs.put(AvroSerializerConfig.DESERIALIZE_TARGET_TYPE, charge.getClass());
+            serializeConfigs.put(AvroSerdeConfig.DESERIALIZE_TARGET_TYPE, charge.getClass());
             serde.configure(serializeConfigs);
             byte[] bytes = serde.serializer().serialize("TopicTest", charge);
 

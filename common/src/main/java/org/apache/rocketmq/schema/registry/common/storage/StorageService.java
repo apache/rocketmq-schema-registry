@@ -80,6 +80,10 @@ public interface StorageService<T extends BaseInfo> {
         throw new UnsupportedOperationException(ERROR_MESSAGE_DEFAULT);
     }
 
+    default SchemaRecordInfo getTargetSchema(StorageServiceContext context, QualifiedName name) {
+        throw new UnsupportedOperationException(ERROR_MESSAGE_DEFAULT);
+    }
+
     default List<SchemaRecordInfo> listBySubject(final StorageServiceContext context, final QualifiedName name) {
         throw new UnsupportedOperationException(ERROR_MESSAGE_DEFAULT);
     }

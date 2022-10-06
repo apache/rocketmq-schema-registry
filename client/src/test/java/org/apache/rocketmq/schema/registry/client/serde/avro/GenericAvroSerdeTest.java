@@ -20,7 +20,7 @@ import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.generic.GenericRecordBuilder;
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
-import org.apache.rocketmq.schema.registry.client.config.AvroSerializerConfig;
+import org.apache.rocketmq.schema.registry.client.config.AvroSerdeConfig;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
 import org.apache.rocketmq.schema.registry.common.dto.GetSchemaResponse;
 import org.junit.jupiter.api.Test;
@@ -52,7 +52,8 @@ public class GenericAvroSerdeTest {
         when(getSchemaResponse.getIdl()).thenReturn(idl);
 
         registryClient = mock(SchemaRegistryClient.class);
-        when(registryClient.getSchemaBySubject("TopicTest")).thenReturn(getSchemaResponse);
+        when(registryClient.getTargetSchema("TopicTest", schema.toString())).thenReturn(getSchemaResponse);
+        when(registryClient.getSchemaByRecordId("TopicTest", 1111L)).thenReturn(getSchemaResponse);
 
         GenericRecord record = new GenericRecordBuilder(schema)
                 .set("item", "generic")
@@ -62,7 +63,7 @@ public class GenericAvroSerdeTest {
         try (GenericAvroSerde serde = new GenericAvroSerde(registryClient)) {
             //configure
             Map<String, Object> configs = new HashMap<>();
-            configs.put(AvroSerializerConfig.USE_GENERIC_DATUM_READER, true);
+            configs.put(AvroSerdeConfig.USE_GENERIC_DATUM_READER, true);
             serde.configure(configs);
 
             //serialize

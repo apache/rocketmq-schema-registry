@@ -14,13 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.rocketmq.schema.registry.client.config;
 
-import java.util.Map;
+package org.apache.rocketmq.schema.registry.common.model;
 
-public class JsonSerializerConfig extends SerializerConfig {
-    public JsonSerializerConfig(Map<String, Object> configs) {
-        this.configs = configs;
-    }
-
+public class SchemaDefinition {
 }

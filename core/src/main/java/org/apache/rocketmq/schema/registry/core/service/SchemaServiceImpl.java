@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.auth.AccessControlService;
+import org.apache.rocketmq.schema.registry.common.constant.SchemaConstants;
 import org.apache.rocketmq.schema.registry.common.context.RequestContext;
 import org.apache.rocketmq.schema.registry.common.context.RequestContextManager;
 import org.apache.rocketmq.schema.registry.common.dto.DeleteSchemeResponse;
@@ -297,6 +298,25 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
         List<String> tenants = storageServiceProxy.listTenants(qualifiedName);
         log.info("list all tenants: {}", qualifiedName.getCluster());
         return tenants;
+    }
+
+    public GetSchemaResponse getTargetSchema(QualifiedName qualifiedName) {
+        final RequestContext requestContext = RequestContextManager.getContext();
+        log.info("get request context: " + requestContext);
+        this.accessController.checkPermission("", qualifiedName.getTenant(), SchemaOperation.GET);
+        SchemaRecordInfo schemaRecordInfo = storageServiceProxy.getTargetSchema(qualifiedName);
+        if (schemaRecordInfo == null) {
+            throw new SchemaException("Schema: " + qualifiedName + " not exist");
+        }
+        return new GetSchemaResponse(qualifiedName, schemaRecordInfo);
+    }
+
+    @Override
+    public GetSchemaResponse getByRecordId(QualifiedName qualifiedName, long recordId) {
+        long versionMask = ~(-1L << SchemaConstants.SCHEMA_VERSION_BITS);
+        Long version = recordId & versionMask;
+        qualifiedName.setVersion(version);
+        return getBySubject(qualifiedName);
     }
 
     private void checkSchemaExist(final QualifiedName qualifiedName) {

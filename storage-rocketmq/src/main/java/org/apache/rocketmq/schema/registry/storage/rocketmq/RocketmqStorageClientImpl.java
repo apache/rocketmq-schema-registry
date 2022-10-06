@@ -20,17 +20,21 @@ package org.apache.rocketmq.schema.registry.storage.rocketmq;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.avro.Schema;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.context.StoragePluginContext;
 import org.apache.rocketmq.schema.registry.common.context.StorageServiceContext;
 import org.apache.rocketmq.schema.registry.common.json.JsonConverter;
 import org.apache.rocketmq.schema.registry.common.json.JsonConverterImpl;
 import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
+import org.apache.rocketmq.schema.registry.common.model.SchemaMetaInfo;
 import org.apache.rocketmq.schema.registry.common.model.SchemaRecordInfo;
+import org.apache.rocketmq.schema.registry.common.model.SchemaType;
 import org.apache.rocketmq.schema.registry.common.utils.CommonUtil;
 
 @Slf4j
@@ -111,6 +115,32 @@ public class RocketmqStorageClientImpl implements RocketmqStorageClient {
         Map<Long, SchemaRecordInfo> versionSchemaMap = schemaInfo.getDetails().getSchemaRecords()
             .stream().collect(Collectors.toMap(SchemaRecordInfo::getVersion, Function.identity()));
         return versionSchemaMap.get(qualifiedName.getVersion());
+    }
+
+    @Override
+    public SchemaRecordInfo getTargetSchema(QualifiedName qualifiedName) {
+        // schema version is given
+        SchemaInfo schemaInfo = rocketmqClient.getSchemaInfoBySubject(qualifiedName.subjectFullName());
+        if (schemaInfo == null || schemaInfo.getDetails() == null || schemaInfo.getDetails().getSchemaRecords() == null) {
+            return null;
+        }
+        SchemaMetaInfo schemaMetaInfo = schemaInfo.getMeta();
+        if (schemaMetaInfo == null) {
+            return null;
+        }
+        if (schemaMetaInfo.getType() == SchemaType.AVRO) {
+            for (SchemaRecordInfo schemaRecordInfo : schemaInfo.getDetails().getSchemaRecords()) {
+                Schema store = new Schema.Parser().parse(schemaRecordInfo.getIdl());
+                Schema target = new Schema.Parser().parse(qualifiedName.getSchema());
+                if (Objects.equals(store, target)) {
+                    return schemaRecordInfo;
+                }
+            }
+        } else {
+            //todo support other type
+            return null;
+        }
+        return null;
     }
 
     @Override

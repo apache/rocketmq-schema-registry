@@ -75,6 +75,10 @@ public interface RocketmqStorageClient {
         throw new UnsupportedOperationException(ERROR_MESSAGE_DEFAULT);
     }
 
+    default SchemaRecordInfo getTargetSchema(QualifiedName qualifiedName) {
+        throw new UnsupportedOperationException(ERROR_MESSAGE_DEFAULT);
+    }
+
     /**
      * list all versions of rocketmq schema entity by subject.
      *

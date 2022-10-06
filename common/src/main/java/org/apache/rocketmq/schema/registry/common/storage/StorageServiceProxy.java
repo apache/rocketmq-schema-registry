@@ -106,6 +106,13 @@ public class StorageServiceProxy {
         return storageService.getBySubject(storageServiceContext, name);
     }
 
+    public SchemaRecordInfo getTargetSchema(final QualifiedName name) {
+        final RequestContext requestContext = RequestContextManager.getContext();
+        final StorageServiceContext storageServiceContext = storageUtil.convertToStorageServiceContext(requestContext);
+        final StorageService<SchemaInfo> storageService = storageManager.getStorageService();
+        return storageService.getTargetSchema(storageServiceContext, name);
+    }
+
     public List<SchemaRecordInfo> listBySubject(final QualifiedName name) {
         final RequestContext requestContext = RequestContextManager.getContext();
         final StorageServiceContext storageServiceContext = storageUtil.convertToStorageServiceContext(requestContext);

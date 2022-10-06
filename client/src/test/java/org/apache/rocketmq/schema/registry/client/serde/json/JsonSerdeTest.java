@@ -17,11 +17,9 @@
 package org.apache.rocketmq.schema.registry.client.serde.json;
 
 import org.apache.rocketmq.schema.registry.client.SchemaRegistryClient;
-import org.apache.rocketmq.schema.registry.client.config.JsonSerializerConfig;
+import org.apache.rocketmq.schema.registry.client.config.JsonSerdeConfig;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
-import org.apache.rocketmq.schema.registry.client.serde.Charge;
 import org.apache.rocketmq.schema.registry.client.serde.Person;
-import org.apache.rocketmq.schema.registry.client.serde.avro.SpecificAvroSerde;
 import org.apache.rocketmq.schema.registry.common.dto.GetSchemaResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -57,7 +55,7 @@ public class JsonSerdeTest {
             //serialize
             Person person = new Person(1L, "Tom", 18);
             Map<String, Object> configs = new HashMap<>();
-            configs.put(JsonSerializerConfig.DESERIALIZE_TARGET_TYPE, person.getClass());
+            configs.put(JsonSerdeConfig.DESERIALIZE_TARGET_TYPE, person.getClass());
             serde.configure(configs);
             byte[] bytes = serde.serializer().serialize("TopicTest", person);
 

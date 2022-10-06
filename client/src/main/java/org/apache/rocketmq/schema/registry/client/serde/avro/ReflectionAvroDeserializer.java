@@ -22,7 +22,7 @@ import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.reflect.ReflectData;
 import org.apache.avro.reflect.ReflectDatumReader;
-import org.apache.rocketmq.schema.registry.client.config.AvroSerializerConfig;
+import org.apache.rocketmq.schema.registry.client.config.AvroSerdeConfig;
 import org.apache.rocketmq.schema.registry.client.exceptions.SerializationException;
 import org.apache.rocketmq.schema.registry.client.serde.Deserializer;
 
@@ -39,8 +39,8 @@ public class ReflectionAvroDeserializer<T> implements Deserializer<T> {
 
     @Override
     public void configure(Map<String, Object> configs) {
-        AvroSerializerConfig avroSerializerConfig = new AvroSerializerConfig(configs);
-        this.type = avroSerializerConfig.deserializeTargetType();
+        AvroSerdeConfig avroSerdeConfig = new AvroSerdeConfig(configs);
+        this.type = avroSerdeConfig.deserializeTargetType();
     }
 
     @Override
