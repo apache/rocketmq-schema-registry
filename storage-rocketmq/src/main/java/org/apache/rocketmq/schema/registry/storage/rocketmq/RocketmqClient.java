@@ -85,7 +85,7 @@ import static org.apache.rocketmq.schema.registry.storage.rocketmq.configs.Rocke
 public class RocketmqClient {
 
     private DefaultMQProducer producer;
-    private DefaultMQPushConsumer scheduleConsumer;
+    private DefaultMQPushConsumer consumer;
     private DefaultMQAdminExt mqAdminExt;
     private String storageTopic;
     private boolean useCompactTopic;
@@ -197,9 +197,10 @@ public class RocketmqClient {
         try {
             producer.start();
 
-            scheduleConsumer.subscribe(storageTopic, "*");
-            scheduleConsumer.registerMessageListener(new MessageListener());
-            scheduleConsumer.start();
+            consumer.subscribe(storageTopic, "*");
+            consumer.registerMessageListener(new MessageListener());
+            consumer.start();
+            log.info("push consumer for local cache start, gid={}", consumer.getConsumerGroup());
         } catch (MQClientException e) {
             throw new SchemaException("Rocketmq client start failed", e);
         }
@@ -459,11 +460,11 @@ public class RocketmqClient {
             props.getProperty(STORAGE_ROCKETMQ_NAMESRV, STORAGE_ROCKETMQ_NAMESRV_DEFAULT)
         );
 
-        this.scheduleConsumer = new DefaultMQPushConsumer(
+        this.consumer = new DefaultMQPushConsumer(
             props.getProperty(STORAGE_ROCKETMQ_CONSUMER_GROUP, STORAGE_ROCKETMQ_CONSUMER_GROUP_DEFAULT)
         );
 
-        this.scheduleConsumer.setNamesrvAddr(
+        this.consumer.setNamesrvAddr(
             props.getProperty(STORAGE_ROCKETMQ_NAMESRV, STORAGE_ROCKETMQ_NAMESRV_DEFAULT)
         );
 
