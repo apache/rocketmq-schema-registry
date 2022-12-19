@@ -18,18 +18,34 @@
 package org.apache.rocketmq.schema.registry.core.compatibility;
 
 import org.apache.rocketmq.schema.registry.common.exception.SchemaCompatibilityException;
+import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
 import org.apache.rocketmq.schema.registry.common.model.SchemaType;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class CompatibilityChecker {
 
     private static final SchemaValidator SCHEMA_VALIDATOR_AVRO = new AvroSchemaValidator();
+    
+    private static final SchemaValidator SCHEMA_VALIDATOR_PROTO = new ProtobufSchemaValidator();
 
     public static SchemaValidator getValidator(SchemaType schemaType) {
         switch (schemaType) {
             case AVRO:
                 return SCHEMA_VALIDATOR_AVRO;
+        case PROTOBUF:
+            return SCHEMA_VALIDATOR_PROTO;
             default:
                 throw new SchemaCompatibilityException("Unsupported schema type: " + schemaType);
         }
+    }
+    
+    public List<String> isCompatible(SchemaInfo newSchema, List<SchemaInfo> previousSchemas, SchemaType schemaType){
+        List<SchemaInfo> previousSchemaCopy = new ArrayList<>(previousSchemas);
+        Collections.reverse(previousSchemaCopy);
+        SchemaValidator validator =  getValidator(schemaType);
+        return validator.validate(newSchema, previousSchemaCopy);
     }
 }

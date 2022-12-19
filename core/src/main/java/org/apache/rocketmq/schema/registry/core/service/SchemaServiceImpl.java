@@ -119,6 +119,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
 
         if (config.isUploadEnabled()) {
             // TODO: async upload to speed up register operation and keep atomic with register
+            // todo 实现jvm远程热加载
             Dependency dependency = dependencyService.compile(schemaInfo);
             schemaInfo.setLastRecordDependency(dependency);
         }
