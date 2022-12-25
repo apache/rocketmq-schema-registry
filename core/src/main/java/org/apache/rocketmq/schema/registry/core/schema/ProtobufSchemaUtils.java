@@ -31,21 +31,22 @@ import com.squareup.wire.schema.internal.parser.OptionElement.Kind;
 import kotlin.Pair;
 import kotlin.ranges.IntRange;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.rocketmq.schema.registry.core.provider.Context;
+import org.apache.rocketmq.schema.registry.core.utils.JacksonUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static com.squareup.wire.schema.internal.UtilKt.MAX_TAG_VALUE;
+import static org.apache.rocketmq.schema.registry.common.constant.SchemaConstants.MAX_TAG_VALUE;
+import static org.apache.rocketmq.schema.registry.core.schema.ProtobufSchema.DEFAULT_LOCATION;
 
 public class ProtobufSchemaUtils {
 
-  private static final ObjectMapper jsonMapper = JacksonMapper.INSTANCE;
+  private static final ObjectMapper jsonMapper = JacksonUtils.INSTANCE;
 
   public static ProtobufSchema copyOf(ProtobufSchema schema) {
     return schema.copy();
@@ -610,7 +611,7 @@ public class ProtobufSchemaUtils {
       if (!fieldProtoType.isScalar() && !fieldProtoType.isMap()) {
         // See if the fieldType resolves to a message representing a map
         fieldType = resolve(ctx, fieldType);
-        TypeElementInfo typeInfo = ctx.getTypeForFullName(fieldType, true);
+        Context.TypeElementInfo typeInfo = ctx.getTypeForFullName(fieldType, true);
         if (typeInfo != null && typeInfo.isMap()) {
           fieldProtoType = typeInfo.getMapType();
         } else {
@@ -712,7 +713,7 @@ public class ProtobufSchemaUtils {
       return types.stream()
           .filter(type -> {
             if (type instanceof MessageElement) {
-              TypeElementInfo typeInfo = ctx.getType(type.getName(), true);
+              Context.TypeElementInfo typeInfo = ctx.getType(type.getName(), true);
               // Don't emit synthetic map message
               return typeInfo == null || !typeInfo.isMap();
             } else {
@@ -918,29 +919,29 @@ public class ProtobufSchemaUtils {
     private boolean ignoreExtensions;
     private boolean normalize;
     private NumberFormat numberFormat;
-
+  
     public FormatContext(boolean ignoreExtensions, boolean normalize) {
       super();
       this.ignoreExtensions = ignoreExtensions;
       this.normalize = normalize;
     }
-
+  
     public boolean ignoreExtensions() {
       return ignoreExtensions;
     }
-
+  
     public boolean normalize() {
       return normalize;
     }
-
+  
     public String formatNumber(Number number) {
       return numberFormat().format(number);
     }
-
+  
     public Number parseNumber(String str) {
       return NumberUtils.createNumber(str);
     }
-
+  
     private NumberFormat numberFormat() {
       if (numberFormat == null) {
         numberFormat = new DecimalFormat();
@@ -948,8 +949,9 @@ public class ProtobufSchemaUtils {
       }
       return numberFormat;
     }
-
+  
     public List<OptionElement> filterOptions(List<OptionElement> options) {
       return new ArrayList<>();
+    }
   }
 }

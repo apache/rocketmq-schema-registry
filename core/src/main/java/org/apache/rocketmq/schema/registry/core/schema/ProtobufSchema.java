@@ -968,6 +968,14 @@ public class ProtobufSchema extends SchemaInfo {
 		}
 	}
 	
+	public ProtoFileElement rawSchema() {
+		return schemaObj;
+	}
+	
+	public List<SchemaReference> references() {
+		return references;
+	}
+	
 	private static String dataType(FieldDescriptorProto field) {
 		if (field.hasTypeName()) {
 			return field.getTypeName();
