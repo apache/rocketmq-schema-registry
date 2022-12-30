@@ -180,7 +180,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
         }
 
         // check compatibility
-        CompatibilityChecker.getValidator(update.getMeta().getType()).validate(update, current);
+//        CompatibilityChecker.getValidator(update.getMeta().getType()).validate(update, current);
 
         if (config.isUploadEnabled()) {
             Dependency dependency = dependencyService.compile(update);
