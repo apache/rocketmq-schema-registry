@@ -1,32 +1,14 @@
-/*
- * Copyright 2020 Confluent Inc.
- * Copyright 2015 protobuf-dynamic developers
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.apache.rocketmq.schema.registry.core.proto.dynamic;
 
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.DescriptorProtos.EnumDescriptorProto;
 import com.google.protobuf.DescriptorProtos.EnumDescriptorProto.EnumReservedRange;
 import com.google.protobuf.DescriptorProtos.EnumValueDescriptorProto;
-import io.confluent.protobuf.MetaProto;
-import io.confluent.protobuf.MetaProto.Meta;
+import org.apache.rocketmq.schema.registry.core.proto.MetaProto;
 
 import java.util.Map;
 
-import static io.confluent.kafka.schemaregistry.protobuf.dynamic.DynamicSchema.toMeta;
+import static org.apache.rocketmq.schema.registry.core.proto.dynamic.DynamicSchema.toMeta;
 
 /**
  * EnumDefinition
@@ -87,7 +69,7 @@ public class EnumDefinition {
         optionsBuilder.setDeprecated(isDeprecated);
         enumValBuilder.mergeOptions(optionsBuilder.build());
       }
-      Meta meta = toMeta(doc, params);
+      MetaProto.Meta meta = toMeta(doc, params);
       if (meta != null) {
         DescriptorProtos.EnumValueOptions.Builder optionsBuilder =
                 DescriptorProtos.EnumValueOptions.newBuilder();
@@ -114,7 +96,7 @@ public class EnumDefinition {
 
     // Note: added
     public Builder setMeta(String doc, Map<String, String> params) {
-      Meta meta = toMeta(doc, params);
+      MetaProto.Meta meta = toMeta(doc, params);
       if (meta != null) {
         DescriptorProtos.EnumOptions.Builder optionsBuilder =
                 DescriptorProtos.EnumOptions.newBuilder();

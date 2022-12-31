@@ -1,20 +1,3 @@
-/*
- * Copyright 2020 Confluent Inc.
- * Copyright 2015 protobuf-dynamic developers
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.apache.rocketmq.schema.registry.core.proto.dynamic;
 
 import com.google.protobuf.DescriptorProtos;
@@ -24,14 +7,13 @@ import com.google.protobuf.DescriptorProtos.FieldDescriptorProto;
 import com.google.protobuf.DescriptorProtos.FieldOptions.CType;
 import com.google.protobuf.DescriptorProtos.FieldOptions.JSType;
 import com.google.protobuf.DescriptorProtos.OneofDescriptorProto;
-import io.confluent.protobuf.MetaProto;
-import io.confluent.protobuf.MetaProto.Meta;
+import org.apache.rocketmq.schema.registry.core.proto.MetaProto;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.confluent.kafka.schemaregistry.protobuf.dynamic.DynamicSchema.toMeta;
+import static org.apache.rocketmq.schema.registry.core.proto.dynamic.DynamicSchema.toMeta;
 
 /**
  * MessageDefinition
@@ -192,7 +174,7 @@ public class MessageDefinition {
 
     // Note: added
     public Builder setMeta(String doc, Map<String, String> params) {
-      Meta meta = toMeta(doc, params);
+      MetaProto.Meta meta = toMeta(doc, params);
       if (meta != null) {
         DescriptorProtos.MessageOptions.Builder optionsBuilder =
                 DescriptorProtos.MessageOptions.newBuilder();
@@ -391,7 +373,7 @@ public class MessageDefinition {
 
   private static void setFieldMeta(
       FieldDescriptorProto.Builder fieldBuilder, String doc, Map<String, String> params) {
-    Meta meta = toMeta(doc, params);
+    MetaProto.Meta meta = toMeta(doc, params);
     if (meta != null) {
       DescriptorProtos.FieldOptions.Builder optionsBuilder =
           DescriptorProtos.FieldOptions.newBuilder();

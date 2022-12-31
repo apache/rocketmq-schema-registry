@@ -3,13 +3,10 @@
 
 package org.apache.rocketmq.schema.registry.core.proto;
 
-/**
- * Protobuf type {@code confluent.type.Decimal}
- */
 public final class Decimal extends
     com.google.protobuf.GeneratedMessageV3 implements
     // @@protoc_insertion_point(message_implements:confluent.type.Decimal)
-		io.confluent.protobuf.type.DecimalOrBuilder {
+		DecimalOrBuilder {
 private static final long serialVersionUID = 0L;
   // Use Decimal.newBuilder() to construct.
   private Decimal(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
@@ -85,13 +82,13 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return io.confluent.protobuf.type.DecimalProto.internal_static_confluent_type_Decimal_descriptor;
+    return DecimalProto.internal_static_confluent_type_Decimal_descriptor;
   }
 
   @Override
   protected FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return io.confluent.protobuf.type.DecimalProto.internal_static_confluent_type_Decimal_fieldAccessorTable
+    return DecimalProto.internal_static_confluent_type_Decimal_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
             Decimal.class, Builder.class);
   }
@@ -324,16 +321,16 @@ private static final long serialVersionUID = 0L;
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
       // @@protoc_insertion_point(builder_implements:confluent.type.Decimal)
-      io.confluent.protobuf.type.DecimalOrBuilder {
+      DecimalOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.confluent.protobuf.type.DecimalProto.internal_static_confluent_type_Decimal_descriptor;
+      return DecimalProto.internal_static_confluent_type_Decimal_descriptor;
     }
 
     @Override
     protected FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.confluent.protobuf.type.DecimalProto.internal_static_confluent_type_Decimal_fieldAccessorTable
+      return DecimalProto.internal_static_confluent_type_Decimal_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               Decimal.class, Builder.class);
     }
@@ -368,7 +365,7 @@ private static final long serialVersionUID = 0L;
     @Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return io.confluent.protobuf.type.DecimalProto.internal_static_confluent_type_Decimal_descriptor;
+      return DecimalProto.internal_static_confluent_type_Decimal_descriptor;
     }
 
     @Override
