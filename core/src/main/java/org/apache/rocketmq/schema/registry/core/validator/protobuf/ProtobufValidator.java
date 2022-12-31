@@ -4,6 +4,7 @@ import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.GeneratedMessageV3;
 import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
+import org.apache.rocketmq.schema.registry.core.provider.diff.SchemaDiff;
 import org.apache.rocketmq.schema.registry.core.schema.ProtobufSchema;
 
 import java.util.List;
@@ -40,12 +41,15 @@ public class ProtobufValidator {
 	}
 	
 	/**
-	 * @param protoMessage The protobuf message object to validate
+	 * @param update The protobuf update message object
+	 * @param current The protobuf message object to validate
 	 * @throws MessageValidationException Further information about the failed field
 	 */
 	@SuppressWarnings("unchecked")
 	public void validate(ProtobufSchema update, List<ProtobufSchema> current) throws MessageValidationException {
-		//TODO 兼容kafka的SchemaDiff#Compare方法
+		for (ProtobufSchema currentItem: current) {
+			SchemaDiff.compare(update, currentItem);
+		}
 	}
 	
 }
