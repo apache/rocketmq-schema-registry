@@ -30,6 +30,6 @@ public class SchemaRegistryClientFactory {
      */
     public static SchemaRegistryClient newClient(String baseUrl, Map<String, String> map) {
         RestService restService = null == map ? new RestService(baseUrl) : new RestService(baseUrl, map);
-        return new NormalSchemaRegistryClient(restService);
+        return new CachedSchemaRegistryClient(restService);
     }
 }
