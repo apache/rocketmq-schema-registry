@@ -136,6 +136,7 @@ public class CachedSchemaRegistryClient implements SchemaRegistryClient {
     @Override
     public UpdateSchemaResponse updateSchema(String subject, String schemaName,
         UpdateSchemaRequest request) throws RestClientException, IOException {
+        // invalidate schemaCache
         schemaCache.invalidate(new SubjectAndSchema(DEFAULT_CLUSTER, DEFAULT_TENANT, subject, schemaName));
         return restService.updateSchema(subject, schemaName, request);
     }
@@ -143,6 +144,7 @@ public class CachedSchemaRegistryClient implements SchemaRegistryClient {
     @Override
     public UpdateSchemaResponse updateSchema(String cluster, String tenant, String subjectName,
         String schemaName, UpdateSchemaRequest request) throws IOException, RestClientException {
+        // invalidate schemaCache
         schemaCache.invalidate(new SubjectAndSchema(cluster, tenant, subjectName, schemaName));
         return restService.updateSchema(cluster, tenant, subjectName, schemaName, request);
     }

@@ -26,8 +26,6 @@ import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaRequest;
 import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaResponse;
 import org.apache.rocketmq.schema.registry.common.model.Compatibility;
 import org.apache.rocketmq.schema.registry.common.model.SchemaType;
-import org.assertj.core.api.Assert;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -67,7 +65,7 @@ class CachedSchemaRegistryClientTest {
             .owner("test").build();
         try {
             RegisterSchemaResponse response
-                = normalSchemaRegistryClient.registerSchema(topic, "Charge", request);
+                = cachedSchemaRegistryClient.registerSchema(topic, "Charge", request);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -79,7 +77,10 @@ class CachedSchemaRegistryClientTest {
             GetSchemaResponse normalResponse = normalSchemaRegistryClient.getSchemaBySubject(topic);
             GetSchemaResponse cachedResponse = cachedSchemaRegistryClient.getSchemaBySubject(topic);
             GetSchemaResponse cachedResponse2 = cachedSchemaRegistryClient.getSchemaBySubject(topic);
+            GetSchemaResponse cachedResponse3 = cachedSchemaRegistryClient.getSchemaBySubject("default", "default", topic);
+
             assertEquals(normalResponse, cachedResponse2);
+            assertEquals(cachedResponse3, cachedResponse);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,7 +92,27 @@ class CachedSchemaRegistryClientTest {
             GetSchemaResponse normalResponse = normalSchemaRegistryClient.getSchemaBySubjectAndVersion("default", "default", topic, 1);
             GetSchemaResponse cachedResponse = cachedSchemaRegistryClient.getSchemaBySubjectAndVersion("default", "default", topic, 1);
             GetSchemaResponse cachedResponse2 = cachedSchemaRegistryClient.getSchemaBySubjectAndVersion("default", "default", topic, 1);
+            GetSchemaResponse cachedResponse3 = cachedSchemaRegistryClient.getSchemaBySubjectAndVersion(topic, 1);
+
             assertEquals(normalResponse, cachedResponse2);
+            assertEquals(cachedResponse3, cachedResponse);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (RestClientException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void getSchemaBySubjectAndId() {
+        try {
+            GetSchemaResponse normalResponse = normalSchemaRegistryClient.getSchemaByRecordId("default", "default", topic, Long.parseLong("135023078756319233"));
+            GetSchemaResponse cachedResponse = cachedSchemaRegistryClient.getSchemaByRecordId("default", "default", topic, Long.parseLong("135023078756319233"));
+            GetSchemaResponse cachedResponse2 = cachedSchemaRegistryClient.getSchemaByRecordId("default", "default", topic, Long.parseLong("135023078756319233"));
+            GetSchemaResponse cachedResponse3 = cachedSchemaRegistryClient.getSchemaByRecordId(topic, Long.parseLong("135023078756319233"));
+
+            assertEquals(normalResponse, cachedResponse2);
+            assertEquals(cachedResponse3, cachedResponse);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (RestClientException e) {
