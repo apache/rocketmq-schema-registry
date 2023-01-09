@@ -27,3 +27,10 @@ github:
     - MatrixHB 
     
   protected_branches:
+ 
+ notifications:
+  commits:      commits@rocketmq.apache.org
+  issues:       commits@rocketmq.apache.org
+  pullrequests: commits@rocketmq.apache.org
+  jobs:         commits@rocketmq.apache.org
+  discussions:  dev@rocketmq.apache.org
