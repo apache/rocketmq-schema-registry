@@ -124,6 +124,7 @@ public class NormalSchemaRegistryClient implements SchemaRegistryClient {
         return restService.getAllTenants(cluster);
     }
 
+    @Override
     public GetSchemaResponse getSchemaByRecordId(String cluster, String tenant, String subject,
         long recordId) throws RestClientException, IOException {
         return restService.getSchemaByRecordId(cluster, tenant, subject, recordId);

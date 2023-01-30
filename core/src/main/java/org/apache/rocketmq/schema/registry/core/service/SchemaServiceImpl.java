@@ -50,6 +50,7 @@ import org.apache.rocketmq.schema.registry.common.utils.CommonUtil;
 import org.apache.rocketmq.schema.registry.common.utils.IdGenerator;
 import org.apache.rocketmq.schema.registry.common.utils.StorageUtil;
 import org.apache.rocketmq.schema.registry.core.compatibility.CompatibilityChecker;
+import org.apache.rocketmq.schema.registry.core.compatibility.SchemaValidator;
 import org.apache.rocketmq.schema.registry.core.dependency.DependencyService;
 
 @Slf4j
@@ -180,7 +181,10 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
         }
 
         // check compatibility
-        CompatibilityChecker.getValidator(update.getMeta().getType()).validate(update, current);
+        SchemaValidator validator = CompatibilityChecker.getValidator(update.getMeta().getType());
+        if (validator != null) {
+            validator.validate(update, current);
+        }
 
         if (config.isUploadEnabled()) {
             Dependency dependency = dependencyService.compile(update);
@@ -300,6 +304,7 @@ public class SchemaServiceImpl implements SchemaService<SchemaDto> {
         return tenants;
     }
 
+    @Override
     public GetSchemaResponse getTargetSchema(QualifiedName qualifiedName) {
         final RequestContext requestContext = RequestContextManager.getContext();
         log.info("get request context: " + requestContext);
