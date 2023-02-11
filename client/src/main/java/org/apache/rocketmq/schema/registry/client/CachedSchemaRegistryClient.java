@@ -48,11 +48,11 @@ public class CachedSchemaRegistryClient implements SchemaRegistryClient {
 
     private final RestService restService;
 
-    private final Map<String, Set<Long>> subjectToId; // restore recordIds that cached in SubjectAndId
+    private final Map<String, Set<Long>> subjectToId; // restore recordIds that cached in SubjectAndId, used when delete all subject caches
 
-    private final Map<String, Set<Long>> subjectToVersion; // restore versions that cached in SubjectAndVersion
+    private final Map<String, Set<Long>> subjectToVersion; // restore versions that cached in SubjectAndVersion, used when delete all subject caches
 
-    private final Map<String, Set<String>> subjectToSchema; // restore schema that cached in SubjectAndSchema
+    private final Map<String, Set<String>> subjectToSchema; // restore schema that cached in SubjectAndSchema, used when delete all subject caches
 
     private final Cache<SubjectAndVersion, GetSchemaResponse> schemaCacheBySubjectAndVersion;
 
