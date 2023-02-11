@@ -18,6 +18,7 @@
 package org.apache.rocketmq.schema.registry.client;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
 import org.apache.rocketmq.schema.registry.client.rest.RestService;
 import org.apache.rocketmq.schema.registry.common.dto.DeleteSchemeResponse;
@@ -40,11 +41,14 @@ class CachedSchemaRegistryClientTest {
     static NormalSchemaRegistryClient normalSchemaRegistryClient;
     static CachedSchemaRegistryClient cachedSchemaRegistryClient;
 
+    static CachedSchemaRegistryClient cachedSchemaRegistryClientCapacity2;
+
     @BeforeAll
     static void setUp() {
         restService = new RestService(baseUrl);
         normalSchemaRegistryClient = new NormalSchemaRegistryClient(restService);
         cachedSchemaRegistryClient = new CachedSchemaRegistryClient(restService);
+        cachedSchemaRegistryClientCapacity2 = new CachedSchemaRegistryClient(restService, 2, TimeUnit.MINUTES, 2);
         try {
             DeleteSchemeResponse response1
                 = cachedSchemaRegistryClient.deleteSchema("default", "default", topic);
@@ -119,4 +123,40 @@ class CachedSchemaRegistryClientTest {
             throw new RuntimeException(e);
         }
     }
+
+    @Test
+    void getSchemaBySubjectWithCapacity2() {
+        RegisterSchemaRequest request = RegisterSchemaRequest.builder()
+            .schemaIdl("{\"type\":\"record\",\"name\":\"Charge\",\"namespace\":\"org.apache.rocketmq.schema.registry.example.serde\","
+                + "\"fields\":[{\"name\":\"item\",\"type\":\"string\"},{\"name\":\"amount\",\"type\":\"double\"}]}")
+            .schemaType(SchemaType.AVRO)
+            .compatibility(Compatibility.BACKWARD)
+            .owner("test").build();
+        try {
+            DeleteSchemeResponse responseD1
+                = cachedSchemaRegistryClient.deleteSchema("default", "default", "TopicTest2");
+            DeleteSchemeResponse responseD2
+                = cachedSchemaRegistryClient.deleteSchema("default", "default", "TopicTest3");
+            RegisterSchemaResponse response
+                = cachedSchemaRegistryClient.registerSchema("TopicTest2", "Charge2", request);
+            RegisterSchemaResponse response2
+                = cachedSchemaRegistryClient.registerSchema("TopicTest3", "Charge3", request);
+            GetSchemaResponse normalResponse = normalSchemaRegistryClient.getSchemaBySubject(topic);
+            GetSchemaResponse normalResponse2 = normalSchemaRegistryClient.getSchemaBySubject("TopicTest2");
+            GetSchemaResponse normalResponse3 = normalSchemaRegistryClient.getSchemaBySubject("TopicTest3");
+
+            GetSchemaResponse cachedResponse = cachedSchemaRegistryClientCapacity2.getSchemaBySubject(topic);
+            GetSchemaResponse cachedResponse2 = cachedSchemaRegistryClientCapacity2.getSchemaBySubject("TopicTest2");
+            GetSchemaResponse cachedResponse3 = cachedSchemaRegistryClientCapacity2.getSchemaBySubject("TopicTest3");
+
+            assertEquals(normalResponse, cachedResponse);
+            assertEquals(normalResponse2, cachedResponse2);
+            assertEquals(normalResponse3, cachedResponse3);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        
+    }
+    
 }
