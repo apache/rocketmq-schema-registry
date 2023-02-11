@@ -48,6 +48,9 @@ public class CachedSchemaRegistryClient implements SchemaRegistryClient {
 
     private final RestService restService;
 
+    /**
+     * when deleting schema by subject, use these maps to invalidate all caches by KEY SubjectAndId / SubjectAndVersion / SubjectAndSchema
+     */
     private final Map<String, Set<Long>> subjectToId; // restore recordIds that cached in SubjectAndId, used when delete all subject caches
 
     private final Map<String, Set<Long>> subjectToVersion; // restore versions that cached in SubjectAndVersion, used when delete all subject caches
