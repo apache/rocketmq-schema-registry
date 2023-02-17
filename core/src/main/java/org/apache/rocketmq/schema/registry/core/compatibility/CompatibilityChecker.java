@@ -28,6 +28,8 @@ public class CompatibilityChecker {
         switch (schemaType) {
             case AVRO:
                 return SCHEMA_VALIDATOR_AVRO;
+            case JSON:
+                return null;
             default:
                 throw new SchemaCompatibilityException("Unsupported schema type: " + schemaType);
         }
