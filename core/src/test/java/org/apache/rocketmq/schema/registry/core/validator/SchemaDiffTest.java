@@ -19,7 +19,7 @@ public class SchemaDiffTest {
 	
 	private static final String recordSchemaString = "syntax = \"proto3\";\n"
 			+ "\n"
-			+ "option java_package = \"io.confluent.kafka.serializers.protobuf.test\";\n"
+			+ "option java_package = \"protobuf.test\";\n"
 			+ "option java_outer_classname = \"TestMessageProtos\";\n"
 			+ "\n"
 			+ "import \"google/protobuf/descriptor.proto\";\n"
