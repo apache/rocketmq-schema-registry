@@ -41,11 +41,4 @@ public class CompatibilityChecker {
                 throw new SchemaCompatibilityException("Unsupported schema type: " + schemaType);
         }
     }
-    
-    public List<String> isCompatible(SchemaInfo newSchema, List<SchemaInfo> previousSchemas, SchemaType schemaType){
-        List<SchemaInfo> previousSchemaCopy = new ArrayList<>(previousSchemas);
-        Collections.reverse(previousSchemaCopy);
-        SchemaValidator validator =  getValidator(schemaType);
-        return validator.validate(newSchema, previousSchemaCopy);
-    }
 }

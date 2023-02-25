@@ -110,10 +110,6 @@ public class ProtobufSchema extends SchemaInfo {
 	
 	private static final Logger log = LoggerFactory.getLogger(ProtobufSchema.class);
 	
-	public static final String TYPE = "PROTOBUF";
-	
-	public static final String SERIALIZED_FORMAT = "serialized";
-	
 	public static final String PROTO2 = "proto2";
 	public static final String PROTO3 = "proto3";
 	
