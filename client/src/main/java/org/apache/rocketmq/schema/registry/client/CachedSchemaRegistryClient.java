@@ -19,25 +19,25 @@ package org.apache.rocketmq.schema.registry.client;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import lombok.AllArgsConstructor;
 import org.apache.rocketmq.schema.registry.client.exceptions.RestClientException;
 import org.apache.rocketmq.schema.registry.client.rest.RestService;
-
-import java.io.IOException;
-import java.util.List;
-import org.apache.rocketmq.schema.registry.common.dto.GetSchemaResponse;
 import org.apache.rocketmq.schema.registry.common.dto.DeleteSchemeResponse;
+import org.apache.rocketmq.schema.registry.common.dto.GetSchemaResponse;
 import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaRequest;
 import org.apache.rocketmq.schema.registry.common.dto.RegisterSchemaResponse;
 import org.apache.rocketmq.schema.registry.common.dto.SchemaRecordDto;
 import org.apache.rocketmq.schema.registry.common.dto.UpdateSchemaRequest;
 import org.apache.rocketmq.schema.registry.common.dto.UpdateSchemaResponse;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class CachedSchemaRegistryClient implements SchemaRegistryClient {
 
@@ -131,11 +131,9 @@ public class CachedSchemaRegistryClient implements SchemaRegistryClient {
         String subjectFullName = String.format("%s/%s/%s", cluster, tenant, subject);
         schemaCacheBySubject.invalidate(subjectFullName);
         schemaCacheBySubjectAndVersion.invalidate(new SubjectAndVersion(cluster, tenant, subject, version));
-
-        if (subjectToSchema.get(subjectFullName) != null) {
+        if (subjectToVersion.containsKey(subjectFullName)) {
             subjectToVersion.get(subjectFullName).remove(version);
         }
-
         return restService.deleteSchema(cluster, tenant, subject, version);
     }
 

@@ -15,23 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.rocketmq.schema.registry.common.model;
+package org.apache.rocketmq.schema.registry.storage.jdbc.store;
 
-public enum StorageType {
+import com.hazelcast.map.MapLoaderLifecycleSupport;
+import com.hazelcast.map.MapStore;
 
-    /**
-     * Rocketmq type
-     */
-    ROCKETMQ(1),
-    /**
-     * Jdbc type
-     */
-    JDBC(2);
-
-    private final int value;
-
-    StorageType(final int value) {
-        this.value = value;
-    }
+public interface IMapStore<K, V> extends MapStore<K, V>, MapLoaderLifecycleSupport {
 
 }

@@ -15,23 +15,38 @@
  * limitations under the License.
  */
 
-package org.apache.rocketmq.schema.registry.common.model;
+package org.apache.rocketmq.schema.registry.storage.jdbc.dialect;
 
-public enum StorageType {
+import java.sql.Connection;
+import java.sql.SQLException;
+
+/**
+ * A provider of JDBC {@link Connection} instances.
+ */
+public interface ConnectionProvider extends AutoCloseable {
 
     /**
-     * Rocketmq type
+     * Create a connection.
+     *
+     * @return the connection; never null
+     * @throws SQLException if there is a problem getting the connection
      */
-    ROCKETMQ(1),
+    Connection getConnection() throws SQLException;
+
     /**
-     * Jdbc type
+     * connection valid
+     *
+     * @param connection
+     * @param timeout
+     * @return
+     * @throws SQLException
      */
-    JDBC(2);
+    boolean isConnectionValid(Connection connection, int timeout) throws SQLException;
 
-    private final int value;
-
-    StorageType(final int value) {
-        this.value = value;
-    }
+    /**
+     * Close this connection provider.
+     */
+    @Override
+    void close();
 
 }

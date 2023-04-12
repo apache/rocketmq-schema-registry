@@ -15,23 +15,15 @@
  * limitations under the License.
  */
 
-package org.apache.rocketmq.schema.registry.common.model;
+package org.apache.rocketmq.schema.registry.storage.jdbc.common;
 
-public enum StorageType {
-
-    /**
-     * Rocketmq type
-     */
-    ROCKETMQ(1),
-    /**
-     * Jdbc type
-     */
-    JDBC(2);
-
-    private final int value;
-
-    StorageType(final int value) {
-        this.value = value;
-    }
-
+/**
+ * update mode
+ */
+public enum Operator {
+    INSERT,
+    DELETE,
+    UPSERT,
+    UPDATE,
+    SELECT
 }

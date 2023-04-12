@@ -15,23 +15,25 @@
  * limitations under the License.
  */
 
-package org.apache.rocketmq.schema.registry.common.model;
+package org.apache.rocketmq.schema.registry.storage.jdbc;
 
-public enum StorageType {
+import org.apache.rocketmq.schema.registry.common.context.StoragePluginContext;
+import org.apache.rocketmq.schema.registry.common.model.StorageType;
+import org.apache.rocketmq.schema.registry.common.storage.StorageFactory;
+import org.apache.rocketmq.schema.registry.common.storage.StoragePlugin;
 
-    /**
-     * Rocketmq type
-     */
-    ROCKETMQ(1),
-    /**
-     * Jdbc type
-     */
-    JDBC(2);
-
-    private final int value;
-
-    StorageType(final int value) {
-        this.value = value;
+/**
+ * Mysql storage plugin
+ */
+public class JdbcStoragePlugin
+        implements StoragePlugin {
+    @Override
+    public StorageType getType() {
+        return StorageType.JDBC;
     }
 
+    @Override
+    public StorageFactory load(StoragePluginContext context) {
+        return new JdbcStorageFactory(context);
+    }
 }

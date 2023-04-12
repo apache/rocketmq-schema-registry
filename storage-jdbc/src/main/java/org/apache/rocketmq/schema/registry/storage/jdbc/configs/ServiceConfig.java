@@ -15,23 +15,24 @@
  * limitations under the License.
  */
 
-package org.apache.rocketmq.schema.registry.common.model;
+package org.apache.rocketmq.schema.registry.storage.jdbc.configs;
 
-public enum StorageType {
+import org.apache.rocketmq.schema.registry.common.context.StoragePluginContext;
+import org.apache.rocketmq.schema.registry.storage.jdbc.JdbcStorageService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class ServiceConfig {
 
     /**
-     * Rocketmq type
+     * mysql storage service
+     *
+     * @param context
+     * @return
      */
-    ROCKETMQ(1),
-    /**
-     * Jdbc type
-     */
-    JDBC(2);
-
-    private final int value;
-
-    StorageType(final int value) {
-        this.value = value;
+    @Bean
+    public JdbcStorageService jdbcStorageService(StoragePluginContext context) {
+        return new JdbcStorageService(context);
     }
-
 }

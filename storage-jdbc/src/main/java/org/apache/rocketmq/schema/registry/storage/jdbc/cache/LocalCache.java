@@ -15,23 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.rocketmq.schema.registry.common.model;
+package org.apache.rocketmq.schema.registry.storage.jdbc.cache;
 
-public enum StorageType {
+import java.util.Map;
+import java.util.function.Consumer;
 
-    /**
-     * Rocketmq type
-     */
-    ROCKETMQ(1),
-    /**
-     * Jdbc type
-     */
-    JDBC(2);
+public interface LocalCache<K, V> {
 
-    private final int value;
+    V put(K k, V v);
 
-    StorageType(final int value) {
-        this.value = value;
-    }
+    V get(K k, Consumer<String> consumer);
+
+    V get(K k);
+
+    V remove(K k);
+
+    boolean containsKey(K k);
+
+    Map<K, V> getCache();
 
 }
