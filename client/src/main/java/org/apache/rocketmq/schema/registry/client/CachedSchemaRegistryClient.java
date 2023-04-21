@@ -131,7 +131,10 @@ public class CachedSchemaRegistryClient implements SchemaRegistryClient {
         String subjectFullName = String.format("%s/%s/%s", cluster, tenant, subject);
         schemaCacheBySubject.invalidate(subjectFullName);
         schemaCacheBySubjectAndVersion.invalidate(new SubjectAndVersion(cluster, tenant, subject, version));
-        subjectToVersion.get(subjectFullName).remove(version);
+
+        if (subjectToSchema.get(subjectFullName) != null) {
+            subjectToVersion.get(subjectFullName).remove(version);
+        }
 
         return restService.deleteSchema(cluster, tenant, subject, version);
     }
