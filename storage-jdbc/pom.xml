@@ -29,7 +29,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <mysql.version>8.0.16</mysql.version>
+        <mysql.version>8.0.28</mysql.version>
         <hazelcast.version>5.2.3</hazelcast.version>
     </properties>
 
