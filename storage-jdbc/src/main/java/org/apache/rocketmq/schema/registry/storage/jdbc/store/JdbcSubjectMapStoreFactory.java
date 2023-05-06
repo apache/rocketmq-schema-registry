@@ -15,23 +15,18 @@
  * limitations under the License.
  */
 
-package org.apache.rocketmq.schema.registry.common.model;
+package org.apache.rocketmq.schema.registry.storage.jdbc.store;
 
-public enum StorageType {
+import com.hazelcast.map.MapLoader;
+import com.hazelcast.map.MapStoreFactory;
+import org.apache.rocketmq.schema.registry.common.model.SchemaRecordInfo;
 
-    /**
-     * Rocketmq type
-     */
-    ROCKETMQ(1),
-    /**
-     * Jdbc type
-     */
-    JDBC(2);
+import java.util.Properties;
 
-    private final int value;
+public class JdbcSubjectMapStoreFactory implements MapStoreFactory<String, SchemaRecordInfo> {
 
-    StorageType(final int value) {
-        this.value = value;
+    @Override
+    public MapLoader<String, SchemaRecordInfo> newMapStore(String s, Properties properties) {
+        return new JdbcSubjectMapStore();
     }
-
 }

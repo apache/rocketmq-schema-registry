@@ -17,6 +17,8 @@
 
 package org.apache.rocketmq.schema.registry.common.storage;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.List;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.context.StorageServiceContext;
@@ -24,7 +26,7 @@ import org.apache.rocketmq.schema.registry.common.model.BaseInfo;
 import org.apache.rocketmq.schema.registry.common.model.SchemaInfo;
 import org.apache.rocketmq.schema.registry.common.model.SchemaRecordInfo;
 
-public interface StorageService<T extends BaseInfo> {
+public interface StorageService<T extends BaseInfo> extends Closeable {
 
     /**
      * Error message for all default implementations.
@@ -94,5 +96,9 @@ public interface StorageService<T extends BaseInfo> {
 
     default List<String> listTenants(StorageServiceContext storageService, QualifiedName name) {
         throw new UnsupportedOperationException(ERROR_MESSAGE_DEFAULT);
+    }
+
+    @Override
+    default void close() throws IOException {
     }
 }

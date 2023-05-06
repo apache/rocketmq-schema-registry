@@ -15,23 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.rocketmq.schema.registry.common.model;
+package org.apache.rocketmq.schema.registry.storage.jdbc.dialect;
 
-public enum StorageType {
+import java.io.IOException;
+import java.util.Properties;
 
-    /**
-     * Rocketmq type
-     */
-    ROCKETMQ(1),
-    /**
-     * Jdbc type
-     */
-    JDBC(2);
+public interface DatabaseDialectProvider {
 
-    private final int value;
+    DatabaseDialect createDialect(Properties config) throws IOException;
 
-    StorageType(final int value) {
-        this.value = value;
-    }
-
+    String databaseType();
 }
