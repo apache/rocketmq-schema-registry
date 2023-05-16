@@ -24,6 +24,7 @@ import org.apache.rocketmq.schema.registry.common.model.SchemaRecordInfo;
 
 import java.io.Closeable;
 import java.util.List;
+import java.util.Set;
 
 public abstract class IHandler implements Closeable {
     /**
@@ -100,7 +101,7 @@ public abstract class IHandler implements Closeable {
      * @param cluster
      * @return
      */
-    public abstract List<String> getTenants(String cluster);
+    public abstract Set<String> getTenants(String cluster);
 
 
     protected void changeNotify() {

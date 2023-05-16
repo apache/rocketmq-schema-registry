@@ -17,7 +17,7 @@
 
 package org.apache.rocketmq.schema.registry.storage.jdbc.handler;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.Hazelcast;
@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.apache.rocketmq.schema.registry.storage.jdbc.store.JdbcSchemaMapStore.SCHEMAS;
@@ -214,16 +215,18 @@ public class SchemaHandler extends IHandler {
         for (Map.Entry<String, SchemaRecordInfo> schemaRecordEntry : subjects.entrySet()) {
             String subjectFullName = schemaRecordEntry.getKey();
             String[] subjectFromCache = subjectFullName.split(String.valueOf(SchemaConstants.SUBJECT_SEPARATOR));
+            String tenantFromKey = subjectFromCache[1];
             String subjectFromKey = subjectFromCache[2];
-            // Check permission
-            allSubjects.add(subjectFromKey);
+            if (tenant.equals(tenantFromKey)) {
+                allSubjects.add(subjectFromKey);
+            }
         }
         return allSubjects;
     }
 
     @Override
-    public List<String> getTenants(String cluster) {
-        List<String> tenants = Lists.newArrayList();
+    public Set<String> getTenants(String cluster) {
+        Set<String> tenants = Sets.newHashSet();
         for (Map.Entry<String, SchemaRecordInfo> schemaRecordEntry : subjects.entrySet()) {
             String subjectFullName = schemaRecordEntry.getKey();
             String tenant = subjectFullName.split(String.valueOf(SchemaConstants.SUBJECT_SEPARATOR))[1];

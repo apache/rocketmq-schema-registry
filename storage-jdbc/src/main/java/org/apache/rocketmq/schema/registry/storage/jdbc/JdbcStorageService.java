@@ -17,6 +17,7 @@
 
 package org.apache.rocketmq.schema.registry.storage.jdbc;
 
+import com.google.common.collect.Lists;
 import org.apache.avro.Schema;
 import org.apache.rocketmq.schema.registry.common.QualifiedName;
 import org.apache.rocketmq.schema.registry.common.context.StoragePluginContext;
@@ -138,7 +139,7 @@ public class JdbcStorageService
 
     @Override
     public List<String> listTenants(StorageServiceContext storageService, QualifiedName qualifiedName) {
-        return handler.getTenants(qualifiedName.getCluster());
+        return Lists.newArrayList(handler.getTenants(qualifiedName.getCluster()));
     }
 
     @Override
